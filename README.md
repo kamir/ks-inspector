@@ -1,10 +1,10 @@
 # ks-inspector
-A tool which helps operatora and developera of Kafka Streaming application to understand dependencies between KSQL queries and KStreams applications.
+A tool which helps operators and developers of Kafka Streaming applications to understand dependencies between KSQL queries and KStreams applications.
 
 <a href="https://codeclimate.com/github/kamir/ks-inspector"><img src="https://api.codeclimate.com/v1/badges/ef4bcda7d1b5fd0a4f1e/maintainability" /></a>  [![Build Status](https://travis-ci.org/kamir/ks-inspector.svg?branch=master)](https://travis-ci.org/kamir/ks-inspector)
 
 
-## Concept
+## Motivation and Concept
 
 We define an *application context* in order to provide all required information for an
 analysis of a particular *streaming use-case*. 
@@ -27,13 +27,33 @@ With this information we are able to:
 
 ### How to use the tool?
 
-You can run the tool via Maven with the `mvn exec:java` command. 
+You can run the tool via Maven with the `mvn exec:java` command using custom profiles.
+This makes it easy to use it with automation tools in an CI/CD context.
+
+Alternatively, you can start the main class of the project: `io.confluent.ksql.KSQLQueryInspector` in your favorite JVM. 
+
+The following arguments are used by *ks-inspector*:
+
+```
+usage: KSQLQueryInspector :
+
+ -bss,--bootstrap.servers <arg>   the Kafka bootstrap.servers ... [OPTIONAL]
+ 
+ -ks,--ksql-server <arg>          the hostname/IP of the KSQL server we want to work with [REQUIRED]
+ 
+ -p,--projectPath <arg>           BASE PATH for streaming app topology-dumps and KSQL scripts 
+                                  ... this is the place from which the custom data is loaded [REQUIRED]
+ 
+ -qf,--queryFileName <arg>        Filename for the KSQL query file which needs to be analysed 
+                                  ... this is the central part of the analysis [REQUIRED]
+```                                 
 
 To point to your own application context, please provide the following arguments:
 
-- *-p*
-- *-ks*
-- *-qf*
+- *p*
+- *ks*
+- *bss*
+- *qf*
 
 as properties in the `pom.xml` file as shown in this example:
 
@@ -56,34 +76,13 @@ as properties in the `pom.xml` file as shown in this example:
         </profile>
     </profiles>
 ```
+Now you start the program with `mvn exec:java -Pp1`.
 
-The following arguments are used by *ks-inspector*:
-
-```
-usage: KSQLQueryInspector :
-
- -bss,--bootstrap.servers <arg>   the Kafka bootstrap.servers ... [OPTIONAL]
- 
- -ks,--ksql-server <arg>          the hostname/IP of the KSQL server we want to work with [REQUIRED]
- 
- -p,--projectPath <arg>           BASE PATH for streaming app topology-dumps and KSQL scripts 
-                                  ... this is the place from which the custom data is loaded [REQUIRED]
- 
- -qf,--queryFileName <arg>        Filename for the KSQL query file which needs to be analysed 
-                                  ... this is the central part of the analysis [REQUIRED]
-                                                                 
-```                                 
-
+![The KStreams application context](docs/intro.png)
 
 ### How to draw the dependency graph?
 
-<<<<<<< HEAD
 The tool produces a dependency graph as a `.dot file in the folder `insights` within your working directory.
-=======
-![A simple dependency graph for streams an tables](docs/simple-dep-graph.png)
-
-The tool produces a dependency graph in the folder `insights` within your working directory.
->>>>>>> 57281fceebf538192548d448bf45603e2ce6eaae
 
 Using the Graphviz tool we are able to render a dependency network as a PDF file.
 ```
