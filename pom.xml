@@ -17,8 +17,8 @@
         <argument1v>.</argument1v>
         <argument2k>-ksql-server</argument2k>
         <argument2v>127.0.0.1</argument2v>
-        <argument3k>-ks</argument3k>
-        <argument3v>127.0.0.1</argument3v>
+        <argument3k>-bss</argument3k>
+        <argument3v>127.0.0.1:9092</argument3v>
         <argument4k>-qf</argument4k>
         <argument4v>opentsx.ksql</argument4v>
 
@@ -32,10 +32,10 @@
                 <maven.test.skip>true</maven.test.skip>
                 <argument1k>-p</argument1k>
                 <argument1v>/Users/mkampf/Engagements/KSQL/P1</argument1v>
-                <argument2k>-ksql-server</argument2k>
+                <argument2k>-ks</argument2k>
                 <argument2v>127.0.0.1</argument2v>
-                <argument3k>-ks</argument3k>
-                <argument3v>127.0.0.1</argument3v>
+                <argument3k>-bss</argument3k>
+                <argument3v>127.0.0.1:9092</argument3v>
                 <argument4k>-qf</argument4k>
                 <argument4v>script1.ksql</argument4v>
             </properties>
