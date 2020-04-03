@@ -71,13 +71,19 @@ usage: KSQLQueryInspector :
  
  -qf,--queryFileName <arg>        Filename for the KSQL query file which needs to be analysed 
                                   ... this is the central part of the analysis [REQUIRED]
+                                                                 
 ```                                 
 
-![The KStreams application context](docs/intro.png)
 
 ### How to draw the dependency graph?
 
+<<<<<<< HEAD
 The tool produces a dependency graph as a `.dot file in the folder `insights` within your working directory.
+=======
+![A simple dependency graph for streams an tables](docs/simple-dep-graph.png)
+
+The tool produces a dependency graph in the folder `insights` within your working directory.
+>>>>>>> 57281fceebf538192548d448bf45603e2ce6eaae
 
 Using the Graphviz tool we are able to render a dependency network as a PDF file.
 ```
