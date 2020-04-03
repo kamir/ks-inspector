@@ -77,7 +77,7 @@ usage: KSQLQueryInspector :
 
 ### How to draw the dependency graph?
 
-The tool produces a dependency graph in the folder `insights` within your working directory.
+The tool produces a dependency graph as a `.dot file in the folder `insights` within your working directory.
 
 Using the Graphviz tool we are able to render a dependency network as a PDF file.
 ```

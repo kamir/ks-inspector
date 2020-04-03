@@ -74,6 +74,47 @@ public class KSQLRestClient {
 
     }
 
+    public String executeQuery( String CMD, Properties props ) throws Exception {
+
+        URI uri = new URI("http://"+host+":"+port+"/query");
+
+        HttpClient client = HttpClients.custom().build();
+/*
+
+        HttpUriRequest request = RequestBuilder.get()
+                .setUri( uri )
+                .setHeader(HttpHeaders.CONTENT_TYPE, "application/vnd.ksql.v1+json; charset=utf-8")
+                .setHeader(HttpHeaders.ACCEPT, "application/json")
+                .build();
+
+        client.execute(request);
+
+*/
+
+        HttpPost httpPost = new HttpPost(uri);
+        httpPost.addHeader( HttpHeaders.CONTENT_TYPE, "application/vnd.ksql.v1+json; charset=utf-8");
+        httpPost.addHeader( HttpHeaders.ACCEPT, "application/json" );
+
+        String requestWrapper = "{\n" +
+                "                \"ksql\": \" "+  CMD + "\",\n" +
+                "                \"streamsProperties\": {}\n" +
+                "}\n";
+
+        httpPost.setEntity(new StringEntity( requestWrapper ) );
+
+        CloseableHttpResponse response = (CloseableHttpResponse) client.execute(httpPost);
+
+        String responseString = new BasicResponseHandler().handleResponse(response);
+
+        // System.out.println(responseString);
+
+        // System.out.println( response.getStatusLine().getStatusCode() + " <== " + 200 );
+
+        return responseString;
+
+    }
+
+
     public void setHost(String host) {
         this.host = host;
     }
