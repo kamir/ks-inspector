@@ -1,8 +1,7 @@
 # ks-inspector
 A tool which helps operators and developers of Kafka Streaming applications to understand dependencies between KSQL queries and KStreams applications.
 
-<a href="https://codeclimate.com/github/kamir/ks-inspector"><img src="https://api.codeclimate.com/v1/badges/ef4bcda7d1b5fd0a4f1e/maintainability" /></a>  [![Build Status](https://travis-ci.org/kamir/ks-inspector.svg?branch=master)](https://travis-ci.com/kamir/ks-inspector)
-
+<a href="https://codeclimate.com/github/kamir/ks-inspector"><img src="https://api.codeclimate.com/v1/badges/ef4bcda7d1b5fd0a4f1e/maintainability" /></a>  [![Build Status](https://travis-ci.com/kamir/ks-inspector.svg?branch=master)](https://travis-ci.com/kamir/ks-inspector)
 
 ## Motivation and Concept
 
