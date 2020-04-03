@@ -78,11 +78,11 @@ as properties in the `pom.xml` file as shown in this example:
 ```
 Now you start the program with `mvn exec:java -Pp1`.
 
-![The KStreams application context](docs/intro.png)
-
 ### How to draw the dependency graph?
 
-The tool produces a dependency graph as a `.dot file in the folder `insights` within your working directory.
+![The KStreams application context](docs/simple-dep-graph.png)
+
+The tool produces a dependency graph as a `.dot` file in the folder `insights` within your working directory.
 
 Using the Graphviz tool we are able to render a dependency network as a PDF file.
 ```
