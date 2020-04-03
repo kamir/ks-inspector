@@ -71,9 +71,10 @@ usage: KSQLQueryInspector :
  
  -qf,--queryFileName <arg>        Filename for the KSQL query file which needs to be analysed 
                                   ... this is the central part of the analysis [REQUIRED]
+                                                                 
 ```                                 
 
-![The KStreams application context](docs/intro.png)
+![A simple dependency graph for streams an tables](docs/simple-dep-graph.png)
 
 ### How to draw the dependency graph?
 
