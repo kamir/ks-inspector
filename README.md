@@ -74,9 +74,10 @@ usage: KSQLQueryInspector :
                                                                  
 ```                                 
 
-![A simple dependency graph for streams an tables](docs/simple-dep-graph.png)
 
 ### How to draw the dependency graph?
+
+![A simple dependency graph for streams an tables](docs/simple-dep-graph.png)
 
 The tool produces a dependency graph in the folder `insights` within your working directory.
 
