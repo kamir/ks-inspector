@@ -1,0 +1,9 @@
+/Users/mkampf/GITHUB.confluent/ks-inspector/src/main/java/io/confluent/ksql/KSQLQueryInspector.java
+/Users/mkampf/GITHUB.confluent/ks-inspector/src/main/java/io/confluent/ksql/KSQLServerInstance.java
+/Users/mkampf/GITHUB.confluent/ks-inspector/src/main/java/io/confluent/kstreams/fdg/LabelPropagationClustering.java
+/Users/mkampf/GITHUB.confluent/ks-inspector/src/main/java/io/confluent/kstreams/fdg/DataFlowEdge.java
+/Users/mkampf/GITHUB.confluent/ks-inspector/src/main/java/io/confluent/kstreams/fdg/KSQLDependencyGraph.java
+/Users/mkampf/GITHUB.confluent/ks-inspector/src/main/java/io/confluent/kstreams/inspector/KSApplicationContext.java
+/Users/mkampf/GITHUB.confluent/ks-inspector/src/main/java/io/confluent/kstreams/inspector/KSApplicationPath.java
+/Users/mkampf/GITHUB.confluent/ks-inspector/src/main/java/io/confluent/Helper.java
+/Users/mkampf/GITHUB.confluent/ks-inspector/src/main/java/io/confluent/ksql/KSQLRestClient.java

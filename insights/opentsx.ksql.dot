@@ -1,0 +1,16 @@
+strict graph G {
+  OpenTSx_Event_Flow_State [ label="OpenTSx_Event_Flow_State" ];
+  OpenTSx_Event_Flow_State_stream [ label="OpenTSx_Event_Flow_State_stream" ];
+  OpenTSx_Episodes [ label="OpenTSx_Episodes" ];
+  OpenTSx_Episodes_stream [ label="OpenTSx_Episodes_stream" ];
+  OpenTSx_Events [ label="OpenTSx_Events" ];
+  OpenTSx_Events_stream [ label="OpenTSx_Events_stream" ];
+  OPENTSX_EPISODES_STREAM [ label="OPENTSX_EPISODES_STREAM" ];
+  OPENTSX_EPISODES_MD_STREAM [ label="OPENTSX_EPISODES_MD_STREAM" ];
+  S1 [ label="S1" ];
+  OpenTSx_Event_Flow_State -- OpenTSx_Event_Flow_State_stream;
+  OpenTSx_Episodes -- OpenTSx_Episodes_stream;
+  OpenTSx_Events -- OpenTSx_Events_stream;
+  OPENTSX_EPISODES_STREAM -- OPENTSX_EPISODES_MD_STREAM;
+  OPENTSX_EPISODES_STREAM -- S1;
+}
