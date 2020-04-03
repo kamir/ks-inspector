@@ -25,6 +25,50 @@ With this information we are able to:
 
 ![The KStreams application context](docs/intro.png)
 
+### How to use the tool?
+
+You can run the tool via Maven with the `mvn exec:java` command. 
+
+To point to your own application context, please provide the following arguments as properties in the `pom.xml` file:
+
+```
+    <!-- use custom project and overwrite default settings for KSQL application context.  -->
+    <profiles>
+        <profile>
+            <id>p1</id>
+            <properties>
+                <maven.test.skip>true</maven.test.skip>
+                <argument1k>-p</argument1k>
+                <argument1v>/Users/mkampf/Engagements/KSQL/P1</argument1v>
+                <argument2k>-ksql-server</argument2k>
+                <argument2v>127.0.0.1</argument2v>
+                <argument3k>-ks</argument3k>
+                <argument3v>127.0.0.1</argument3v>
+                <argument4k>-qf</argument4k>
+                <argument4v>script1.ksql</argument4v>
+            </properties>
+        </profile>
+    </profiles>
+```
+
+The following arguments are used:
+
+```
+usage: KSQLQueryInspector :
+
+ -bss,--bootstrap.servers <arg>   the Kafka bootstrap.servers ... [OPTIONAL]
+ 
+ -ks,--ksql-server <arg>          the hostname/IP of the KSQL server we want to work with [REQUIRED]
+ 
+ -p,--projectPath <arg>           BASE PATH for streaming app topology-dumps and KSQL scripts 
+                                  ... this is the place from which the custom data is loaded [REQUIRED]
+ 
+ -qf,--queryFileName <arg>        Filename for the KSQL query file which needs to be analysed 
+                                  ... this is the central part of the analysis [REQUIRED]
+```                                 
+
+![The KStreams application context](docs/intro.png)
+
 ### How to draw the dependency graph?
 
 The tool produces a dependency graph in the folder `insights` within your working directory.
