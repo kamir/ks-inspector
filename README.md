@@ -38,7 +38,7 @@ To point to your own application context, please provide the following arguments
             <id>p1</id>
             <properties>
                 <maven.test.skip>true</maven.test.skip>
-                <argument1k>-p</argument1k>
+                <argument1k>*-p*</argument1k>
                 <argument1v>/Users/mkampf/Engagements/KSQL/P1</argument1v>
                 <argument2k>-ksql-server</argument2k>
                 <argument2v>127.0.0.1</argument2v>
