@@ -14,14 +14,14 @@ The application context consists of:
 
 - the list of expected topics
 - the KSQL queries which implement the application
-- the hostname and the port to connect to the KSQL server REST-API
+- the hostname and the port to connect to the KSQL server's REST-API
 
 With this information we are able to:
 
-- deploy the KSQL queries step by step automatically.
-- analyse existing KSQL queries.
+- analyse existing KSQL queries which are deployed to the KSQL server already.
 - compare the expected queries / streams / tables / topics with available queries / streams / tables / topics.
-- any mismatch is a hint for operational, implementation, or even design problems.
+- identify any mismatch 
+- find potential problems in the operational, implementation, or even design context.
 
 ![The KStreams application context](docs/intro.png)
 
