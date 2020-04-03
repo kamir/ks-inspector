@@ -29,7 +29,13 @@ With this information we are able to:
 
 You can run the tool via Maven with the `mvn exec:java` command. 
 
-To point to your own application context, please provide the following arguments as properties in the `pom.xml` file:
+To point to your own application context, please provide the following arguments:
+
+- *-p*
+- *-ks*
+- *-qf*
+
+as properties in the `pom.xml` file as shown in this example:
 
 ```
     <!-- use custom project and overwrite default settings for KSQL application context.  -->
@@ -38,12 +44,12 @@ To point to your own application context, please provide the following arguments
             <id>p1</id>
             <properties>
                 <maven.test.skip>true</maven.test.skip>
-                <argument1k>*-p*</argument1k>
+                <argument1k>-p</argument1k>
                 <argument1v>/Users/mkampf/Engagements/KSQL/P1</argument1v>
-                <argument2k>-ksql-server</argument2k>
+                <argument2k>-ks</argument2k>
                 <argument2v>127.0.0.1</argument2v>
-                <argument3k>-ks</argument3k>
-                <argument3v>127.0.0.1</argument3v>
+                <argument3k>-bss</argument3k>
+                <argument3v>127.0.0.1:9092</argument3v>
                 <argument4k>-qf</argument4k>
                 <argument4v>script1.ksql</argument4v>
             </properties>
@@ -51,7 +57,7 @@ To point to your own application context, please provide the following arguments
     </profiles>
 ```
 
-The following arguments are used:
+The following arguments are used by *ks-inspector*:
 
 ```
 usage: KSQLQueryInspector :
