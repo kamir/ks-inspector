@@ -10,6 +10,19 @@ We define an *application context* in order to provide all required information 
 analysis of a particular *streaming use-case*. 
 This also works for for multiple uses cases in a multi-tenant environment.
 
+The application context consists of:
+
+- the list of expected topics
+- the KSQL queries which implement the application
+- the hostname and the port to connect to the KSQL server REST-API
+
+With this information we are able to:
+
+- deploy the KSQL queries step by step automatically.
+- analyse existing KSQL queries.
+- compare the expected queries / streams / tables / topics with available queries / streams / tables / topics.
+- any mismatch is a hint for operational, implementation, or even design problems.
+
 ![The KStreams application context](docs/intro.png)
 
 ### How to draw the dependency graph?
