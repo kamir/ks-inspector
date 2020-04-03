@@ -6,6 +6,14 @@ A tool which helps operators and developers of Kafka Streaming applications to u
 
 ## Motivation and Concept
 
+Think about a set of KSQL queries you want to deploy on a KSQL cluster. This is a very easy task. 
+And many users love the flexibility of scalable deployments using containers.
+
+But there is another side of it. Do you know how individual streaming applications depend on each other in
+a direct or indirect way?
+
+
+### The Application Context
 We define an *application context* in order to provide all required information for an
 analysis of a particular *streaming use-case*. 
 This also works for for multiple uses cases in a multi-tenant environment.
@@ -16,7 +24,22 @@ The application context consists of:
 - the KSQL queries which implement the application
 - the hostname and the port to connect to the KSQL server's REST-API
 
-With this information we are able to:
+### The Flow-Dependency-Graph
+Individual queries consume data from one or more topics (streams/tables) and they produce results 
+in another stream or in a materialized form, as a topic, from which other applications can take the 
+datta for further processing. 
+
+Like software libraries have dependencies, such flows have dependencies as well.
+
+The flow dependency graph shows those dependencies in the context of an application deployment, 
+and in the wider context of a Kafka cluster deployment (with many use cases). 
+
+Therefore, we read the state of one or more KSQL servers and compare it with the expected setup, based on deployed KSQL queries. 
+
+Using KStreams application parameters and the dump of the topology of an KStreams application we are able to
+provide a comprehensive view of interdependent flows on a Kafka cluster or on Confluent cloud.
+
+#### With this information we are able to:
 
 - analyse existing KSQL queries which are deployed to the KSQL server already.
 - compare the expected queries / streams / tables / topics with available queries / streams / tables / topics.
