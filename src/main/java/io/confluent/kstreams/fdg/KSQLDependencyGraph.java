@@ -351,6 +351,7 @@ public class KSQLDependencyGraph {
         String tableName = words[2];
 
         int index_WITH = 0;
+
         int index_FROM = 0;
 
         int i = 0;
@@ -392,7 +393,7 @@ public class KSQLDependencyGraph {
 
 
 
-    public void inspectJoin(String statement) {
+    public int inspectJoin(String statement) {
 
         String findStr = " FROM ";
         System.out.println( findStr + " => " + Helper.getCountOfStringsInString(findStr, statement) );
@@ -411,6 +412,7 @@ public class KSQLDependencyGraph {
 
         String lastWord = " ";
 
+
         int i = 0;
         for( String w : words ) {
 
@@ -428,13 +430,14 @@ public class KSQLDependencyGraph {
             };
 
             lastWord = w;
+
+            System.out.println( s1 + " -> " + target );
+            System.out.println( s2 + " -> " + target );
+
+            addLink( s1, target );
+            addLink( s2, target );
+
         }
-
-        System.out.println( s1 + " -> " + target );
-        System.out.println( s2 + " -> " + target );
-
-        addLink( s1, target );
-        addLink( s2, target );
 
     }
 

@@ -328,7 +328,7 @@ public class KSQLQueryInspector {
                     Helper.count("TJ", stats);
                     System.out.println("[" + i + "] " + statement );
 
-                    dg.inspectJoin( statement );
+                    dg.___inspectJoin( statement );
 
                 }
 
