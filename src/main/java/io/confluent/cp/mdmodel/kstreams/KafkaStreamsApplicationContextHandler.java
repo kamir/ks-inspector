@@ -1,6 +1,6 @@
 package io.confluent.cp.mdmodel.kstreams;
 
-import io.confluent.cp.mdmodel.AppContextLogRecord;
+import io.confluent.cp.util.AppContextLogRecord;
 import io.confluent.cp.util.MDLogStore;
 
 import java.util.Map;
