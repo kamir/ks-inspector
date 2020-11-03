@@ -1,0 +1,28 @@
+#
+# The order processing system uses the "order-processing" domain to
+# keep track of application context data.
+#
+# This app-instance-context file is used to configure the application instance.
+#
+
+---
+name: order-processing (domain)
+projects:
+  - name: projectOne  # => USE-CASE
+    topics:
+      - name: topicA
+        configs:
+          "num.partitions": "12"
+          "cleanup.policy": "compact"
+          "segment.ms": "12000"
+        dataModel:
+          key:
+            type: String
+          value:
+            type: Avro
+            schemaFile: "schemas/test.avsc"
+    producers:
+      - principal: "User:xxx"
+        groupId: "groupForProducerApp" # => APPLICATION INSTANCE
+        topics:
+          - topicA

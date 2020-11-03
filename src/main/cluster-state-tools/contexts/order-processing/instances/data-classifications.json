@@ -1,0 +1,25 @@
+{
+  "schema": {
+    "type": "record",
+    "name": "DataClassifications",
+    "classifications": {
+      "PII": {
+        "encrypt": {
+          "key": "AESKey"
+        },
+        "classifications": {
+          "Personal": {
+            "tokenize": {}
+          },
+          "Financial": {
+            "encrypt": {
+              "key": "GeneratedKey",
+              "wrapping.key": "RSAPIIFinancial"
+            }
+          }
+        }
+      }
+    },
+    "fields": []
+  }
+}
