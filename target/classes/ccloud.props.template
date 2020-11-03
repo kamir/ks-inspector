@@ -8,4 +8,4 @@ sasl.mechanism=PLAIN
 # Confluent Cloud Schema Registry
 schema.registry.url=https://psrc-4v1qj.eu-central-1.aws.confluent.cloud
 basic.auth.credentials.source=USER_INFO
-schema.registry.basic.auth.user.info=:
+schema.registry.basic.auth.user.info=USER:SECRET

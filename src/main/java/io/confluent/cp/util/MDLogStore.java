@@ -6,7 +6,7 @@ import org.apache.log4j.Logger;
 
 public class MDLogStore {
 
-    private static final Logger logger = Logger.getRootLogger();
+    private static final Logger logger = Logger.getLogger( MDLogStore.class );
 
     Gson gson = new Gson();
 
