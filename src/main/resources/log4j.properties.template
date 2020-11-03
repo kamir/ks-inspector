@@ -24,5 +24,5 @@ log4j.appender.kafka.layout=io.confluent.common.logging.log4j.StructuredJsonLayo
 
 log4j.appender.kafka.brokerList=pkc-4yyd6.us-east1.gcp.confluent.cloud:9092
 log4j.appender.kafka.securityProtocol=SASL_SSL
-log4j.appender.kafka.clientJaasConf=org.apache.kafka.common.security.plain.PlainLoginModule required username='3C5DVC7KIZWGI567' password='Pfw0JZe/8JDzlLMd79q/No/XYNr58qgAQsiM/UJHrDrMwbry9OOpdRmlfu3aWWkH';
+log4j.appender.kafka.clientJaasConf=org.apache.kafka.common.security.plain.PlainLoginModule required username='' password='';
 log4j.appender.kafka.saslMechanism=PLAIN
