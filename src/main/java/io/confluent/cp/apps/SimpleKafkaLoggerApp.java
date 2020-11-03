@@ -41,11 +41,9 @@ public class SimpleKafkaLoggerApp {
         String instancePath1 = "./src/main/cluster-state-tools-data/contexts/order-processing/instances/order-processing-c.domy";
         Domain domain = AppDescriptorLoader.readAppDescriptor( instancePath1 );
 
-        KafkaStreamsApplicationContextHandler.init( "my-host", domain.name );
+        KafkaStreamsApplicationContextHandler.init( "my-host-1", domain.name );
 
         KafkaStreamsApplicationContextHandler.persistDomain( domain.toString() );
-
-        KafkaStreamsApplicationContextHandler.persistDomain( "FAkE_TOPOLOGY" );
 
         KafkaStreamsApplicationContextHandler.persistRuntimeProperties( System.getenv() );
 

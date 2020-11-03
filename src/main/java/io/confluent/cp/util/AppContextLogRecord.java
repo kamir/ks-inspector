@@ -1,4 +1,4 @@
-package io.confluent.cp.mdmodel;
+package io.confluent.cp.util;
 
 import java.util.Hashtable;
 import java.util.Properties;
