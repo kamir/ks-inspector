@@ -1,0 +1,7 @@
+{
+  "BrokerList": "pkc-4r297.europe-west1.gcp.confluent.cloud:9092",
+  "SaslPassword": "G9sD3IBy7C86c+gQhPHThITLAlKcrol6QuCWbvYk541CZKWsUnzbty7Vd2rIncdq",
+  "SaslUsername": "BBKCVI4JFMWWMJPV",
+  "SchemaRegistryUri": "https://psrc-lgy7n.europe-west3.gcp.confluent.cloud",
+  "SchemaRegistryAuth":"ECBHCNUB7UBJCF3L:48feeULFM8FVaLKOvRrt78/kU9a0jKuu4CvDd4tOskKJPgu86Jfa1nEUGjjseIcl",
+}

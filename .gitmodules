@@ -1,0 +1,6 @@
+[submodule "bin/kafka-clusterstate-tools"]
+	path = bin/kafka-clusterstate-tools
+	url = https://github.com/kamir/kafka-clusterstate-tools
+[submodule "kafka-clusterstate-tools"]
+	path = kafka-clusterstate-tools
+	url = https://github.com/kamir/kafka-clusterstate-tools

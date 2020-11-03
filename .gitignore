@@ -2,6 +2,8 @@
 ccloud.props
 
 
+
+
 # Compiled class file
 *.class
 
@@ -27,3 +29,14 @@ ccloud.props
 hs_err_pid*
 
 d3js/
+/src/main/docker-compose/graph-db/data/
+query-loaded-from-ksql-server/
+src/.DS_Store
+src/main/.DS_Store
+src/main/docker-compose/.DS_Store
+src/main/docker-compose/graph-db/conf/
+src/main/docker-compose/graph-db/import/
+src/main/docker-compose/graph-db/plugins/
+src/main/resources/
+src/test/
+target/generated-sources/
