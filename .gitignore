@@ -38,7 +38,6 @@ src/main/docker-compose/.DS_Store
 src/main/docker-compose/graph-db/conf/
 src/main/docker-compose/graph-db/import/
 src/main/docker-compose/graph-db/plugins/
-src/main/resources/
 src/test/
 target/generated-sources/
 
