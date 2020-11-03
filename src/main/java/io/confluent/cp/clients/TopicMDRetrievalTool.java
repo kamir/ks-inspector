@@ -1,29 +1,18 @@
 package io.confluent.cp.clients;
 
-import io.confluent.cp.CCloudClusterWrapper;
+import io.confluent.cp.cfg.CCloudClusterWrapper;
 import org.apache.kafka.clients.admin.*;
-import org.apache.kafka.common.KafkaFuture;
-import org.apache.kafka.common.acl.AccessControlEntryFilter;
-import org.apache.kafka.common.acl.AclBinding;
-import org.apache.kafka.common.acl.AclBindingFilter;
-import org.apache.kafka.common.resource.ResourcePatternFilter;
-import org.bouncycastle.math.ec.ScaleYNegateXPointMap;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.security.acl.Acl;
-import java.util.Collection;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Vector;
 import java.util.concurrent.ExecutionException;
 
 public class TopicMDRetrievalTool {
 
     /**
-     * This tool reads all ACLs from a Confluent cloud cluster.
+     * This tool reads topic-metadata from a Confluent cloud cluster.
      *
-     * We convert this data into a knowledge graph data model.
+     * We can convert this data into a knowledge graph data model. TODO
      */
 
     public static void main(String[] args) throws ExecutionException, InterruptedException {

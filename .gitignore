@@ -29,6 +29,7 @@ ccloud.props
 hs_err_pid*
 
 d3js/
+
 /src/main/docker-compose/graph-db/data/
 query-loaded-from-ksql-server/
 src/.DS_Store
@@ -40,3 +41,9 @@ src/main/docker-compose/graph-db/plugins/
 src/main/resources/
 src/test/
 target/generated-sources/
+
+src/main/resources/log4j.properties
+src/main/resources/ccloud.props
+
+/graph-db/
+/out/

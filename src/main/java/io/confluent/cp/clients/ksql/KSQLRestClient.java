@@ -114,7 +114,6 @@ public class KSQLRestClient {
 
     }
 
-
     public void setHost(String host) {
         this.host = host;
     }

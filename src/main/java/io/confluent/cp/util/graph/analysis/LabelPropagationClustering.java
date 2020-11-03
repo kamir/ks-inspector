@@ -1,4 +1,4 @@
-package io.confluent.cp.mdmodel.kstreams.fdg;/*
+package io.confluent.cp.util.graph.analysis;/*
  * (C) Copyright 2020-2020, by Dimitrios Michail and Contributors.
  *
  * JGraphT : a free Java graph-theory library

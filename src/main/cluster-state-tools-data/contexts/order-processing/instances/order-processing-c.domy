@@ -7,9 +7,6 @@
 
 ---
 name: order-processing (domain)
-
-short-name: TECHNICAL_KEY (Prefix_to_ENV_VARIABLES)
-
 projects:
   - name: projectOne  # => USE-CASE
     topics:

@@ -1,5 +1,13 @@
-package io.confluent.cp.mdmodel;
+package io.confluent.cp.cs;
 
+/**
+ *
+ * This class uses the Cluster State Tools to read the DOMAIN definition file
+ * as defined in CST project.
+ *
+ * It can create the Knowledge Graph using a Neo4J database.
+ *
+ */
 
 import io.confluent.mdgraph.KnowledgeGraph;
 import net.christophschubert.kafka.clusterstate.cli.CLITools;

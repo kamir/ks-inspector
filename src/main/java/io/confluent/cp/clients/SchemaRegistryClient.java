@@ -1,14 +1,12 @@
 package io.confluent.cp.clients;
 
-import io.confluent.cp.CCloudClusterWrapper;
+import io.confluent.cp.cfg.CCloudClusterWrapper;
 import io.confluent.kafka.schemaregistry.client.rest.*;
 import io.confluent.kafka.schemaregistry.client.rest.entities.Schema;
 import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientException;
-import io.confluent.kafka.schemaregistry.client.security.basicauth.BasicAuthCredentialProvider;
 import io.confluent.mdgraph.KnowledgeGraph;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -80,7 +78,8 @@ public class SchemaRegistryClient {
 
                 Schema schema = srr.getVersion(subject, v);
 
-                kg.registerSchema( schema );
+                if ( kg != null )
+                    kg.registerSchema( schema );
 
                 System.out.println( "    " + schema );
             }
