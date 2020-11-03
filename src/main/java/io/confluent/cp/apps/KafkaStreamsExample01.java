@@ -63,17 +63,18 @@ public class KafkaStreamsExample01 {
     Topology topology = builder.build();
 
     /**
-     * Application Context management ... we dump PROPS and TOPOLOGY to the cluster.
+     * Application Context Management ... we dump PROPS and TOPOLOGY to a topic in our kafka cluster.
      */
     String instancePath1 = "./src/main/cluster-state-tools-data/contexts/order-processing/instances/order-processing-ks1.domy";
     Domain d = AppDescriptorLoader.readAppDescriptor( instancePath1 );
 
     KafkaStreamsApplicationContextHandler.init( "MacBook PRO 2", d.name );
 
+    KafkaStreamsApplicationContextHandler.persistTopology( topology.describe().toString()  );
+
     KafkaStreamsApplicationContextHandler.persistRuntimeProperties( props );
     KafkaStreamsApplicationContextHandler.persistRuntimeProperties( System.getenv() );
 
-    KafkaStreamsApplicationContextHandler.persistTopology( topology.describe().toString()  );
 
     /**
      * Now we are ready for streaming the data ...
@@ -92,7 +93,7 @@ public class KafkaStreamsExample01 {
 
     LogManager.shutdown();
 
-    System.out.println("> Stopped SimpleKafkaLoggerApp.");
+    System.out.println("> Stopped KafkaStreamsExample01.");
 
     System.exit(0);
 
