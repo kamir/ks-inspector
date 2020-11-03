@@ -1,5 +1,8 @@
 # ks-inspector
-A tool which helps operators and developers of Kafka Streaming applications to understand dependencies between KSQL queries and KStreams applications.
+KS-Inspector is a tool to understand Kafka based streams applications better.
+
+The tool helps application developers and operators of Kafka Streaming applications to understand dependencies between KSQL queries and KStreams applications.
+Using the metadata graph we are able to identify components which process sensitive information.
 
 <a href="https://codeclimate.com/github/kamir/ks-inspector"><img src="https://api.codeclimate.com/v1/badges/ef4bcda7d1b5fd0a4f1e/maintainability" /></a>  [![Build Status](https://travis-ci.com/kamir/ks-inspector.svg?branch=master)](https://travis-ci.com/kamir/ks-inspector)
 
@@ -11,7 +14,6 @@ And many users love the flexibility of scalable deployments using containers.
 But there is another side of it. Do you know how individual streaming applications depend on each other in
 a direct or indirect way?
 
-
 ### The Application Context
 We define an *application context* in order to provide all required information for an
 analysis of a particular *streaming use-case*. 
@@ -22,6 +24,8 @@ The application context consists of:
 - the list of expected topics
 - the KSQL queries which implement the application
 - the hostname and the port to connect to the KSQL server's REST-API
+
+![A streaming application context](docs/app-context.png)
 
 ### The Flow-Dependency-Graph
 Individual queries consume data from one or more topics (streams/tables) and they produce results 
