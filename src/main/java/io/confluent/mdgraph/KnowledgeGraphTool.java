@@ -1,23 +1,12 @@
 package io.confluent.mdgraph;
 
 
-import io.confluent.cp.mdmodel.Classifications;
-import io.confluent.cp.mdmodel.ClusterStateLoader;
-import io.confluent.kafka.schemaregistry.client.rest.entities.Schema;
-import io.confluent.kafka.schemaregistry.client.rest.entities.SchemaReference;
+import io.confluent.cp.mdmodel.infosec.Classifications;
+import io.confluent.cp.cs.ClusterStateLoader;
 import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientException;
-import net.christophschubert.kafka.clusterstate.formats.domain.Domain;
-import net.christophschubert.kafka.clusterstate.formats.domain.Project;
 import org.apache.log4j.LogManager;
-import org.neo4j.driver.*;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-
-import static org.neo4j.driver.Values.parameters;
 
 public class KnowledgeGraphTool {
 
@@ -83,10 +72,10 @@ public class KnowledgeGraphTool {
         /**
          * Manage Domain data
          */
-        String instancePath1 = "./src/main/cluster-state-tools/contexts/order-processing/instances/order-processing-c.domy";
-        String instancePath2 = "./src/main/cluster-state-tools/contexts/order-processing/instances/order-processing-ks1.domy";
-        String instancePath3 = "./src/main/cluster-state-tools/contexts/order-processing/instances/order-processing-ks2.domy";
-        String instancePath4 = "./src/main/cluster-state-tools/contexts/order-processing/instances/order-processing-p.domy";
+        String instancePath1 = "./src/main/cluster-state-tools-data/contexts/order-processing/instances/order-processing-c.domy";
+        String instancePath2 = "./src/main/cluster-state-tools-data/contexts/order-processing/instances/order-processing-ks1.domy";
+        String instancePath3 = "./src/main/cluster-state-tools-data/contexts/order-processing/instances/order-processing-ks2.domy";
+        String instancePath4 = "./src/main/cluster-state-tools-data/contexts/order-processing/instances/order-processing-p.domy";
 
         ClusterStateLoader.populateKnowledgeGraphWithInstanceDescription( g, instancePath1 );
         ClusterStateLoader.populateKnowledgeGraphWithInstanceDescription( g, instancePath2 );

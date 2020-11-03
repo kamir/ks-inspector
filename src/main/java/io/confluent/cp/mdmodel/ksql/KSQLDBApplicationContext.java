@@ -1,21 +1,17 @@
-package io.confluent.cp.mdmodel.kstreams.inspector;
-
-import io.confluent.cp.mdmodel.ksql.KSQLServerInstance;
+package io.confluent.cp.mdmodel.ksql;
 
 import java.io.File;
 import java.util.Vector;
 
 /**
- *
- * The
- *
+ * The KSApplicationContext class will be the place where METADATA MANAGEMENT is integrated with the
+ * Confluent cluster state tools and the knowledge graph about multiple streaming applications.
  */
-public class KSApplicationContext {
+public class KSQLDBApplicationContext {
 
     public KSQLServerInstance ksqlServer = new KSQLServerInstance();
 
-    public KSApplicationPath appPath = new KSApplicationPath();
-
+    public KSQLDBApplicationPath appPath = new KSQLDBApplicationPath();
 
     Vector<String> expected_TOPICS = new Vector<>();
     Vector<String> expected_TABLES = new Vector<>();
@@ -27,14 +23,15 @@ public class KSApplicationContext {
     String[] STREAMS_on_server;
     String[] QUERIES_on_server;
 
-    public KSApplicationContext(String a1, String a2, String a3, String host, String port) {
+    public KSQLDBApplicationContext(String a1, String a2, String a3, String host, String port) {
+
         setQueryFolder( a1 );
         setKSQLFilename( a2 );
         setKSQLBufferFolder( a3 );
 
         setKSQLServerHost( host, port );
-    }
 
+    }
 
     public void setKSQLServerHost( String host ) {
         this.ksqlServer.setHost( host );
@@ -95,6 +92,7 @@ public class KSApplicationContext {
     }
 
     private void compareSollIst(String context, String[] on_server, String[] expected) {
+
         System.out.println("-------------------------");
         System.out.println("  " + context);
         System.out.println("-------------------------");

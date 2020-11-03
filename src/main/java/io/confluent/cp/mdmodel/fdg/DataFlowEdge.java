@@ -1,4 +1,4 @@
-package io.confluent.cp.mdmodel.kstreams.fdg;
+package io.confluent.cp.mdmodel.fdg;
 
 public class DataFlowEdge {
 

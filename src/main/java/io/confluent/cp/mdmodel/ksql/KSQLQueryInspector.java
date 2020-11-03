@@ -1,7 +1,6 @@
 package io.confluent.cp.mdmodel.ksql;
 
-import io.confluent.cp.mdmodel.kstreams.fdg.KSQLDependencyGraph;
-import io.confluent.cp.mdmodel.kstreams.inspector.KSApplicationContext;
+import io.confluent.cp.mdmodel.fdg.KSQLDependencyGraph;
 
 import java.io.*;
 import java.util.*;
@@ -26,8 +25,8 @@ public class KSQLQueryInspector {
      * default_queryBufferFolder   : the system stores the responses from the KSQL-REST-API in this place.
      *
      */
-    String default_queryFolder = "query-to-deploy-to-ksql-server";
-    String default_queryBufferFolder = "query-to-deploy-to-ksql-server";
+    String default_queryFolder = "query-stage/query-to-deploy-to-ksql-server";
+    String default_queryBufferFolder = "query-stage/query-to-deploy-to-ksql-server";
 
 
     /**
@@ -35,9 +34,8 @@ public class KSQLQueryInspector {
      */
     String default_queryFileName = "opentsx.ksql";
 
-
     KSQLDependencyGraph dg = null;
-    KSApplicationContext appContext;
+    KSQLDBApplicationContext appContext;
 
     /**
      * The KSQL statements loaded from the KSQL script.
@@ -147,15 +145,9 @@ public class KSQLQueryInspector {
             System.exit(1);
         }
 
-
-
-
-
-
-
         KSQLQueryInspector inspector = new KSQLQueryInspector( p, qf );
 
-        inspector.appContext = new KSApplicationContext( inspector.getQueryFolder(), inspector.default_queryFileName, inspector.getQueryBufferFolder(), ks, port );
+        inspector.appContext = new KSQLDBApplicationContext( inspector.getQueryFolder(), inspector.default_queryFileName, inspector.getQueryBufferFolder(), ks, port );
 
         inspector.getQueriesFromKSQLServer(inspector.appContext);
 
@@ -173,7 +165,7 @@ public class KSQLQueryInspector {
         return workdir + "/" + default_queryFolder;
     }
 
-    private void compareExpacted_vs_available(KSApplicationContext appContext) {
+    private void compareExpacted_vs_available(KSQLDBApplicationContext appContext) {
 
         appContext.compare();
 
@@ -186,7 +178,7 @@ public class KSQLQueryInspector {
      * The application-context specific status of a resource is provided in a report.
      *
      */
-    private void getQueriesFromKSQLServer( KSApplicationContext applicationContext ) {
+    private void getQueriesFromKSQLServer( KSQLDBApplicationContext applicationContext ) {
 
         String[] TOPICS;
         String[] TABLES;
@@ -242,7 +234,7 @@ public class KSQLQueryInspector {
     }
 
 
-    public void processStatementsFromFile( KSApplicationContext appContext ) throws Exception {
+    public void processStatementsFromFile( KSQLDBApplicationContext appContext ) throws Exception {
 
         processStatementsFromFile( appContext.getKSQLFile() );
 

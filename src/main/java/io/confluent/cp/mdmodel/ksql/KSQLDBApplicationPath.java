@@ -1,8 +1,8 @@
-package io.confluent.cp.mdmodel.kstreams.inspector;
+package io.confluent.cp.mdmodel.ksql;
 
 import java.io.File;
 
-public class KSApplicationPath {
+public class KSQLDBApplicationPath {
 
     String queryFileName = null;
     String queryFolder = null;
@@ -23,4 +23,5 @@ public class KSApplicationPath {
     public void setKSQLBufferFolder(String default_queryBufferFolder) {
         queryBufferFolder = default_queryBufferFolder;
     }
+
 }

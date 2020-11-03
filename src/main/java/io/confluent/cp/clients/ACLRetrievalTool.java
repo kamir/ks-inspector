@@ -1,6 +1,6 @@
 package io.confluent.cp.clients;
 
-import io.confluent.cp.CCloudClusterWrapper;
+import io.confluent.cp.cfg.CCloudClusterWrapper;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.DescribeAclsResult;
 import org.apache.kafka.common.KafkaFuture;
@@ -8,7 +8,6 @@ import org.apache.kafka.common.acl.AccessControlEntryFilter;
 import org.apache.kafka.common.acl.AclBinding;
 import org.apache.kafka.common.acl.AclBindingFilter;
 import org.apache.kafka.common.resource.ResourceFilter;
-import org.apache.kafka.common.resource.ResourcePatternFilter;
 
 import java.util.Collection;
 import java.util.concurrent.ExecutionException;
@@ -18,7 +17,7 @@ public class ACLRetrievalTool {
     /**
      * This tool reads all ACLs from a Confluent cloud cluster.
      *
-     * We convert this data into a knowledge graph data model.
+     * We can convert this data into a knowledge graph data model. TODO
      */
 
     public static void main(String[] args) throws ExecutionException, InterruptedException {

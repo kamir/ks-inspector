@@ -1,8 +1,8 @@
 package io.confluent.mdgraph;
 
 
-import io.confluent.cp.mdmodel.Classifications;
-import io.confluent.cp.mdmodel.ClusterStateLoader;
+import io.confluent.cp.mdmodel.infosec.Classifications;
+import io.confluent.cp.cs.ClusterStateLoader;
 import io.confluent.kafka.schemaregistry.client.rest.entities.Schema;
 import io.confluent.kafka.schemaregistry.client.rest.entities.SchemaReference;
 import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientException;
@@ -14,7 +14,6 @@ import org.apache.log4j.LogManager;
 import org.neo4j.driver.*;
 import org.neo4j.driver.Result;
 
-import javax.swing.plaf.synth.SynthScrollBarUI;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;

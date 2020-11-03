@@ -38,13 +38,10 @@ public class KSQLDBClient2 {
 
             System.out.println( streamDescription.topic() );
 
-        } catch (ExecutionException | InterruptedException e) {
+        }
+        catch (ExecutionException | InterruptedException e) {
             throw new RuntimeException("Failed to describe stream/table", e);
         }
-
-
-
-
 
         runtimeGraph.show();
 

@@ -1,7 +1,8 @@
-package io.confluent.cp.mdmodel.kstreams.fdg;
+package io.confluent.cp.mdmodel.fdg;
 
 import io.confluent.cp.mdmodel.ksql.Helper;
 import io.confluent.cp.mdmodel.ksql.KSQLQueryInspector;
+import io.confluent.cp.util.graph.analysis.LabelPropagationClustering;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.cycle.CycleDetector;
 import org.jgrapht.alg.interfaces.ClusteringAlgorithm;
@@ -12,6 +13,7 @@ import org.jgrapht.nio.Attribute;
 import org.jgrapht.nio.DefaultAttribute;
 import org.jgrapht.nio.dot.DOTExporter;
 import org.jgrapht.traverse.TopologicalOrderIterator;
+
 
 import java.io.*;
 import java.util.*;
@@ -30,8 +32,8 @@ public class KSQLDependencyGraph {
 
     Vector<Set> largeClusters = null;
 
-    Graph<String, DataFlowEdge> flowDependencyGraph = new SimpleDirectedWeightedGraph<>(DataFlowEdge.class);
-    Graph<String, DefaultEdge> flowDependencyGraph_undirected = new SimpleWeightedGraph<>(DefaultEdge.class);
+    Graph<String, DataFlowEdge> flowDependencyGraph = new SimpleDirectedWeightedGraph<>( DataFlowEdge.class );
+    Graph<String, DefaultEdge> flowDependencyGraph_undirected = new SimpleWeightedGraph<>( DefaultEdge.class );
 
     boolean hasCycles = false;
     ClusteringAlgorithm.Clustering clustering = null;
@@ -76,7 +78,7 @@ public class KSQLDependencyGraph {
         flowDependencyGraph.addVertex( s );
         flowDependencyGraph.addVertex( t );
 
-        flowDependencyGraph.addEdge( s, t, new DataFlowEdge(s,t,1.0));
+        flowDependencyGraph.addEdge( s, t, new io.confluent.cp.mdmodel.fdg.DataFlowEdge(s,t,1.0));
 
         flowDependencyGraph_undirected.addVertex( s );
         flowDependencyGraph_undirected.addVertex( t );

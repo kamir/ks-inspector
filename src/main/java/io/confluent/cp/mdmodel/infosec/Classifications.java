@@ -1,7 +1,15 @@
-package io.confluent.cp.mdmodel;
+package io.confluent.cp.mdmodel.infosec;
 
 import java.util.Hashtable;
 
+/**
+ *
+ * This class is a connector for security tag information as used by the Confluent end-2-end DEMO.
+ *
+ * We have to implement a reader to take the real configuration instead of our "fixed tags" used for the
+ * initial Demo.
+ *
+ */
 public class Classifications {
 
     /**

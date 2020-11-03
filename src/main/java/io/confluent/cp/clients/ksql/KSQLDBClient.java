@@ -52,14 +52,12 @@ public class KSQLDBClient {
                 e.printStackTrace();
             }
 
-                    System.out.println(result11.size());
+            System.out.println(result11.size());
 
             return "DATA";
         }
 
         );
-
-
 
         // When all the Futures are completed, call `future.join()` to get their results and collect the results in a list -
         CompletableFuture<String> allPageContentsFuture = fAll.thenApply( v -> {
