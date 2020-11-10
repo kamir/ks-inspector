@@ -23,7 +23,9 @@ The application context consists of:
 
 - the list of expected topics
 - the KSQL queries which implement the application
-- the hostname and the port to connect to the KSQL server's REST-API
+- the topology which defines the streaming application
+- the hostname of the host on which the application is started
+- URL to connect to the KSQL server's REST-API
 
 ![A streaming application context](docs/app-context.png)
 
