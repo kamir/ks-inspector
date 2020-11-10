@@ -1,0 +1,109 @@
+#########################################################################################
+# This file describes three Confluent Platform environments, used for our demo scenario.
+#
+
+- developer-sandbox:
+
+    # from cloud ui
+    cluster-id:	lkc-jwgvw
+    cluster-type: basic
+    provider: GCP
+    region: us-east1
+    availability: single zone
+    name: cluster_AO
+
+    # defined by organization
+    owner: Mirko
+    owner-contact: mirko@confluent.io
+    org: Confluent Inc.
+    tags:
+      - low-performance
+      - insecure
+      - open
+
+    # technical details for accessing kafka-service
+    kafka:
+      bootstrap.servers: pkc-4yyd6.us-east1.gcp.confluent.cloud:9092
+      security.protocol: SASL_SSL
+      sasl.jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule   required username='{{ CLUSTER_API_KEY }}'   password='{{ CLUSTER_API_SECRET }}';
+      sasl.mechanism: PLAIN
+
+    # technical details for accessing schema-registry-service
+    schema-registry:
+      schema.registry.url: https://psrc-4v1qj.eu-central-1.aws.confluent.cloud
+      basic.auth.credentials.source: USER_INFO
+      schema.registry.basic.auth.user.info: {{ SR_API_KEY }}:{{ SR_API_SECRET }}
+
+    # technical details to access the kubernetes stack
+    kubernetes-api:
+      # Select name of cluster you want to interact with from above output:
+      CLUSTER_NAME: some_server_name
+      # Point to the API server referring the cluster name
+      APISERVER: some_ip-or_hostname
+
+    # technical details to access the kubernetes stack
+    knowledge-graph-service:
+      type: Neo4J-service
+      url: http://localhost:7474
+
+#
+# Here, we have only essential properties, no optional Kubernetes stack and no graph-db.
+#
+- QA-Cluster:
+    # from cloud ui
+    cluster-id: lkc-jwxyz
+    cluster-type: basic
+    provider: GCP
+    region: us-east1
+    availability: single zone
+    name: cluster_AO
+    # defined by organization
+    owner: Jon
+    owner-contact: jon@ao.com
+    org: AO UK
+    tags:
+      - high-performance
+      - secure
+      - managed
+    # technical details for accessing kafka-service
+    kafka:
+      bootstrap.servers: pkc-4yyd6.us-east1.gcp.confluent.cloud:9092
+      security.protocol: SASL_SSL
+      sasl.jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule   required username='{{ CLUSTER_API_KEY }}'   password='{{ CLUSTER_API_SECRET }}';
+      sasl.mechanism: PLAIN
+    # technical details for accessing schema-registry-service
+    schema-registry:
+      schema.registry.url: https://psrc-4v1qj.eu-central-1.aws.confluent.cloud
+      basic.auth.credentials.source: USER_INFO
+      schema.registry.basic.auth.user.info: {{ SR_API_KEY }}:{{ SR_API_SECRET }}
+
+#
+# Here, we have only essential properties, no optional Kubernetes stack and no graph-db.
+#
+- PROD-Cluster:
+    # from cloud ui
+    clusterId: lkc-jwxyz
+    clusterType: basic
+    provider: GCP
+    region: us-east1
+    availability: single zone
+    name: AO-PROD-cluster-101
+    # defined by organization
+    owner: Jon
+    owner-contact: jon@ao.com
+    org: AO UK
+    tags:
+      - high-performance
+      - secure
+      - managed
+    kafka:
+    # technical details for accessing kafka-service
+      bootstrap.servers: pkc-4yyd6.us-east1.gcp.confluent.cloud:9092
+      security.protocol: SASL_SSL
+      sasl.jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule   required username='{{ CLUSTER_API_KEY }}'   password='{{ CLUSTER_API_SECRET }}';
+      sasl.mechanism: PLAIN
+    # technical details for accessing schema-registry-service
+    schema-registry:
+      schema.registry.url: https://psrc-4v1qj.eu-central-1.aws.confluent.cloud
+      basic.auth.credentials.source: USER_INFO
+      schema.registry.basic.auth.user.info: {{ SR_API_KEY }}:{{ SR_API_SECRET }}
