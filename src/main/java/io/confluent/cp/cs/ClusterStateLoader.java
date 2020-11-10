@@ -27,6 +27,13 @@ public class ClusterStateLoader {
 
     private static Logger logger = LoggerFactory.getLogger(ClusterStateLoader.class);
 
+    /**
+     * Reads only a particular file.
+     *
+     * @param kg
+     * @param instanceDescriptionPath
+     * @throws IOException
+     */
     public static void populateKnowledgeGraphWithInstanceDescription( KnowledgeGraph kg, String instanceDescriptionPath ) throws IOException {
 
         final DomainParser parser = new DomainParser();
@@ -41,7 +48,37 @@ public class ClusterStateLoader {
 
     }
 
+    /**
+     * Iterates over a base folder and reads all domains.
+     * Schema folder is skipped.
+     */
+    public static void populateKnowledgeGraphMultiDomains( KnowledgeGraph kg, String basePath ) throws IOException {
 
+        File[] dirs = new File( basePath ).listFiles();
+
+        for( File f : dirs ) {
+
+            if ( f.isDirectory() ) {
+                if( !f.getName().equals( "schemas" ) ) {
+
+                    System.out.println( "> Read data for instances in Domain folder: " + f.getAbsolutePath() );
+                    populateKnowledgeGraph( kg, f.getAbsolutePath() );
+
+                }
+            }
+
+        }
+
+    }
+
+
+    /**
+     * Reads all files for this domain.
+     *
+     * @param kg
+     * @param domainPath
+     * @throws IOException
+     */
     public static void populateKnowledgeGraph( KnowledgeGraph kg, String domainPath ) throws IOException {
 
         final DomainParser parser = new DomainParser();
@@ -49,6 +86,8 @@ public class ClusterStateLoader {
         if ( domainPath == null) {
             domainPath = "./src/main/cluster-state-tools/contexts/order-processing";
         }
+        else
+            logger.info( "# DOMAIN-PATH: " + domainPath );
 
         File contextPath = new File( domainPath );
 
@@ -56,6 +95,8 @@ public class ClusterStateLoader {
                 .filter(CLITools::isDomainFile)
                 .flatMap(path -> {
                     try {
+                        logger.info( "# DOMAIN-FILE: " + path.toFile().getAbsolutePath() );
+
                         return Stream.of(parser.loadFromFile(path.toFile()));
                     } catch (IOException e) {
                         logger.error("Could not open or parse domain file " + path, e);
@@ -72,8 +113,14 @@ public class ClusterStateLoader {
         System.out.println("Domains: " + domains);
 
         for (int i = 0; i < domains.size(); i++) {
+
             kg.registerDomain( domains.get(i),i+1 , contextPath );
+
+            kg.registerAppInstance4Domain( domains.get(i), contextPath );
+
         }
+
+
     }
 
     public static void main(String[] args) throws IOException {
