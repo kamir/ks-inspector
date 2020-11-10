@@ -20,15 +20,10 @@ public class AOGovernanceToolDEMO {
 
         g.deleteAllFacts();
 
-        /**
-         *
-         */
         String instancesPath = "/Users/mkampf/Engagements/AO-Cloud-Project/week6/instances";
         ClusterStateLoader.populateKnowledgeGraphMultiDomains( g, instancesPath );
 
         g.show();
-
-
 
     }
 

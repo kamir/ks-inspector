@@ -13,9 +13,9 @@ io/confluent/cp/clients/ksql/KSQLDBClient2.class
 io/confluent/cp/util/MDLogStore.class
 io/confluent/cp/mdmodel/ksql/Helper.class
 io/confluent/cp/mdmodel/ksql/KSQLQueryInspector.class
+io/confluent/cp/util/AppContextLogRecord.class
 io/confluent/mdgraph/KnowledgeGraph$4.class
 io/confluent/cp/util/graph/analysis/LabelPropagationClustering.class
-io/confluent/cp/mdmodel/AppContextLogRecord.class
 io/confluent/mdgraph/KnowledgeGraph$2.class
 io/confluent/cp/clients/SchemaRegistryClient.class
 io/confluent/cp/mdmodel/infosec/Classifications.class
@@ -28,6 +28,7 @@ io/confluent/cp/cfg/CCloudClusterWrapper.class
 io/confluent/mdgraph/KnowledgeGraph$5.class
 io/confluent/cp/mdmodel/fdg/KSQLDependencyGraph.class
 io/confluent/mdgraph/KnowledgeGraphTool.class
+io/confluent/mdgraph/AOGovernanceToolDEMO.class
 io/confluent/mdgraph/KnowledgeGraph$3.class
 io/confluent/cp/mdmodel/kstreams/KafkaStreamsApplicationContextHandler.class
 io/confluent/cp/apps/KafkaStreamsExample01.class

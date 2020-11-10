@@ -185,13 +185,17 @@
 
     </dependencies>
 
-
-
     <repositories>
 
         <repository>
             <id>ksqlDB</id>
             <name>ksqlDB</name>
+            <url>https://ksqldb-maven.s3.amazonaws.com/maven/</url>
+        </repository>
+
+        <repository>
+            <id>confluent_repo</id>
+            <name>confluent_repo</name>
             <url>http://packages.confluent.io/maven/</url>
         </repository>
 
@@ -294,7 +298,6 @@
                 </plugin>
             </plugins>
         </pluginManagement>
-
 
 </build>
 
