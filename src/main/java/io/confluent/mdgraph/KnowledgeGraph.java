@@ -534,8 +534,6 @@ public class KnowledgeGraph {
         for (Project p : domain.projects ) {
             this.mergeProject( p.name );
             this.addDomainProjectLink( domain, p );
-
-
         }
 
     }
