@@ -242,7 +242,7 @@
                             <manifest>
                                 <addClasspath>true</addClasspath>
                                 <classpathPrefix>lib/</classpathPrefix>
-                                <mainClass>io.confluent.cp.mdmodel.ksql.KSQLQueryInspector</mainClass>
+                                <mainClass>io.confluent.mdgraph.cli.CLI</mainClass>
                             </manifest>
                         </archive>
                     </configuration>
@@ -255,7 +255,7 @@
                         <appendAssemblyId>true</appendAssemblyId>
                         <archive>
                             <manifest>
-                                <mainClass>io.confluent.cp.mdmodel.ksql.KSQLQueryInspector</mainClass>
+                                <mainClass>io.confluent.mdgraph.cli.CLI</mainClass>
                             </manifest>
                         </archive>
                         <descriptorRefs>
@@ -284,7 +284,7 @@
                         </execution>
                     </executions>
                     <configuration>
-                        <mainClass>io.confluent.cp.mdmodel.ksql.KSQLQueryInspector</mainClass>
+                        <mainClass>io.confluent.mdgraph.cli.CLI</mainClass>
                         <arguments>
                             <argument>${argument1k}</argument>
                             <argument>${argument1v}</argument>
