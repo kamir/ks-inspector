@@ -22,7 +22,7 @@ public class ACLRetrievalTool {
 
     public static void main(String[] args) throws ExecutionException, InterruptedException {
 
-        AdminClient kac = AdminClient.create( CCloudClusterWrapper.getProps() );
+        AdminClient kac = AdminClient.create( CCloudClusterWrapper.getPropsFrom_ROOT_FOLDER() );
 
         AclBindingFilter aclBindingFilter = new AclBindingFilter(ResourceFilter.ANY, AccessControlEntryFilter.ANY);
 

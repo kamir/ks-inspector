@@ -1,5 +1,7 @@
 package io.confluent.cp.cfg;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -13,7 +15,30 @@ import java.util.Properties;
 
 public class CCloudClusterWrapper {
 
-    public static Properties getProps() {
+    public static Properties getPropsFrom_ROOT_FOLDER() {
+
+        String configFile = "./ccloud.props"; // could also be a constant
+
+        Properties props = new Properties();
+
+        try {
+
+            InputStream resourceStream = new FileInputStream( new File(configFile) );
+
+            props.load(resourceStream);
+            return props;
+
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            System.exit( -1 );
+        }
+
+        return null;
+
+    }
+
+    public static Properties getPropsFromJAR() {
 
         String resourceName = "ccloud.props"; // could also be a constant
 

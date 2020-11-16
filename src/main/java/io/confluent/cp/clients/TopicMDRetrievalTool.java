@@ -17,7 +17,7 @@ public class TopicMDRetrievalTool {
 
     public static void main(String[] args) throws ExecutionException, InterruptedException {
 
-        AdminClient kac = AdminClient.create( CCloudClusterWrapper.getProps() );
+        AdminClient kac = AdminClient.create( CCloudClusterWrapper.getPropsFrom_ROOT_FOLDER() );
 
         ListTopicsResult topicList = kac.listTopics();
 

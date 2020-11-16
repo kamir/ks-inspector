@@ -9,7 +9,8 @@ package io.confluent.cp.cs;
  *
  */
 
-import io.confluent.mdgraph.KnowledgeGraph;
+import io.confluent.mdgraph.model.IKnowledgeGraph;
+import io.confluent.mdgraph.model.KnowledgeGraphNeo4J;
 import net.christophschubert.kafka.clusterstate.cli.CLITools;
 import net.christophschubert.kafka.clusterstate.formats.domain.Domain;
 import net.christophschubert.kafka.clusterstate.formats.domain.DomainParser;
@@ -34,7 +35,7 @@ public class ClusterStateLoader {
      * @param instanceDescriptionPath
      * @throws IOException
      */
-    public static void populateKnowledgeGraphWithInstanceDescription( KnowledgeGraph kg, String instanceDescriptionPath ) throws IOException {
+    public static void populateKnowledgeGraphWithInstanceDescription(KnowledgeGraphNeo4J kg, String instanceDescriptionPath ) throws IOException {
 
         final DomainParser parser = new DomainParser();
 
@@ -52,7 +53,7 @@ public class ClusterStateLoader {
      * Iterates over a base folder and reads all domains.
      * Schema folder is skipped.
      */
-    public static void populateKnowledgeGraphMultiDomains( KnowledgeGraph kg, String basePath ) throws IOException {
+    public static void populateKnowledgeGraphMultiDomains(IKnowledgeGraph kg, String basePath ) throws IOException {
 
         File[] dirs = new File( basePath ).listFiles();
 
@@ -62,6 +63,7 @@ public class ClusterStateLoader {
                 if( !f.getName().equals( "schemas" ) ) {
 
                     System.out.println( "> Read data for instances in Domain folder: " + f.getAbsolutePath() );
+
                     populateKnowledgeGraph( kg, f.getAbsolutePath() );
 
                 }
@@ -79,12 +81,12 @@ public class ClusterStateLoader {
      * @param domainPath
      * @throws IOException
      */
-    public static void populateKnowledgeGraph( KnowledgeGraph kg, String domainPath ) throws IOException {
+    public static void populateKnowledgeGraph(IKnowledgeGraph kg, String domainPath ) throws IOException {
 
         final DomainParser parser = new DomainParser();
 
         if ( domainPath == null) {
-            domainPath = "./src/main/cluster-state-tools/contexts/order-processing";
+            domainPath = "./src/main/cluster-state-tools-data/contexts/order-processing";
         }
         else
             logger.info( "# DOMAIN-PATH: " + domainPath );
@@ -95,18 +97,26 @@ public class ClusterStateLoader {
                 .filter(CLITools::isDomainFile)
                 .flatMap(path -> {
                     try {
+
                         logger.info( "# DOMAIN-FILE: " + path.toFile().getAbsolutePath() );
 
+                        System.out.println( path.toFile() );
+
                         return Stream.of(parser.loadFromFile(path.toFile()));
-                    } catch (IOException e) {
+
+                    }
+                    catch (IOException e) {
+                        e.printStackTrace();
                         logger.error("Could not open or parse domain file " + path, e);
                         // we should quit application here since otherwise the topic specified in the unparseable domain
                         // file will be deleted!
                         logger.error("Stopping processing to prevent possible data loss");
+
                         System.exit(1);
                     }
                     return Stream.empty(); // to keep compiler happy
                 }).collect(Collectors.toList());
+
 
         logger.info("Domains: " + domains);
 
