@@ -4,6 +4,7 @@ package io.confluent.mdgraph;
 import io.confluent.cp.mdmodel.infosec.Classifications;
 import io.confluent.cp.cs.ClusterStateLoader;
 import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientException;
+import io.confluent.mdgraph.model.KnowledgeGraphNeo4J;
 import org.apache.log4j.LogManager;
 
 import java.io.IOException;
@@ -20,7 +21,7 @@ public class KnowledgeGraphTool {
 
         KnowledgeGraphTool gt = new KnowledgeGraphTool();
 
-        KnowledgeGraph g = gt.graph;
+        KnowledgeGraphNeo4J g = gt.graph;
 
         g.deleteAllFacts();
 
@@ -82,20 +83,24 @@ public class KnowledgeGraphTool {
         ClusterStateLoader.populateKnowledgeGraphWithInstanceDescription( g, instancePath3 );
         ClusterStateLoader.populateKnowledgeGraphWithInstanceDescription( g, instancePath4 );
 
-
-
-
         g.show();
 
         System.exit(0);
 
     }
 
-    public static KnowledgeGraph graph = null;
+    public static KnowledgeGraphNeo4J graph = null;
 
     public KnowledgeGraphTool() {
-        graph = KnowledgeGraph.getGraph();
+        graph = KnowledgeGraphNeo4J.getGraph();
     }
 
 
+    public void deleteAllFacts() {
+        graph.deleteAllFacts();
+    }
+
+    public void showGraph() {
+        graph.show();
+    }
 }

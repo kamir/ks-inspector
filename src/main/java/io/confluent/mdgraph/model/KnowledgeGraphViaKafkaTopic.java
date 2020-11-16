@@ -1,171 +1,34 @@
-package io.confluent.mdgraph;
+package io.confluent.mdgraph.model;
 
-
+import io.confluent.cp.clients.FactQueryProducer;
 import io.confluent.cp.mdmodel.infosec.Classifications;
-import io.confluent.cp.cs.ClusterStateLoader;
 import io.confluent.kafka.schemaregistry.client.rest.entities.Schema;
 import io.confluent.kafka.schemaregistry.client.rest.entities.SchemaReference;
-import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientException;
 import net.christophschubert.kafka.clusterstate.formats.domain.*;
-
 import org.apache.commons.codec.digest.DigestUtils;
-
-import org.apache.log4j.LogManager;
-import org.neo4j.driver.*;
+import org.neo4j.driver.Driver;
 import org.neo4j.driver.Result;
+import org.neo4j.driver.Session;
+import org.neo4j.driver.TransactionWork;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
-
 import java.util.Properties;
 
-import static org.neo4j.driver.Values.parameters;
+public class KnowledgeGraphViaKafkaTopic implements IKnowledgeGraph {
 
-public class KnowledgeGraph {
+    static KnowledgeGraphViaKafkaTopic graph = null;
 
-    private static final org.apache.log4j.Logger logger = LogManager.getLogger(KnowledgeGraph.class);
-    
-    public static void main(String[] ARGS) throws IOException, RestClientException {
-
-        System.out.println( "Start Knowledge Graph DEMO ... ");
-        logger.info( "Hey" );
-        logger.warn( "Ho!" );
-
-        KnowledgeGraph g = KnowledgeGraph.getGraph();
-
-        g.deleteAllFacts();
-
-        g.show();
-
-
-
-        /**
-         * Manage TOPIC MD
-         */
-        g.addTopicNode( "t1" );
-        g.addTopicNode( "t2" );
-        g.addTopicNode( "t3" );
-        g.addTopicNode( "t4" );
-
-        g.addPropertiesToNode( "Topic", "name", "t1", "nrOfPartitions", "1" );
-        g.addPropertiesToNode( "Topic", "name", "t1", "replication", "3" );
-        g.addPropertiesToNode( "Topic", "name", "t1", "compacted", "false" );
-
-        g.addPropertiesToNode( "Topic", "name", "t2", "nrOfPartitions", "1" );
-        g.addPropertiesToNode( "Topic", "name", "t3", "replication", "3" );
-        g.addPropertiesToNode( "Topic", "name", "t4", "compacted", "false" );
-
-
-        Properties props = new Properties();
-        props.put( "nrOfPartitions", "1" );
-        props.put( "replication", "3" );
-        props.put( "compacted", "false" );
-
-        g.addNode("Topic" ,"t5" , props );
-
-
-        /**
-         * Manage Schema MD
-         */
-        io.confluent.cp.clients.SchemaRegistryClient src = new io.confluent.cp.clients.SchemaRegistryClient();
-        src.populateGraph( g );
-
-
-        /**
-         * Manage Domain data
-         */
-        ClusterStateLoader.populateKnowledgeGraph( g, null );
-
-        /**
-         * Manage Domain data
-         */
-        String instancePath1 = "./src/main/cluster-state-tools/contexts/order-processing/instances/order-processing-c.domy";
-        String instancePath2 = "./src/main/cluster-state-tools/contexts/order-processing/instances/order-processing-ks1.domy";
-        String instancePath3 = "./src/main/cluster-state-tools/contexts/order-processing/instances/order-processing-ks2.domy";
-        String instancePath4 = "./src/main/cluster-state-tools/contexts/order-processing/instances/order-processing-p.domy";
-
-        ClusterStateLoader.populateKnowledgeGraphWithInstanceDescription( g, instancePath1 );
-        ClusterStateLoader.populateKnowledgeGraphWithInstanceDescription( g, instancePath2 );
-        ClusterStateLoader.populateKnowledgeGraphWithInstanceDescription( g, instancePath3 );
-        ClusterStateLoader.populateKnowledgeGraphWithInstanceDescription( g, instancePath4 );
-
-        g.show();
-
-        System.exit(0);
-
-    }
-
-
-
-    public void show() {
-
-        System.out.println( ">>> Graph data ...");
-
-        List<String> nodes = getAllNodes();
-
-        int i = 0;
-        for( String n : nodes ) {
-            i++;
-            System.out.println( i + " :: " +  n );
-
-        }
-
-    }
-
-    private List<String> getAllNodes() {
-
-        try ( Session session = driver.session() )
-        {
-            return session.readTransaction( tx -> {
-                List<String> names = new ArrayList<>();
-                Result result = tx.run( "MATCH (n) RETURN n.name ORDER BY n.name" );
-                while ( result.hasNext() )
-                {
-                    names.add( result.next().get( 0 ).asString() );
-                }
-                return names;
-            } );
-        }
-    }
-
-    private static KnowledgeGraph graph = null;
-
-    private Driver driver;
-
-    public static KnowledgeGraph getGraph() {
+    public static IKnowledgeGraph getGraph() {
         if ( graph == null ) {
-            graph = new KnowledgeGraph();
+            graph = new KnowledgeGraphViaKafkaTopic();
         }
         return graph;
     }
 
-    String databaseDirectory = "graph-db";
-    String DEFAULT_DATABASE_NAME = "neo4j";
-    String uri = "bolt://localhost:7687";
-
-    public KnowledgeGraph() {
-
-        driver = GraphDatabase.driver( uri, AuthTokens.basic( "neo4j", "admin" ) );
-
-
-        registerShutdownHook( driver );
-
-    }
-
-    public void addNode(String type, String name, Properties props) {
-
-        addNode( type, name );
-        for( String k: props.stringPropertyNames() ) {
-            addPropertiesToNode(type, "name", name, k, props.getProperty( k ) );
-        }
-
-    }
-
     // START SNIPPET: shutdownHook
-    private static void registerShutdownHook( final Driver driver )
+    public static void registerShutdownHook(final Driver driver)
     {
         // Registers a shutdown hook for the Neo4j instance so that it
         // shuts down nicely when the VM exits (even if you "Ctrl-C" the
@@ -175,13 +38,32 @@ public class KnowledgeGraph {
             @Override
             public void run()
             {
-                driver.close();
+                FactQueryProducer.close();
 
             }
         } );
     }
-    // END SNIPPET: shutdownHook
 
+    /**
+     * Every CYPHER statement will be intercepted in order to keep the Graph data independent from a Neo4J service.
+     *
+     * @param q
+     */
+    public void exequteCypherQuery(String q) {
+
+        FactQueryProducer.sendFact( q );
+
+    }
+
+    @Override
+    public void addNode(String type, String name, Properties props) {
+
+        addNode( type, name );
+        for( String k: props.stringPropertyNames() ) {
+            addPropertiesToNode(type, "name", name, k, props.getProperty( k ) );
+        }
+
+    }
 
     /**
       #
@@ -203,94 +85,25 @@ public class KnowledgeGraph {
 
      */
 
+    @Override
     public void addPropertiesToNode(String T, String SK, String SV, String K, String V) {
 
-        Session s = driver.session();
-
-        String greeting = s.writeTransaction( new TransactionWork<String>()
-        {
-            @Override
-            public String execute(org.neo4j.driver.Transaction tx) {
-
-                Result result = tx.run( "MATCH (N:" + T +
-                        "{ " + SK + ":'" + SV + "' } ) SET N." + K + " = '" + V + "';" );
-
-                return result.consume().query().toString();
-            }
-        } );
-
-        System.out.println( greeting );
+        exequteCypherQuery( "MATCH (N:" + T + "{ " + SK + ":'" + SV + "' } ) SET N." + K + " = '" + V + "';" );
 
     }
 
     private void addNode(String type, String name ) {
 
-        Session s = driver.session();
-
-        String greeting = s.writeTransaction( new TransactionWork<String>()
-        {
-            @Override
-            public String execute(org.neo4j.driver.Transaction tx) {
-
-                Result result = tx.run( "CREATE (N:" + type + " { name : '" + name + "' } );" );
-
-                return result.consume().query().toString();
-            }
-        } );
-
-        System.out.println( greeting );
+        exequteCypherQuery( "CREATE (N:" + type + " { name : '" + name + "' } );" );
 
     }
-    public void addTopicNode( String name ) {
+
+    @Override
+    public void addTopicNode(String name) {
          addNode( "Topic", name );
     }
 
-
-    public void exampleCalls() {
-
-        Session s = driver.session();
-
-        String message = "Hi ho!";
-
-        String greeting = s.writeTransaction( new TransactionWork<String>()
-        {
-            @Override
-            public String execute(org.neo4j.driver.Transaction tx) {
-
-                Result result = tx.run( "CREATE (a:Greeting) " +
-                                "SET a.message = $message " +
-                                "RETURN a.message + ', from node ' + id(a)",
-                        parameters( "message", message ) );
-                return result.single().get(0).asString();
-            }
-        } );
-        System.out.println( greeting );
-
-    }
-
-
-    public void deleteAllFacts() {
-
-        Session s = driver.session();
-
-        String st = s.writeTransaction( new TransactionWork<String>()
-        {
-            @Override
-            public String execute(org.neo4j.driver.Transaction tx) {
-
-                Result result = tx.run( "MATCH (n)\n" +
-                                "DETACH DELETE n" );
-
-                return result.toString();
-
-            }
-
-        } );
-
-        System.out.println( st );
-
-    }
-
+    @Override
     public void registerSchema(Schema schema) {
 
         String subject = schema.getSubject();
@@ -442,8 +255,6 @@ public class KnowledgeGraph {
 
     }
 
-
-
     private void addSchemaVersionToSubject(String subject, String version, String schemaString) {
 
         String nodeName = subject + "_" + version;
@@ -484,6 +295,7 @@ public class KnowledgeGraph {
         }
 
     }
+
     private void addTopicSubjectLink(String topic, String subject, String hasRegisteredSchema) {
 
         String q = "MATCH (t:Topic),(s:Subject) " +
@@ -498,27 +310,7 @@ public class KnowledgeGraph {
         this.addNode( "Subject" , subject, props );
     }
 
-    private void exequteCypherQuery(String q) {
-
-        Session s = driver.session();
-
-        String st = s.writeTransaction( new TransactionWork<String>()
-        {
-            @Override
-            public String execute(org.neo4j.driver.Transaction tx) {
-
-                Result result = tx.run( q );
-
-                return result.toString();
-
-            }
-
-        } );
-
-        System.out.println( st );
-
-    }
-
+    @Override
     public void registerDomain(Domain domain, int i, File contextPath) {
 
         Properties props = new Properties();
@@ -538,8 +330,6 @@ public class KnowledgeGraph {
 
     }
 
-
-
     private void addDomainProjectLink(Domain domain, Project p) {
 
         String q = "MATCH (t:Domain),(s:Project) " +
@@ -550,6 +340,7 @@ public class KnowledgeGraph {
 
     }
 
+    @Override
     public void registerAppInstance4Domain(Domain domain, File contextPath) {
 
         String md5Hex = DigestUtils.md5Hex(contextPath.getAbsolutePath()).toUpperCase();
@@ -683,7 +474,6 @@ public class KnowledgeGraph {
         mergeNode( "Producer", name, null );
     }
 
-
     private void addProducerProjectLink(Producer pr, Project p) {
 
         String name = getProducerNodeName( pr );
@@ -697,8 +487,6 @@ public class KnowledgeGraph {
         exequteCypherQuery( q );
 
     }
-
-
 
     private void addConsumerProjectLink(Consumer c, Project p) {
 
@@ -724,7 +512,7 @@ public class KnowledgeGraph {
 
     }
 
-    private String getConsumerNodeName( Consumer c ) {
+    private String getConsumerNodeName(Consumer c ) {
         String name = "CONS (" + c.groupId + ") <- " + c.principal;
         return name;
     }
@@ -733,4 +521,5 @@ public class KnowledgeGraph {
         String name = "PROD <- " + pr.principal;
         return name;
     }
+
 }

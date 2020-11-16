@@ -1,7 +1,7 @@
 package io.confluent.cp.clients.ksql;
 
 import io.confluent.ksql.api.client.*;
-import io.confluent.mdgraph.KnowledgeGraph;
+import io.confluent.mdgraph.model.KnowledgeGraphNeo4J;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -22,7 +22,7 @@ public class KSQLDBClient {
         Client client = Client.create(options);
 
         // Send requests with the client by following the other examples
-        KnowledgeGraph runtimeGraph = new KnowledgeGraph();
+        KnowledgeGraphNeo4J runtimeGraph = KnowledgeGraphNeo4J.getGraph();
         //runtimeGraph.deleteAllFacts();
         runtimeGraph.exampleCalls();
 

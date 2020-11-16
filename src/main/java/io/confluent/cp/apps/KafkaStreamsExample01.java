@@ -25,7 +25,7 @@ public class KafkaStreamsExample01 {
 
   public static Properties getFlowSpecificProperties() {
 
-    Properties props = CCloudClusterWrapper.getProps();
+    Properties props = CCloudClusterWrapper.getPropsFrom_ROOT_FOLDER();
 
     props.put(StreamsConfig.APPLICATION_ID_CONFIG, "TSAExample_10_" + System.currentTimeMillis() );
 
