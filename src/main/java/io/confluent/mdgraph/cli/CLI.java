@@ -60,7 +60,7 @@ class CLI {
 
         ClusterStateLoader.populateKnowledgeGraphMultiDomains( g1, instancesPath );
 
-        System.out.println( ">>> Finished reading the facts for our Streaming Processes Knowledge Graph." );
+        System.out.println( ">>> Finished collecting the facts for our Streaming Processes Knowledge Graph in a topic." );
 
         return 0;
 
@@ -100,7 +100,7 @@ class CLI {
         KnowledgeGraphNeo4J queriableGraph = (KnowledgeGraphNeo4J)g2;
         queriableGraph.readGraphFromTopic( "DataGovernanceDemo001_" + System.currentTimeMillis(), propertiesKAFKA );
 
-        System.out.println( ">>> Finished reading the facts for our Streaming Processes Knowledge Graph." );
+        System.out.println( ">>> Finished exporting the facts for our Streaming Processes Knowledge Graph to Neo4J." );
 
         return 0;
 
@@ -122,6 +122,28 @@ class CLI {
         queriableGraph.deleteAllFacts();
 
         System.out.println( ">>> Finished housekeeping work." );
+
+        return 0;
+
+    }
+
+    @Command(name = "queryGraph", description = "Query the knowledge graph in a Neo4J service with a predefined analysis query.")
+    int queryGraph(
+            @Option(names = { "-e", "--env-var-prefix"}, paramLabel = "<prefix>",
+                    description = "prefix for env vars to be added to properties ") String envVarPrefix,
+            @CommandLine.Parameters(paramLabel = "queryFilePath", description = "path to a cypher queryfile", defaultValue = "./src/main/cypher/q1.cypher") File queryFilePath
+
+    ) throws IOException, ExecutionException, InterruptedException {
+
+        Properties p = new Properties();
+        p.putAll( System.getenv() );
+
+        IKnowledgeGraph g2 = KnowledgeGraphFactory.getNeo4JBasedKnowledgeGraph(p);
+
+        KnowledgeGraphNeo4J queriableGraph = (KnowledgeGraphNeo4J)g2;
+        queriableGraph.queryFromFile( queryFilePath );
+
+        System.out.println( ">>> Finished analysis work." );
 
         return 0;
 
