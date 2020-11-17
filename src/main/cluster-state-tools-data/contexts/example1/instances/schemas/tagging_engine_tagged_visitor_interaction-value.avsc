@@ -1,0 +1,89 @@
+{
+  "type": "record",
+  "name": "TaggedInteraction",
+  "namespace": "AO.CP.TaggingService.Schemas",
+  "fields": [
+    {
+      "name": "dateCreated",
+      "type": [
+        "null",
+        "long"
+      ],
+      "default": null
+    },
+    {
+      "name": "visitorId",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null
+    },
+    {
+      "name": "sessionId",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null
+    },
+    {
+      "name": "type",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null
+    },
+    {
+      "name": "payload",
+      "type": [
+        "null",
+        "bytes"
+      ],
+      "default": null
+    },
+    {
+      "name": "tags",
+      "type": [
+        "null",
+        {
+          "type": "array",
+          "items": "string"
+        }
+      ],
+      "default": null
+    },
+    {
+      "name": "metadata",
+      "type": [
+        "null",
+        {
+          "type": "record",
+          "name": "Metadata",
+          "fields": [
+            {
+              "name": "requestType",
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          ]
+        }
+      ],
+      "default": null
+    },
+    {
+      "name": "autoGenTags",
+      "type": [
+        "null",
+        {
+          "type": "array",
+          "items": "string"
+        }
+      ],
+      "default": null
+    }
+  ]
+}

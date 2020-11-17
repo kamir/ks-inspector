@@ -12,8 +12,8 @@ public class FactQueryProducer extends GenericProducerFactory {
 
     static String TOPIC = "_kst_knowledgegraph";
 
-    public static void init( String appId ) {
-        Properties props = GenericProducerFactory.getClientProperties();
+    public static void init( String appId, Properties properties ) {
+        props = properties;
         producer = createProducer( props, appId );
     }
 

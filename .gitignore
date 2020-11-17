@@ -46,3 +46,4 @@ src/main/resources/ccloud.props
 
 /graph-db/
 /out/
+/src/main/cluster-state-tools-data/contexts/example1/

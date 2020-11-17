@@ -2,11 +2,13 @@ package io.confluent.mdgraph.model;
 
 import io.confluent.cp.clients.FactQueryProducer;
 
+import java.util.Properties;
+
 public class KnowledgeGraphFactory {
 
-    public static IKnowledgeGraph getKafkaBasedKnowledgegraph(String appId){
+    public static IKnowledgeGraph getKafkaBasedKnowledgegraph(String appId, Properties properties){
 
-        FactQueryProducer.init( appId );
+        FactQueryProducer.init( appId, properties );
 
         return KnowledgeGraphViaKafkaTopic.getGraph();
 

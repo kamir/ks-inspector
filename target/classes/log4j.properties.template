@@ -1,0 +1,40 @@
+
+# Root logger option
+log4j.rootLogger=DEBUG, stdout, kafka
+
+log4j.logger.kafka=WARN
+log4j.logger.org.apache.kafka=WARN
+
+log4j.category.io.confluent.cp.util.MDLogStore=DEBUG
+
+# Redirect log messages to console
+log4j.appender.stdout=org.apache.log4j.ConsoleAppender
+log4j.appender.stdout.target=System.out
+log4j.appender.stdout.layout=org.apache.log4j.PatternLayout
+log4j.appender.stdout.layout.ConversionPattern=%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n
+#log4j.appender.stdout.layout.ConversionPattern={"debug_level":"%p","debug_timestamp":"%d{ISO8601}","debug_thread":"%t","debug_file":"%F", "debug_line":"%L","debug_message":"%m"}%n
+
+log4j.appender.kafka=org.apache.kafka.log4jappender.KafkaLog4jAppender
+
+log4j.appender.kafka.topic=tomcat_logs_test
+log4j.appender.kafka.layout=io.confluent.common.logging.log4j.StructuredJsonLayout
+
+#
+# alternative approach: compose a JSON Object.
+#
+#log4j.appender.kafka.layout=org.apache.log4j.PatternLayout
+#log4j.appender.kafka.layout.ConversionPattern={"debug_level":"%p","debug_timestamp":"%d{ISO8601}","debug_thread":"%t","debug_file":"%F", "debug_line":"%L","debug_message":"%m"}%n
+#log4j.appender.kafka.level=INFO
+
+log4j.appender.kafka.brokerList=pkc-4yyd6.us-east1.gcp.confluent.cloud:9092
+log4j.appender.kafka.securityProtocol=SASL_SSL
+log4j.appender.kafka.clientJaasConf=org.apache.kafka.common.security.plain.PlainLoginModule required username='' password='';
+log4j.appender.kafka.saslMechanism=PLAIN
+
+# Confluent Cloud Schema Registry
+#log4j.appender.kafka.schema.registry.url=https://psrc-4v1qj.eu-central-1.aws.confluent.cloud
+#log4j.appender.kafka.basic.auth.credentials.source=USER_INFO
+#log4j.appender.kafka.schema.registry.basic.auth.user.info=USER:SECRET
+
+
+

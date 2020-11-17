@@ -1,0 +1,45 @@
+#
+# The stock availability system uses the "stock-availability" domain to
+# keep track of application context data.
+#
+# This app-instance-context file is used to configure the application instance.
+#
+
+---
+name: Visitor
+projects:
+  - name: ao.cp.visitorengine
+    topics:
+      - name: visitor_engine_session_activity_updated
+        dataModel:
+          key:
+            type: String
+          value:
+            type: Avro
+            schemaFile: "schemas/visitor_engine_session_activity_updated-value.avsc"
+      - name: visitor_engine_visitor_updated
+        dataModel:
+          key:
+            type: String
+          value:
+            type: Avro
+            schemaFile: "schemas/visitor_engine_visitor_updated-value.avsc"
+      - name: visitor_engine_visitor_updated_json
+        dataModel:
+          key:
+            type: String
+          value:
+            type: String
+    producers:
+      - principal: "User:EA5OEKFEB2Q5DCM7"
+        #prefixGroup: true
+        groupId: "cp-visitor-service" # => APPLICATION INSTANCE
+        topics:
+          - visitor_engine_visitor_updated
+          - visitor_engine_visitor_updated_json
+    consumers:
+      - principal: "User:EA5OEKFEB2Q5DCM7"
+        groupId: "cp-visitor-service-consumer" # => APPLICATION INSTANCE
+        #prefixGroup: true
+        topics:
+          - visitor_engine_session_activity_updated
