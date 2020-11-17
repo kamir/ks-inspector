@@ -1,28 +1,47 @@
 package io.confluent.mdgraph.model;
 
 import io.confluent.cp.clients.FactQueryConsumer;
-import io.confluent.cp.cs.ClusterStateLoader;
-import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientException;
 
 import org.apache.log4j.LogManager;
 import org.neo4j.driver.*;
 import org.neo4j.driver.Result;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 import java.util.Properties;
 
-import static org.neo4j.driver.Values.parameters;
 
 public class KnowledgeGraphNeo4J extends KnowledgeGraphViaKafkaTopic {
 
     private static final org.apache.log4j.Logger logger = LogManager.getLogger(KnowledgeGraphNeo4J.class);
 
-    public void readGraphFromTopic() {
+    static String databaseDirectory = "graph-db";
+    static String DEFAULT_DATABASE_NAME = "neo4j";
+    static String uri = "bolt://localhost:7687";
+    static String username = "neo4j";
+    static String password = "admin";
 
-        FactQueryConsumer consumer = new FactQueryConsumer( "DemoApp" );
+    public static void init(Properties properties) {
+
+        databaseDirectory = properties.getProperty( "KST_NEO4J_DATABASE_DIRECTORY" );
+        DEFAULT_DATABASE_NAME = properties.getProperty( "KST_NEO4J_DEFAULT_DATABASE_NAME" );
+        uri = properties.getProperty( "KST_NEO4J_URI" );
+        username = properties.getProperty( "KST_NEO4J_USERNAME" );
+        password = properties.getProperty( "KST_NEO4J_PASSWORD" );
+
+        /**
+        System.out.println( databaseDirectory );
+        System.out.println( DEFAULT_DATABASE_NAME );
+        System.out.println( uri );
+        System.out.println( username );
+        System.out.println( password );
+        **/
+
+    }
+
+    public void readGraphFromTopic( String consumerGroup, Properties props ) {
+
+        FactQueryConsumer consumer = new FactQueryConsumer( consumerGroup, props );
         consumer.processCypherQueries( this );
 
     }
@@ -69,40 +88,13 @@ public class KnowledgeGraphNeo4J extends KnowledgeGraphViaKafkaTopic {
         return graph;
     }
 
-    String databaseDirectory = "graph-db";
-    String DEFAULT_DATABASE_NAME = "neo4j";
-    String uri = "bolt://localhost:7687";
+
 
     private KnowledgeGraphNeo4J() {
 
-        driver = GraphDatabase.driver( uri, AuthTokens.basic( "neo4j", "admin" ) );
+        driver = GraphDatabase.driver( uri, AuthTokens.basic( username, password ) );
 
         registerShutdownHook( driver );
-
-    }
-
-    // END SNIPPET: shutdownHook
-
-
-    public void exampleCalls() {
-
-        Session s = driver.session();
-
-        String message = "Hi ho!";
-
-        String greeting = s.writeTransaction( new TransactionWork<String>()
-        {
-            @Override
-            public String execute(org.neo4j.driver.Transaction tx) {
-
-                Result result = tx.run( "CREATE (a:Greeting) " +
-                                "SET a.message = $message " +
-                                "RETURN a.message + ', from node ' + id(a)",
-                        parameters( "message", message ) );
-                return result.single().get(0).asString();
-            }
-        } );
-        System.out.println( greeting );
 
     }
 
@@ -146,7 +138,6 @@ public class KnowledgeGraphNeo4J extends KnowledgeGraphViaKafkaTopic {
 
         } );
 
-        // System.out.println( st.toString() );
 
     }
 

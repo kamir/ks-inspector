@@ -11,7 +11,6 @@
 /Users/mkampf/GITHUB.confluent/ks-inspector/src/main/java/io/confluent/cp/clients/GenericProducerFactory.java
 /Users/mkampf/GITHUB.confluent/ks-inspector/src/main/java/io/confluent/cp/clients/ACLRetrievalTool.java
 /Users/mkampf/GITHUB.confluent/ks-inspector/src/main/java/io/confluent/cp/mdmodel/ksql/KSQLQueryInspector.java
-/Users/mkampf/GITHUB.confluent/ks-inspector/src/main/java/io/confluent/mdgraph/TopicBasedGraphStore.java
 /Users/mkampf/GITHUB.confluent/ks-inspector/src/main/java/io/confluent/cp/mdmodel/ksql/KSQLServerInstance.java
 /Users/mkampf/GITHUB.confluent/ks-inspector/src/main/java/io/confluent/mdgraph/KnowledgeGraphTool.java
 /Users/mkampf/GITHUB.confluent/ks-inspector/src/main/java/io/confluent/cp/mdmodel/fdg/DataFlowEdge.java

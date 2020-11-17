@@ -24,7 +24,7 @@ public class KSQLDBClient {
         // Send requests with the client by following the other examples
         KnowledgeGraphNeo4J runtimeGraph = KnowledgeGraphNeo4J.getGraph();
         //runtimeGraph.deleteAllFacts();
-        runtimeGraph.exampleCalls();
+
 
         System.out.println( "Load metadata ... " );;
         CompletableFuture<List<QueryInfo>> listQueries = client.listQueries();

@@ -14,7 +14,9 @@ public class KnowledgeGraphFactory {
 
     };
 
-    public static IKnowledgeGraph getNeo4JBasedKnowledgeGraph(){
+    public static IKnowledgeGraph getNeo4JBasedKnowledgeGraph( Properties properties ){
+
+        KnowledgeGraphNeo4J.init( properties );
 
         return KnowledgeGraphNeo4J.getGraph();
 
