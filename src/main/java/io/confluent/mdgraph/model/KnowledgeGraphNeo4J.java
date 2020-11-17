@@ -5,9 +5,15 @@ import io.confluent.cp.clients.FactQueryConsumer;
 import org.apache.log4j.LogManager;
 import org.neo4j.driver.*;
 import org.neo4j.driver.Result;
+import org.neo4j.graphdb.Node;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 
@@ -132,7 +138,16 @@ public class KnowledgeGraphNeo4J extends KnowledgeGraphViaKafkaTopic {
 
                 Result result = tx.run( q );
 
+                while (result.hasNext()) {
+
+                    Record row = result.next();
+
+                    System.out.println(row.asMap().toString());
+
+                }
+
                 return result.toString();
+
 
             }
 
@@ -142,4 +157,32 @@ public class KnowledgeGraphNeo4J extends KnowledgeGraphViaKafkaTopic {
     }
 
 
+    public void queryFromFile(File queryFilePath) {
+
+        try {
+
+            FileReader fr = new FileReader(queryFilePath);
+            BufferedReader br = new BufferedReader( fr );
+            StringBuffer sb = new StringBuffer();
+            while( br.ready() ) {
+                String line = br.readLine();
+                if ( !line.startsWith("#") )
+                    sb.append( line + " " );
+            }
+            System.out.println( "#####################################################################################" );
+            System.out.println( "# Query Path: " +  queryFilePath.getAbsolutePath() );
+            System.out.println( "# " );
+            System.out.println( "# Query: " );
+            System.out.println( "# ------ " );
+            System.out.println( "  " + sb.toString() );
+            System.out.println( "#####################################################################################" );
+
+            exequteCypherQuery( sb.toString() );
+
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        };
+
+    }
 }

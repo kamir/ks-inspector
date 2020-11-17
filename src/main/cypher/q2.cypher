@@ -1,5 +1,5 @@
 #
-# Count all nodes ...
+# Find all topics with two registered subjects
 #
-MATCH (n)
-RETURN count(n) as count
+MATCH p=()<-[r1:hasRegisteredSchema]-(n)-[r2:hasRegisteredSchema]->()
+RETURN n
