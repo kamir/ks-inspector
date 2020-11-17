@@ -16,8 +16,10 @@ public class FactQueryConsumer extends GenericProducerFactory {
 
     Consumer<String, String> consumer = null;
 
-    public FactQueryConsumer(String cg) {
-        Properties props = GenericProducerFactory.getClientProperties();
+    Properties properties = null;
+
+    public FactQueryConsumer(String cg, Properties props) {
+        properties = props;
         consumer = createConsumer( props, cg);
     }
 
@@ -45,7 +47,7 @@ public class FactQueryConsumer extends GenericProducerFactory {
 
     public void processCypherQueries(KnowledgeGraphNeo4J knowledgeGraphNeo4J) {
 
-        final int giveUp = 100;   int noRecordsCount = 0;
+        final int giveUp = 10;   int noRecordsCount = 0;
 
         System.out.println( "Read fact queries ...");
 
@@ -57,7 +59,10 @@ public class FactQueryConsumer extends GenericProducerFactory {
             if (consumerRecords.count()==0) {
                 noRecordsCount++;
                 if (noRecordsCount > giveUp) break;
-                else continue;
+                else {
+                    System.out.println( (100.0 * noRecordsCount/giveUp) + " % ... waiting time until end of procedure.");
+                    continue;
+                }
             }
 
             consumerRecords.forEach(record -> {

@@ -10,7 +10,6 @@ io/confluent/cp/mdmodel/ksql/KSQLDBApplicationContext.class
 io/confluent/cp/cs/AppDescriptorLoader.class
 io/confluent/cp/util/graph/analysis/LabelPropagationClustering$Implementation.class
 io/confluent/cp/clients/ksql/KSQLDBClient2.class
-io/confluent/mdgraph/model/KnowledgeGraphNeo4J$3.class
 io/confluent/cp/util/MDLogStore.class
 io/confluent/cp/mdmodel/ksql/Helper.class
 io/confluent/cp/mdmodel/ksql/KSQLQueryInspector.class
@@ -18,7 +17,6 @@ io/confluent/mdgraph/GovernanceToolDEMO.class
 io/confluent/mdgraph/model/KnowledgeGraphNeo4J$1.class
 io/confluent/cp/util/AppContextLogRecord.class
 io/confluent/mdgraph/model/IKnowledgeGraph.class
-io/confluent/mdgraph/TopicBasedGraphStore.class
 io/confluent/cp/util/graph/analysis/LabelPropagationClustering.class
 io/confluent/cp/clients/FactQueryConsumer.class
 io/confluent/cp/clients/SchemaRegistryClient.class

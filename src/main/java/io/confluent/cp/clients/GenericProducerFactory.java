@@ -11,39 +11,20 @@ public class GenericProducerFactory {
 
     public static Producer producer = null;
 
-    public static Properties getClientProperties() {
-
-        File f = new File( "ccloud.props"  );
-
-        System.out.println( ">>> Client properties from file: " + f.getAbsolutePath() + " ("+f.canRead()+")");
-
-        Properties properties = new Properties();
-        try {
-            properties.load(new FileReader( f ));
-
-            System.out.println();
-            properties.list( System.out );
-            System.out.println();
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return properties;
-
-    }
 
     public static void flush() {
 
-        producer.flush();
-
+        if( producer != null ) {
+            producer.flush();
+        }
     }
 
     public static void close() {
 
-        producer.flush();
-        producer.close();
-
+        if( producer != null ) {
+            producer.flush();
+            producer.close();
+        }
     }
 
 }
