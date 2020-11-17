@@ -1,0 +1,70 @@
+{
+  "fields": [
+    {
+      "default": null,
+      "doc": "Event Unique Identifier",
+      "name": "uniqueIdentifier",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "default": null,
+      "doc": "Timestamp",
+      "name": "timeStamp",
+      "type": [
+        "null",
+        "long"
+      ]
+    },
+    {
+      "default": null,
+      "doc": "Product Identifier",
+      "name": "productIdentifier",
+      "type": [
+        "null",
+        "int"
+      ]
+    },
+    {
+      "default": null,
+      "doc": "SKU",
+      "name": "sku",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "default": null,
+      "doc": "Is the product available for sale",
+      "name": "suspended",
+      "type": [
+        "null",
+        "boolean"
+      ]
+    },
+    {
+      "default": null,
+      "doc": "The country the product is available",
+      "name": "countryId",
+      "type": [
+        "null",
+        "int"
+      ]
+    },
+    {
+      "default": null,
+      "doc": "The client id the product is available for",
+      "name": "clientId",
+      "type": [
+        "null",
+        "int"
+      ]
+    }
+  ],
+  "name": "StockAvailability",
+  "namespace": "AO.SupplyChain.Events",
+  "type": "record"
+}

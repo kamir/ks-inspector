@@ -1,0 +1,57 @@
+#
+# The stock availability system uses the "stock-availability" domain to
+# keep track of application context data.
+#
+# This app-instance-context file is used to configure the application instance.
+#
+
+---
+name: Clickstream
+projects:
+  - name: ao.socketserver
+    topics:
+      - name: socket_visitorjourney_visitor_page_visit
+        dataModel:
+          key:
+            type: String
+          value:
+            type: Json
+      - name: socket_visitorjourney_visitor_interaction
+        dataModel:
+          key:
+            type: String
+          value:
+            type: Json
+      - name: socket_visitorjourney_visitor_track_interaction
+        dataModel:
+          key:
+            type: String
+          value:
+            type: Json
+      - name: socket_visitorjourney_displayed_topbanner
+        dataModel:
+          key:
+            type: String
+          value:
+            type: Json
+      - name: visitor_engine_visitor_message
+        dataModel:
+          key:
+            type: String
+          value:
+            type: Json
+    producers:
+      - principal: "User:T3VNZSPGZIEAA462"
+        # prefixGroup: true
+        groupId: "SocketServer" # => APPLICATION INSTANCE
+        topics:
+          - socket_visitorjourney_visitor_page_visit
+          - socket_visitorjourney_visitor_interaction
+          - socket_visitorjourney_visitor_track_interaction
+          - socket_visitorjourney_displayed_topbanner
+    consumers:
+      - principal: "User:T3VNZSPGZIEAA462"
+        groupId: "socket-server-consumer" # => APPLICATION INSTANCE
+        # prefixGroup: true
+        topics:
+          - visitor_engine_visitor_message

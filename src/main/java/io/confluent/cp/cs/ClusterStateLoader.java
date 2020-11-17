@@ -60,6 +60,7 @@ public class ClusterStateLoader {
         for( File f : dirs ) {
 
             if ( f.isDirectory() ) {
+
                 if( !f.getName().equals( "schemas" ) ) {
 
                     System.out.println( "> Read data for instances in Domain folder: " + f.getAbsolutePath() );
@@ -100,7 +101,7 @@ public class ClusterStateLoader {
 
                         logger.info( "# DOMAIN-FILE: " + path.toFile().getAbsolutePath() );
 
-                        System.out.println( path.toFile() );
+                        // System.out.println( path.toFile() );
 
                         return Stream.of(parser.loadFromFile(path.toFile()));
 
@@ -120,7 +121,7 @@ public class ClusterStateLoader {
 
         logger.info("Domains: " + domains);
 
-        System.out.println("Domains: " + domains);
+        // System.out.println("Domains: " + domains);
 
         for (int i = 0; i < domains.size(); i++) {
 
