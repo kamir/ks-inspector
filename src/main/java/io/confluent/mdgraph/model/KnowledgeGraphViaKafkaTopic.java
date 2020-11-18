@@ -5,11 +5,10 @@ import io.confluent.cp.mdmodel.infosec.Classifications;
 import io.confluent.kafka.schemaregistry.client.rest.entities.Schema;
 import io.confluent.kafka.schemaregistry.client.rest.entities.SchemaReference;
 import net.christophschubert.kafka.clusterstate.formats.domain.*;
+import net.christophschubert.kafka.clusterstate.formats.env.Cluster;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.neo4j.driver.Driver;
-import org.neo4j.driver.Result;
-import org.neo4j.driver.Session;
-import org.neo4j.driver.TransactionWork;
+
 
 import java.io.File;
 import java.util.Enumeration;
@@ -42,6 +41,7 @@ public class KnowledgeGraphViaKafkaTopic implements IKnowledgeGraph {
 
             }
         } );
+
     }
 
     /**
@@ -159,8 +159,8 @@ public class KnowledgeGraphViaKafkaTopic implements IKnowledgeGraph {
         mergeNode( "ClassifiedField", fieldName, null );
 
         String q1 = "MATCH (s:ClassifiedField),(sst:SchemaString) " +
-                "WHERE sst.name = '" + schemaNameString + "' AND s.name = '" + fieldName + "' " +
-                "MERGE (sst)-[r:hasClassifiedFild]->(s);";
+                    "WHERE sst.name = '" + schemaNameString + "' AND s.name = '" + fieldName + "' " +
+                    "MERGE (sst)-[r:hasClassifiedFild]->(s);";
 
         exequteCypherQuery( q1 );
 
@@ -169,8 +169,8 @@ public class KnowledgeGraphViaKafkaTopic implements IKnowledgeGraph {
             mergeNode( "ClassificationTag", tag, null );
 
             String q2 = "MATCH (f:ClassifiedField),(t:ClassificationTag) " +
-                    "WHERE f.name = '" + fieldName + "' AND t.name = '" + tag + "' " +
-                    "MERGE (f)-[r:hasClassifierTag]->(t);";
+                        "WHERE f.name = '" + fieldName + "' AND t.name = '" + tag + "' " +
+                        "MERGE (f)-[r:hasClassifierTag]->(t);";
 
             exequteCypherQuery( q2 );
 
@@ -185,8 +185,8 @@ public class KnowledgeGraphViaKafkaTopic implements IKnowledgeGraph {
         String sr_version = "" + sr.getVersion();
 
         String q = "MATCH (s:Subject),(sr:Subject) " +
-                "WHERE s.name = '" + subject + "' AND sr.name = '" + sr_subject + "' " +
-                "MERGE (t)-[r:hasSchemaReference{ version: '" + sr_version + "'}]->(sr);";
+                   "WHERE s.name = '" + subject + "' AND sr.name = '" + sr_subject + "' " +
+                   "MERGE (t)-[r:hasSchemaReference{ version: '" + sr_version + "'}]->(sr);";
 
         exequteCypherQuery( q );
 
@@ -230,6 +230,24 @@ public class KnowledgeGraphViaKafkaTopic implements IKnowledgeGraph {
 
     }
 
+    private void mergeEnvironment(String env, Properties props) {
+
+        String q = "MERGE (t:Environment { name: '" + env + "'});";
+
+        exequteCypherQuery( q );
+
+        if ( props != null ) {
+            Enumeration<String> en = (Enumeration<String>)props.propertyNames();
+            while( en.hasMoreElements() ) {
+                String k = en.nextElement();
+                String v = props.getProperty( k );
+                addPropertiesToNode("Environment", "name", env, k, v);
+            }
+        }
+
+    }
+
+
     private void mergeDomain(String domain, Properties props) {
 
         String q = "MERGE (t:Domain { name: '" + domain + "'});";
@@ -265,8 +283,8 @@ public class KnowledgeGraphViaKafkaTopic implements IKnowledgeGraph {
         mergeNode( "SchemaString", nodeName , props );
 
         String q = "MATCH (s:Subject),(sst:SchemaString) " +
-                "WHERE sst.name = '" + nodeName + "' AND s.name = '" + subject + "' " +
-                "MERGE (s)-[r:hasSchemaString { version: " + version + " } ]->(sst);";
+                   "WHERE sst.name = '" + nodeName + "' AND s.name = '" + subject + "' " +
+                   "MERGE (s)-[r:hasSchemaString { version: " + version + " } ]->(sst);";
 
         exequteCypherQuery( q );
 
@@ -333,10 +351,33 @@ public class KnowledgeGraphViaKafkaTopic implements IKnowledgeGraph {
     private void addDomainProjectLink(Domain domain, Project p) {
 
         String q = "MATCH (t:Domain),(s:Project) " +
-                "WHERE t.name = '" + domain.name + "' AND s.name = '" + p.name + "' " +
-                "MERGE (t)-[r:hasProject]->(s);";
+                   "WHERE t.name = '" + domain.name + "' AND s.name = '" + p.name + "' " +
+                   "MERGE (t)-[r:hasProject]->(s);";
 
         exequteCypherQuery( q );
+
+    }
+
+    @Override
+    public void registerEnvironment(Cluster c, File contextPath) {
+
+        String md5Hex = DigestUtils.md5Hex(contextPath.getAbsolutePath()).toUpperCase();
+
+        Properties props = new Properties();
+        props.put( "instancePath_" + md5Hex, contextPath.getAbsolutePath() );
+
+        props.put( "clusterId", c.clusterId );
+        props.put( "clusterType", c.clusterType );
+        props.put( "org", c.org );
+        props.put( "owner", c.owner );
+        props.put( "ownerContact", c.ownerContact );
+        props.put( "provider",c.provider );
+        props.put( "region",c.region );
+        //props.put( c.tags );
+        props.put( "org", c.org );
+        props.put( "availability", c.availability );
+
+        this.mergeEnvironment( c.name , props );
 
     }
 
@@ -390,9 +431,9 @@ public class KnowledgeGraphViaKafkaTopic implements IKnowledgeGraph {
 
         }
 
-
-
     }
+
+
 
     private void addStreamsAppProjectLink(StreamsApp app, Project p) {
 
@@ -401,8 +442,8 @@ public class KnowledgeGraphViaKafkaTopic implements IKnowledgeGraph {
         mergeNode( "KSApp", appName, null );
 
         String q = "MATCH (app:KSApp),(p:Project) " +
-                "WHERE app.name = '" + appName + "' AND p.name = '" + p.name + "' " +
-                "MERGE (p)-[r:hasStreamsApp]->(app);";
+                   "WHERE app.name = '" + appName + "' AND p.name = '" + p.name + "' " +
+                   "MERGE (p)-[r:hasStreamsApp]->(app);";
 
         exequteCypherQuery( q );
 
@@ -419,8 +460,8 @@ public class KnowledgeGraphViaKafkaTopic implements IKnowledgeGraph {
         String name = this.getStreamsAppNodeName( app );
 
         String q = "MATCH (app:KSApp),(t:Topic) " +
-                "WHERE t.name = '" + t + "' AND app.name = '" + name + "' " +
-                "MERGE (app)-[r:readsFromTopic]->(t);";
+                   "WHERE t.name = '" + t + "' AND app.name = '" + name + "' " +
+                   "MERGE (app)-[r:readsFromTopic]->(t);";
 
         exequteCypherQuery( q );
 
@@ -433,8 +474,8 @@ public class KnowledgeGraphViaKafkaTopic implements IKnowledgeGraph {
         String name = this.getStreamsAppNodeName( app );
 
         String q = "MATCH (app:KSApp),(t:Topic) " +
-                "WHERE t.name = '" + t + "' AND app.name = '" + name + "' " +
-                "MERGE (app)-[r:writesToTopic]->(t);";
+                   "WHERE t.name = '" + t + "' AND app.name = '" + name + "' " +
+                   "MERGE (app)-[r:writesToTopic]->(t);";
 
         exequteCypherQuery( q );
 
@@ -447,8 +488,8 @@ public class KnowledgeGraphViaKafkaTopic implements IKnowledgeGraph {
         String name = "CONS (" + c.groupId + ") <- " + c.principal;
 
         String q = "MATCH (c:Consumer),(t:Topic) " +
-                "WHERE t.name = '" + t + "' AND c.name = '" + name + "' " +
-                "MERGE (c)-[r:readsFromTopic]->(t);";
+                   "WHERE t.name = '" + t + "' AND c.name = '" + name + "' " +
+                   "MERGE (c)-[r:readsFromTopic]->(t);";
 
         exequteCypherQuery( q );
 
@@ -461,10 +502,9 @@ public class KnowledgeGraphViaKafkaTopic implements IKnowledgeGraph {
         String name = "PROD <- " + pr.principal;
         mergeProducer(  name );
 
-
         String q = "MATCH (pr:Producer),(t:Topic) " +
-                "WHERE t.name = '" + t + "' AND pr.name = '" + name + "' " +
-                "MERGE (pr)-[r:writesIntoTopic]->(t);";
+                   "WHERE t.name = '" + t + "' AND pr.name = '" + name + "' " +
+                   "MERGE (pr)-[r:writesIntoTopic]->(t);";
 
         exequteCypherQuery( q );
 
@@ -481,8 +521,8 @@ public class KnowledgeGraphViaKafkaTopic implements IKnowledgeGraph {
         mergeProducer( name );
 
         String q = "MATCH (pr:Producer),(p:Project) " +
-                "WHERE pr.name = '" + name + "' AND p.name = '" + p.name + "' " +
-                "MERGE (p)-[r:hasProducer]->(pr);";
+                   "WHERE pr.name = '" + name + "' AND p.name = '" + p.name + "' " +
+                   "MERGE (p)-[r:hasProducer]->(pr);";
 
         exequteCypherQuery( q );
 
@@ -495,8 +535,8 @@ public class KnowledgeGraphViaKafkaTopic implements IKnowledgeGraph {
         mergeNode( "Consumer", name, null );
 
         String q = "MATCH (t:Consumer),(s:Project) " +
-                "WHERE t.name = '" + name + "' AND s.name = '" + p.name + "' " +
-                "MERGE (s)-[r:hasConsumer]->(t);";
+                   "WHERE t.name = '" + name + "' AND s.name = '" + p.name + "' " +
+                   "MERGE (s)-[r:hasConsumer]->(t);";
 
         exequteCypherQuery( q );
 
@@ -505,8 +545,8 @@ public class KnowledgeGraphViaKafkaTopic implements IKnowledgeGraph {
     private void addProjectInDomainLink(Domain domain, Project p) {
 
             String q = "MATCH (t:Domain),(s:Project) " +
-                    "WHERE t.name = '" + domain.name + "' AND s.name = '" + p.name + "' " +
-                    "MERGE (s)-[r:providesAppInstance]->(t);";
+                       "WHERE t.name = '" + domain.name + "' AND s.name = '" + p.name + "' " +
+                       "MERGE (s)-[r:providesAppInstance]->(t);";
 
             exequteCypherQuery( q );
 

@@ -9,6 +9,9 @@
 name: Clickstream
 projects:
   - name: ao.socketserver
+    # track the owner of the application (the project with an application, since a project may have multiple apps)
+    owner: Jon
+    ownerContact: jon@ao.com
     topics:
       - name: socket_visitorjourney_visitor_page_visit
         dataModel:
@@ -41,7 +44,8 @@ projects:
           value:
             type: Json
     producers:
-      - principal: "User:T3VNZSPGZIEAA462"
+        # todo : FIND A MECHANISM FOR VARIABLE REPLACEMENT ...
+      - principal: "${ao.socketserver.principal.prod.env}"
         # prefixGroup: true
         groupId: "SocketServer" # => APPLICATION INSTANCE
         topics:
@@ -50,7 +54,7 @@ projects:
           - socket_visitorjourney_visitor_track_interaction
           - socket_visitorjourney_displayed_topbanner
     consumers:
-      - principal: "User:T3VNZSPGZIEAA462"
+      - principal: "${ao.socketserver.principal.cons.env.x}"
         groupId: "socket-server-consumer" # => APPLICATION INSTANCE
         # prefixGroup: true
         topics:

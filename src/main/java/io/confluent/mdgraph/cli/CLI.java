@@ -2,6 +2,7 @@ package io.confluent.mdgraph.cli;
 
 
 import io.confluent.cp.cs.ClusterStateLoader;
+import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientException;
 import io.confluent.mdgraph.model.IKnowledgeGraph;
 import io.confluent.mdgraph.model.KnowledgeGraphFactory;
 
@@ -61,6 +62,53 @@ class CLI {
         ClusterStateLoader.populateKnowledgeGraphMultiDomains( g1, instancesPath );
 
         System.out.println( ">>> Finished collecting the facts for our Streaming Processes Knowledge Graph in a topic." );
+
+        return 0;
+
+    }
+
+    @Command(name = "inspectSchemaRegistry", description = "Inspect and load SchemaRegistry information.")
+    int inspectSchemaRegistry(
+            @Option(names = { "-b", "--bootstrap-server" }, paramLabel = "<bootstrap-server>",
+                    description = "bootstrap server of the cluster to connect too") String bootstrapServer,
+            @Option(names = { "-c", "--command-properties"}, paramLabel = "<command properties>",
+                    description = "command config file") File configFile,
+            @Option(names = { "-e", "--env-var-prefix"}, paramLabel = "<prefix>",
+                    description = "prefix for env vars to be added to properties ") String envVarPrefix,
+            @CommandLine.Parameters(paramLabel = "context", description = "path to the context", defaultValue = ".") File contextPath
+    ) throws IOException, ExecutionException, InterruptedException {
+        if (!contextPath.isDirectory()) {
+            logger.error("Given context {} is not a folder", contextPath);
+            return 1;
+        }
+        if (configFile == null) {
+            configFile = new File(contextPath, "kst.properties");
+        }
+
+        final Properties properties = CLITools.loadProperties(configFile, bootstrapServer, envVarPrefix);
+        final ClientBundle bundle = ClientBundle.fromProperties(properties, contextPath);
+
+        // bundle.describe();
+
+        System.out.println( ">>> Use config file: [" + configFile.getAbsolutePath() + "] for Knowledge Graph creation. " );
+
+        String instancesPath = contextPath.getPath();
+        System.out.println( ">>> Start reading facts from SchemaRegistry configured in property file [" +instancesPath + "]." );
+
+        IKnowledgeGraph g1 = KnowledgeGraphFactory.getKafkaBasedKnowledgegraph("DataGovernanceDemo001", properties);
+
+        /**
+         * Manage Schema MD: the fields will be linked to the tags provided by the catalog.
+         */
+        io.confluent.cp.clients.SchemaRegistryClient src = new io.confluent.cp.clients.SchemaRegistryClient();
+        try {
+            src.populateGraph( g1 );
+        }
+        catch (RestClientException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println( ">>> Finished collecting the facts from SchemaRegistry for our Streaming Processes Knowledge Graph in a topic." );
 
         return 0;
 

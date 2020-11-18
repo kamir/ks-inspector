@@ -4,6 +4,7 @@ import io.confluent.cp.cfg.CCloudClusterWrapper;
 import io.confluent.kafka.schemaregistry.client.rest.*;
 import io.confluent.kafka.schemaregistry.client.rest.entities.Schema;
 import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientException;
+import io.confluent.mdgraph.model.IKnowledgeGraph;
 import io.confluent.mdgraph.model.KnowledgeGraphNeo4J;
 
 import java.io.IOException;
@@ -40,7 +41,7 @@ public class SchemaRegistryClient {
         srr.configure( map );
     }
 
-    public void populateGraph(KnowledgeGraphNeo4J kg) throws IOException, RestClientException {
+    public void populateGraph(IKnowledgeGraph kg) throws IOException, RestClientException {
 
         List<String> subjects = srr.getAllSubjects();
 
@@ -62,7 +63,7 @@ public class SchemaRegistryClient {
 
     }
 
-    private static void processSubjectMD(String subject, KnowledgeGraphNeo4J kg) {
+    private static void processSubjectMD(String subject, IKnowledgeGraph kg) {
 
         System.out.println("-----subject-----"  );
 

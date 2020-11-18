@@ -29,9 +29,17 @@ export KST_NEO4J_PASSWORD="admin";
 #
 #   src/main/cluster-state-tools-data/contexts/example1/instances
 #
-java -jar target/ks-inspector-1.0-SNAPSHOT.jar inspect  \
-     -b pkc-4yyd6.us-east1.gcp.confluent.cloud:9092  \
-     -e KST src/main/cluster-state-tools-data/contexts/example1/instances
+# java -jar target/ks-inspector-1.0-SNAPSHOT.jar inspect  \
+#     -b pkc-4yyd6.us-east1.gcp.confluent.cloud:9092  \
+#     -e KST src/main/cluster-state-tools-data/contexts/example1/instances
+
+########################################################################################################################
+# Inspect the SchemaRegistry data.
+########################################################################################################################
+#
+# java -jar target/ks-inspector-1.0-SNAPSHOT.jar inspectSchemaRegistry  \
+#     -b pkc-4yyd6.us-east1.gcp.confluent.cloud:9092  \
+#     -e KST src/main/cluster-state-tools-data/contexts/example1/instances
 
 ########################################################################################################################
 # Export the graph data which is persisted in the Kafka topic named _kst_knowledgegraph.
@@ -43,12 +51,17 @@ java -jar target/ks-inspector-1.0-SNAPSHOT.jar inspect  \
 
 ########################################################################################################################
 # Clear the graph in NEO4J.
+########################################################################################################################
 #
-# java -jar target/ks-inspector-1.0-SNAPSHOT.jar clearGraph
+# java -jar target/ks-inspector-1.0-SNAPSHOT.jar clearGraph \
 #      -e KST
 
 ########################################################################################################################
 # Query the knowledge graph with a standard query, useful for operators.
+########################################################################################################################
 #
-# java -jar target/ks-inspector-1.0-SNAPSHOT.jar queryGraph  \
-#     -e KST src/main/cypher/q1.cypher
+java -jar target/ks-inspector-1.0-SNAPSHOT.jar queryGraph  \
+     -e KST src/main/cypher/q1.cypher
+
+
+

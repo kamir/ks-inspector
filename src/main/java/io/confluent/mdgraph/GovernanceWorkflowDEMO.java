@@ -1,7 +1,5 @@
 package io.confluent.mdgraph;
 
-import io.confluent.cp.clients.FactQueryProducer;
-import io.confluent.cp.cs.ClusterStateLoader;
 import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientException;
 import io.confluent.mdgraph.model.IKnowledgeGraph;
 import io.confluent.mdgraph.model.KnowledgeGraphFactory;
@@ -13,9 +11,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
 
-public class GovernanceToolDEMO {
+public class GovernanceWorkflowDEMO {
 
-    private static final org.apache.log4j.Logger logger = LogManager.getLogger(GovernanceToolDEMO.class);
+    private static final org.apache.log4j.Logger logger = LogManager.getLogger(GovernanceWorkflowDEMO.class);
 
     public static void main(String[] ARGS) throws IOException, RestClientException {
 
