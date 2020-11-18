@@ -1,5 +1,12 @@
 package io.confluent.cp.cs;
 
+
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import java.io.File;
+import java.io.IOException;
+
 /**
  *
  * This class uses the Cluster State Tools to read the DOMAIN definition file
@@ -14,11 +21,11 @@ import io.confluent.mdgraph.model.KnowledgeGraphNeo4J;
 import net.christophschubert.kafka.clusterstate.cli.CLITools;
 import net.christophschubert.kafka.clusterstate.formats.domain.Domain;
 import net.christophschubert.kafka.clusterstate.formats.domain.DomainParser;
+import net.christophschubert.kafka.clusterstate.formats.env.Cluster;
+import net.christophschubert.kafka.clusterstate.formats.env.Environment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -163,4 +170,21 @@ public class ClusterStateLoader {
         System.exit( 0 );
     }
 
+    public static void populateKnowledgeGraphWithEnvironmentDescription(KnowledgeGraphNeo4J g, String environmentPath) throws Exception {
+
+        ObjectMapper yamlMapper = new ObjectMapper(new YAMLFactory());
+
+        File f = new File(environmentPath);
+
+        Environment env = (Environment)yamlMapper.readValue( f, Environment.class);
+
+        for ( Cluster c : env.clusters ) {
+
+            g.registerEnvironment( c, f );
+
+        }
+
+        logger.info("Environment: " + env);
+
+    }
 }

@@ -17,7 +17,7 @@ public class CCloudClusterWrapper {
 
     public static Properties getPropsFrom_ROOT_FOLDER() {
 
-        String configFile = "./ccloud.props"; // could also be a constant
+        String configFile = "./src/main/resources/ccloud.props"; // could also be a constant
 
         Properties props = new Properties();
 
