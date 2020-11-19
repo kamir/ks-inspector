@@ -100,7 +100,7 @@ class CLI {
         /**
          * Manage Schema MD: the fields will be linked to the tags provided by the catalog.
          */
-        io.confluent.cp.clients.SchemaRegistryClient src = new io.confluent.cp.clients.SchemaRegistryClient();
+        io.confluent.cp.factcollector.SchemaRegistryClient src = new io.confluent.cp.factcollector.SchemaRegistryClient();
         try {
             src.populateGraph( g1 );
         }

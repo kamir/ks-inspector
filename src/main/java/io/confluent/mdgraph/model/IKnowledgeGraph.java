@@ -1,7 +1,7 @@
 package io.confluent.mdgraph.model;
 
 import net.christophschubert.kafka.clusterstate.formats.domain.Domain;
-import net.christophschubert.kafka.clusterstate.formats.env.Cluster;
+import net.christophschubert.kafka.clusterstate.formats.env.CloudCluster;
 
 import io.confluent.kafka.schemaregistry.client.rest.entities.Schema;
 
@@ -16,7 +16,7 @@ public interface IKnowledgeGraph {
 
     void addPropertiesToNode(String T, String SK, String SV, String K, String V);
 
-    void registerEnvironment(Cluster c, File contextPath);
+    void registerCloudCluster(CloudCluster c, File contextPath);
 
     void registerDomain(Domain domain, int i, File contextPath);
 

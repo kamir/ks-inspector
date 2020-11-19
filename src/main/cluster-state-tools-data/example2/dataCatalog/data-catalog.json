@@ -12,6 +12,13 @@
         ]
       },
       {
+        "name": "PAN",
+        "type": "string",
+        "classifications": [
+          "PII/Financial"
+        ]
+      },
+      {
         "name": "Name",
         "type": "string",
         "classifications": [

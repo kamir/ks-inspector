@@ -2,7 +2,7 @@ package io.confluent.cp.mdmodel.ksql;
 
 import com.google.gson.Gson;
 import com.google.gson.internal.LinkedTreeMap;
-import io.confluent.cp.clients.ksql.KSQLRestClient;
+import io.confluent.cp.factcollector.ksql.KSQLRestClient;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -14,8 +14,6 @@ public class KSQLServerInstance {
     public static boolean HIDE_INTERNAL_TOPICS = true;
 
     KSQLRestClient restClient = new KSQLRestClient();
-
-
 
     public String[] getListOfStreams() {
 

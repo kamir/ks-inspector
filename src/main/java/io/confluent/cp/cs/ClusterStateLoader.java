@@ -21,7 +21,7 @@ import io.confluent.mdgraph.model.KnowledgeGraphNeo4J;
 import net.christophschubert.kafka.clusterstate.cli.CLITools;
 import net.christophschubert.kafka.clusterstate.formats.domain.Domain;
 import net.christophschubert.kafka.clusterstate.formats.domain.DomainParser;
-import net.christophschubert.kafka.clusterstate.formats.env.Cluster;
+import net.christophschubert.kafka.clusterstate.formats.env.CloudCluster;
 import net.christophschubert.kafka.clusterstate.formats.env.Environment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +42,7 @@ public class ClusterStateLoader {
      * @param instanceDescriptionPath
      * @throws IOException
      */
-    public static void populateKnowledgeGraphWithInstanceDescription(KnowledgeGraphNeo4J kg, String instanceDescriptionPath ) throws IOException {
+    public static void populateKnowledgeGraphWithInstanceDescription(IKnowledgeGraph kg, String instanceDescriptionPath ) throws IOException {
 
         final DomainParser parser = new DomainParser();
 
@@ -89,15 +89,11 @@ public class ClusterStateLoader {
      * @param domainPath
      * @throws IOException
      */
-    public static void populateKnowledgeGraph(IKnowledgeGraph kg, String domainPath ) throws IOException {
+    public static void populateKnowledgeGraph( IKnowledgeGraph kg, String domainPath ) throws IOException {
 
         final DomainParser parser = new DomainParser();
 
-        if ( domainPath == null) {
-            domainPath = "./src/main/cluster-state-tools-data/contexts/order-processing";
-        }
-        else
-            logger.info( "# DOMAIN-PATH: " + domainPath );
+        logger.info( "### DOMAIN-PATH : " + domainPath );
 
         File contextPath = new File( domainPath );
 
@@ -127,8 +123,6 @@ public class ClusterStateLoader {
 
 
         logger.info("Domains: " + domains);
-
-        // System.out.println("Domains: " + domains);
 
         for (int i = 0; i < domains.size(); i++) {
 
@@ -170,21 +164,22 @@ public class ClusterStateLoader {
         System.exit( 0 );
     }
 
-    public static void populateKnowledgeGraphWithEnvironmentDescription(KnowledgeGraphNeo4J g, String environmentPath) throws Exception {
+    public static void populateKnowledgeGraphWithEnvironmentDescription(IKnowledgeGraph g, String environmentPath) throws Exception {
 
         ObjectMapper yamlMapper = new ObjectMapper(new YAMLFactory());
 
         File f = new File(environmentPath);
 
         Environment env = (Environment)yamlMapper.readValue( f, Environment.class);
+        logger.info("Environments: " + env);
 
-        for ( Cluster c : env.clusters ) {
+        for ( CloudCluster c : env.clusters ) {
 
-            g.registerEnvironment( c, f );
+            logger.info("CloudClusters: " + c);
+
+            g.registerCloudCluster( c, f );
 
         }
-
-        logger.info("Environment: " + env);
 
     }
 }

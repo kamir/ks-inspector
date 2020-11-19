@@ -1,4 +1,4 @@
-package io.confluent.cp.clients.ksql;
+package io.confluent.cp.factcollector.ksql;
 
 import io.confluent.ksql.api.client.*;
 import io.confluent.mdgraph.model.KnowledgeGraphNeo4J;

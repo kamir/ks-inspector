@@ -1,4 +1,4 @@
-package io.confluent.cp.clients.ksql;
+package io.confluent.cp.factcollector.ksql;
 
 import org.apache.http.HttpHeaders;
 import org.apache.http.client.HttpClient;

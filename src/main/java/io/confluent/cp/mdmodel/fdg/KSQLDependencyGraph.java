@@ -46,7 +46,10 @@ public class KSQLDependencyGraph {
      */
     public void persistFlowDependencyGraph( String name ) throws IOException {
 
-        DOTExporter<String, DefaultEdge> exporter = new DOTExporter<>(v -> v.replace('.', '_'));
+        DOTExporter<String, DefaultEdge> exporter = new DOTExporter<>(v -> {
+            v = v.replace('.', '_');
+            return v.replace('-', '_');
+        });
 
         exporter.setVertexAttributeProvider((v) -> {
             Map<String, Attribute> map = new LinkedHashMap<>();
@@ -68,6 +71,12 @@ public class KSQLDependencyGraph {
     }
 
     public void addLink(String s, String t) {
+
+        if ( s == null || t == null ) {
+            System.out.println("**************************************************");
+            System.out.println("***** BAD VERTEX : " + s + " - " + t);
+            System.out.println("**************************************************");
+        }
 
         if (s.contains("'") || t.contains("'")){
             System.out.println("**************************************************");
@@ -153,9 +162,6 @@ public class KSQLDependencyGraph {
 
             j++;
         }
-
-
-
 
         fw.write( "\n" + "  ]\n" + "}" );
         fw.flush();
@@ -331,9 +337,9 @@ public class KSQLDependencyGraph {
         }
 
         if ( index > 0 ) {
+
             // FINDE POSITION "WITH" und nimm nächstes ...
             String streamName = words[2];
-
 
             String fragment = words[index].substring(14, words[index].length() - 2);
 
@@ -356,7 +362,9 @@ public class KSQLDependencyGraph {
         int index_FROM = 0;
 
         int i = 0;
+
         for( String word : words ) {
+
             System.out.println( i + " : " + index_WITH + " :: " + index_FROM + " - " + word );
             i = i + 1;
 
@@ -372,8 +380,9 @@ public class KSQLDependencyGraph {
         if ( index_WITH > 0 ) {
 
             String fragment = words[index_WITH].substring(14, words[index_WITH].length() - 2);
+            // String fragment = words[index_WITH];
 
-            //       String topicName = "TOPIC_" + fragment;
+            // String topicName = "TOPIC_" + fragment;
             String topicName = fragment;
 
             addLink(topicName, tableName);
@@ -392,14 +401,12 @@ public class KSQLDependencyGraph {
 
     }
 
-
-
     public int inspectJoin(String statement) {
 
         String findStr = " FROM ";
         System.out.println( findStr + " => " + Helper.getCountOfStringsInString(findStr, statement) );
 
-        findStr = " JOIN ";
+        findStr = " LEFT JOIN ";
         System.out.println( findStr + " => " + Helper.getCountOfStringsInString(findStr, statement) );
 
         findStr = " AS ";
@@ -407,35 +414,37 @@ public class KSQLDependencyGraph {
 
         String[] words = statement.split(" ");
 
-        String target = null;
-        String s1 = null;
-        String s2 = null;
-
         String lastWord = " ";
 
         int i = 0;
+
+        String target = null;
+
         for( String w : words ) {
 
+            String s1 = null;
+            String s2 = null;
+
             String current_word = w;
+            System.out.println( "W: [" + lastWord + "] - [" +  current_word  + "]"  );
 
             i = i + 1;
             if ( lastWord.equals("TABLE") || lastWord.equals("STREAM") ) {
-                target = w;
+                target = current_word;
             };
             if (lastWord.equals("FROM")) {
-                s1 = w;
+                s1 = current_word;
+                addLink( s1, target );
             };
             if (lastWord.equals("JOIN")) {
-                s2 = w;
+                s2 = current_word;
+                addLink( s2, target );
             };
 
             lastWord = w;
 
-            System.out.println( s1 + " -> " + target );
-            System.out.println( s2 + " -> " + target );
-
-            addLink( s1, target );
-            addLink( s2, target );
+            System.out.println( "               " + s1 + " -> " + target );
+            System.out.println( "               " + s2 + " -> " + target );
 
         }
 

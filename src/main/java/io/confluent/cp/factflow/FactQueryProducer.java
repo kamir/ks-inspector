@@ -1,10 +1,10 @@
-package io.confluent.cp.clients;
+package io.confluent.cp.factflow;
 
 import org.apache.kafka.clients.producer.*;
 
 import java.util.Properties;
 
-public class FactQueryProducer extends GenericProducerFactory {
+public class FactQueryProducer extends GenericProducerWrapper {
 
     public static long startTime = 0;
 

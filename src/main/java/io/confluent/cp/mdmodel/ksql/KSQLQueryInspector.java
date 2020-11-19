@@ -1,33 +1,30 @@
 package io.confluent.cp.mdmodel.ksql;
 
 import io.confluent.cp.mdmodel.fdg.KSQLDependencyGraph;
+import io.confluent.mdgraph.model.IKnowledgeGraph;
 
 import java.io.*;
 import java.util.*;
 import java.util.logging.Logger;
-
-import org.apache.commons.cli.*;
 
 public class KSQLQueryInspector {
 
     private final static Logger log = Logger.getLogger(KSQLQueryInspector.class.getName());
 
     /**
-     * this is the location in which a particular KSQL-Application is provided.
-     *
+     * workdir is the location in which a particular KSQL-Application is provided.
      */
-    public String workdir = ".";
-    /**
-     * In this folder we expect the following folders:
-     *
-     * default_queryFolder         : holds the developed KSQL queries.
-     *
-     * default_queryBufferFolder   : the system stores the responses from the KSQL-REST-API in this place.
-     *
-     */
-    String default_queryFolder = "query-stage/query-to-deploy-to-ksql-server";
-    String default_queryBufferFolder = "query-stage/query-to-deploy-to-ksql-server";
+    public static String workdir = "./ksqldb-query-stage";
 
+    /**
+     * In a workdir folder we expect the following folders:
+     *
+     * default_queryDeployStageFolder       : holds the developed KSQL queries.
+     *
+     * default_queryBuffer                  : the system stores the responses from the KSQL-REST-API in this place.
+     */
+    String default_queryBuffer = "/query-loaded-from-ksql-server";
+    String default_queryDeployStageFolder = "/query-to-deploy-to-ksql-server";
 
     /**
      * Example 1: OpenTSx DEMO uses KSQL for TSA on streaming data.
@@ -48,121 +45,56 @@ public class KSQLQueryInspector {
 
     }
 
-    public KSQLQueryInspector(String p, String qfn) {
+    public KSQLQueryInspector(String path, String qfn) {
 
         this();
 
-        this.workdir = p;
+        this.workdir = path;
 
         this.default_queryFileName = qfn;
 
     }
 
-    public static void main( String[] args ) throws Exception {
+    public static void inspectQueryFile(String p, String qf, IKnowledgeGraph graph) throws Exception {
 
-        Options options = new Options();
-        options.addOption(Option.builder("p")
-                .longOpt("projectPath")
-                .hasArg(true)
-                .desc("BASE PATH for streaming app scripts and topology-dumps ... this is the place from which data is loaded [REQUIRED]")
-                .required(true)
-                .build());
-
-        options.addOption(Option.builder("qf")
-                .longOpt("queryFileName")
-                .hasArg(true)
-                .desc("Filename for the KSQL query file which needs to be analysed ... this is the central part of the analysis [REQUIRED]")
-                .required(true)
-                .build());
-
-        options.addOption(Option.builder("ks")
-                .longOpt("ksql-server")
-                .hasArg(true)
-                .desc("the hostname/IP of the KSQL server we want to work with [REQUIRED]")
-                .required(true)
-                .build());
-
-        options.addOption(Option.builder("bss")
-                .longOpt("bootstrap.servers")
-                .hasArg(true)
-                .desc("the Kafka bootstrap.servers ... [OPTIONAL]")
-                .required(false)
-                .build());
-
-        CommandLineParser parser = new DefaultParser();
-
-        CommandLine cmd = null;
-
-        String p = ".";
-        String qf = "opentsx.ksql";
         String ks = "127.0.0.1";
         String port = "8088";
-        String bss = "localhost:9092";
-
-        try {
-
-            cmd = parser.parse(options, args);
-
-            if (cmd.hasOption("p")) {
-                p = cmd.getOptionValue("p");
-                File f = new File( p );
-                System.out.println("--projectPath option = " + f.getAbsolutePath() + " (readable: "+f.canRead()+")");
-                if ( !f.canRead() ) {
-                    System.exit( -1 );
-                }
-
-            }
-
-            if (cmd.hasOption("ks")) {
-                ks = cmd.getOptionValue("ks");
-                System.out.println("--ksql-server option = " + ks);
-
-                if ( ks.contains( ":" ) ) {
-                    String[] PARTS = ks.split(":");
-                    ks = PARTS[0];
-                    port = PARTS[1];
-                }
-
-
-            }
-
-            if (cmd.hasOption("qf")) {
-                qf = cmd.getOptionValue("qf");
-                System.out.println("--queryFileName option = " + qf);
-            }
-
-            if (cmd.hasOption("bss")) {
-                bss = cmd.getOptionValue("bss");
-                System.out.println("--bootstrap.servers option = " + bss);
-            }
-
-        }
-        catch (ParseException pe) {
-            System.out.println("Error parsing command-line arguments!");
-            System.out.println("Please, follow the instructions below:");
-            HelpFormatter formatter = new HelpFormatter();
-            formatter.printHelp( "KSQLQueryInspector : ", options );
-            System.exit(1);
-        }
 
         KSQLQueryInspector inspector = new KSQLQueryInspector( p, qf );
 
-        inspector.appContext = new KSQLDBApplicationContext( inspector.getQueryFolder(), inspector.default_queryFileName, inspector.getQueryBufferFolder(), ks, port );
+        inspector.appContext = new KSQLDBApplicationContext( inspector.getQueryStageFolder(), inspector.default_queryFileName, inspector.getQueryStageFolder(), ks, port );
 
-        inspector.getQueriesFromKSQLServer(inspector.appContext);
+///        graph.registerKSQL
 
         inspector.processStatementsFromFile( inspector.appContext );
 
-        inspector.compareExpacted_vs_available( inspector.appContext );
+    }
 
+    public static void main( String[] args ) throws Exception {
+
+        String p = workdir;
+        String qf = "200_PoC-queries-solution.sql"; // ""opentsx.ksql";
+        String ks = "127.0.0.1";
+        String port = "8088";
+
+        KSQLQueryInspector inspector = new KSQLQueryInspector( p, qf );
+
+        inspector.appContext = new KSQLDBApplicationContext( inspector.getQueryStageFolder(), inspector.default_queryFileName, inspector.getQueryStageFolder(), ks, port );
+
+        //inspector.getQueriesFromKSQLServer(inspector.appContext);
+
+        inspector.processStatementsFromFile( inspector.appContext );
+
+        //inspector.compareExpacted_vs_available( inspector.appContext );
+
+    }
+
+    private String getQueryStageFolder() {
+        return workdir + "/" + default_queryDeployStageFolder;
     }
 
     private String getQueryBufferFolder() {
-        return workdir + "/" + default_queryBufferFolder;
-    }
-
-    private String getQueryFolder() {
-        return workdir + "/" + default_queryFolder;
+        return workdir + "/" + default_queryBuffer;
     }
 
     private void compareExpacted_vs_available(KSQLDBApplicationContext appContext) {
@@ -245,7 +177,7 @@ public class KSQLQueryInspector {
 
         readQueryFile( f );
 
-        log.info( "# of parsed statements: " + statements.size() );
+        log.info( ">>> # of parsed statements: " + statements.size() );
 
         analyseStatements( statements );
 
@@ -280,7 +212,6 @@ public class KSQLQueryInspector {
 
 
     public void analyseStatements(Vector<String> statements) {
-
 
         Hashtable<String,Integer> stats = new Hashtable<String,Integer>();
 

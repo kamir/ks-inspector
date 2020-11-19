@@ -1,0 +1,28 @@
+strict graph G {
+  OpenTSx_Event_Flow_State [ label="OpenTSx_Event_Flow_State" ];
+  OpenTSx_Event_Flow_State_stream [ label="OpenTSx_Event_Flow_State_stream" ];
+  OpenTSx_Episodes [ label="OpenTSx_Episodes" ];
+  OpenTSx_Episodes_stream [ label="OpenTSx_Episodes_stream" ];
+  OpenTSx_Events [ label="OpenTSx_Events" ];
+  OpenTSx_Events_stream [ label="OpenTSx_Events_stream" ];
+  OPENTSX_EPISODES_STREAM [ label="OPENTSX_EPISODES_STREAM" ];
+  OPENTSX_EPISODES_MD_STREAM [ label="OPENTSX_EPISODES_MD_STREAM" ];
+  DFA_1 [ label="DFA_1" ];
+  PEAKS_1 [ label="PEAKS_1" ];
+  DECAY_1 [ label="DECAY_1" ];
+  GROWTH_1 [ label="GROWTH_1" ];
+  ALL_RESULTS_MERGED [ label="ALL_RESULTS_MERGED" ];
+  OpenTSx_Event_Flow_State -- OpenTSx_Event_Flow_State_stream;
+  OpenTSx_Episodes -- OpenTSx_Episodes_stream;
+  OpenTSx_Events -- OpenTSx_Events_stream;
+  OPENTSX_EPISODES_STREAM -- OPENTSX_EPISODES_MD_STREAM;
+  OPENTSX_EPISODES_STREAM -- DFA_1;
+  OPENTSX_EPISODES_STREAM -- PEAKS_1;
+  OPENTSX_EPISODES_STREAM -- DECAY_1;
+  OPENTSX_EPISODES_STREAM -- GROWTH_1;
+  OPENTSX_EPISODES_MD_STREAM -- ALL_RESULTS_MERGED;
+  DFA_1 -- ALL_RESULTS_MERGED;
+  PEAKS_1 -- ALL_RESULTS_MERGED;
+  DECAY_1 -- ALL_RESULTS_MERGED;
+  GROWTH_1 -- ALL_RESULTS_MERGED;
+}

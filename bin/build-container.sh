@@ -1,14 +1,12 @@
 #!/bin/sh
 
-export CLUSTER_ID=lkc-jwgvw
+source build-jars.sh
 
-#
-# temporary folder for local graph-db (embedded Neo4J9
-#
-mkdir graph-db
+# we are in the project root folder ...
+docker build . -t kstb:latest
 
-#
-# We have to create a topic named: _kst_knowledgegraph
-#
-ccloud kafka topic delete _kst_knowledgegraph --cluster $CLUSTER_ID
-ccloud kafka topic create _kst_knowledgegraph --cluster $CLUSTER_ID --partitions 1 --if-not-exists --config retention.ms=-1,retention.bytes=-1
+#docker login --username=yourhubusername --email=youremail@company.com
+
+#docker buikd . -t kamir/kstb:latest
+#docker push yourhubusername/verse_gapminder
+
