@@ -1,0 +1,11 @@
+
+# Kafka
+bootstrap.servers=pkc-4yyd6.us-east1.gcp.confluent.cloud:9092
+security.protocol=SASL_SSL
+sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username='7MIELF4TQDRB6LO7' password='RWg4W/R2xHw9g7XyDk63dB7clGj/fnlbzuhByTlEFAAc3a4KWnfPPEGJ9zlXdYz9';
+sasl.mechanism=PLAIN
+
+# Confluent Cloud Schema Registry
+schema.registry.url=https://psrc-4v1qj.eu-central-1.aws.confluent.cloud
+basic.auth.credentials.source=USER_INFO
+schema.registry.basic.auth.user.info=AIR4NTVWXBVPS7DG:RYuFhIcu/z2uhcHsVdNuAQ+w1GwfWbpaf74X9YIAyHig37OX2d4SVG/GDbYIq2p3
