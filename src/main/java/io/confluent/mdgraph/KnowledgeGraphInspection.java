@@ -4,25 +4,23 @@ package io.confluent.mdgraph;
 import io.confluent.cp.cfg.CCloudClusterWrapper;
 import io.confluent.cp.mdmodel.infosec.Classifications;
 import io.confluent.cp.cs.ClusterStateLoader;
-import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientException;
+import io.confluent.cp.mdmodel.ksql.KSQLQueryInspector;
 import io.confluent.mdgraph.model.IKnowledgeGraph;
 import io.confluent.mdgraph.model.KnowledgeGraphFactory;
 import io.confluent.mdgraph.model.KnowledgeGraphNeo4J;
-import net.christophschubert.kafka.clusterstate.ClientBundle;
 import org.apache.log4j.LogManager;
 
-import java.io.IOException;
 import java.util.Properties;
 
-public class KnowledgeGraphTool {
+public class KnowledgeGraphInspection {
 
-    private static final org.apache.log4j.Logger logger = LogManager.getLogger(KnowledgeGraphTool.class);
+    private static final org.apache.log4j.Logger logger = LogManager.getLogger(KnowledgeGraphInspection.class);
 
     public static void main(String[] ARGS) throws Exception {
 
         System.out.println( ">>> Start Knowledge Graph DEMO ... ");
 
-        KnowledgeGraphTool gt = new KnowledgeGraphTool();
+        KnowledgeGraphInspection gt = new KnowledgeGraphInspection();
 
         Properties propertiesKAFKA = CCloudClusterWrapper.getPropsFrom_ROOT_FOLDER();
 
@@ -37,19 +35,19 @@ public class KnowledgeGraphTool {
         /**
          * Manage Schema MD: the fields will be linked to the tags provided by the catalog.
          */
-        io.confluent.cp.clients.SchemaRegistryClient src = new io.confluent.cp.clients.SchemaRegistryClient();
-        src.populateGraph( g );
+        //io.confluent.cp.factcollector.SchemaRegistryClient src = new io.confluent.cp.factcollector.SchemaRegistryClient();
+        //src.populateGraph( g );
 
         /**
          * Manage CloudClusters which are used as "environments" within the app life-cycle.
          */
-        String environmentPath = "./src/main/cluster-state-tools-data/example2/ccloud-environments.yaml";
+        String environmentPath = "./src/main/cluster-state-tools-data/example1/ccloud-environments.yaml";
         ClusterStateLoader.populateKnowledgeGraphWithEnvironmentDescription( g, environmentPath );
 
         /**
          * Load domain related data which is centrally managed - this describes what applications are expected in a cluster!
          */
-        String domainPath = "./src/main/cluster-state-tools-data/example2/domains";
+        String domainPath = "./src/main/cluster-state-tools-data/example1/domains";
         ClusterStateLoader.populateKnowledgeGraphMultiDomains( g, domainPath );
 
         /** Command available.
@@ -64,6 +62,14 @@ public class KnowledgeGraphTool {
         ClusterStateLoader.populateKnowledgeGraphWithInstanceDescription( g, instancePath2 );
         ClusterStateLoader.populateKnowledgeGraphWithInstanceDescription( g, instancePath3 );
         ClusterStateLoader.populateKnowledgeGraphWithInstanceDescription( g, instancePath4 );
+
+
+        //------------------------
+        // Inspect KSQLDB-QUERIES
+
+        String p = "./ksqldb-query-stage";;
+        String qf = "200_PoC-queries-solution.sql";
+        // KSQLQueryInspector.inspectQueryFile( p, qf, g );
 
         //g.show();
 
@@ -81,7 +87,7 @@ public class KnowledgeGraphTool {
 
     public static KnowledgeGraphNeo4J graph = null;
 
-    public KnowledgeGraphTool() {
+    public KnowledgeGraphInspection() {
         graph = KnowledgeGraphNeo4J.getGraph();
     }
 

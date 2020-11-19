@@ -1,11 +1,11 @@
 package io.confluent.mdgraph.model;
 
-import io.confluent.cp.clients.FactQueryProducer;
+import io.confluent.cp.factflow.FactQueryProducer;
 import io.confluent.cp.mdmodel.infosec.Classifications;
 import io.confluent.kafka.schemaregistry.client.rest.entities.Schema;
 import io.confluent.kafka.schemaregistry.client.rest.entities.SchemaReference;
 import net.christophschubert.kafka.clusterstate.formats.domain.*;
-import net.christophschubert.kafka.clusterstate.formats.env.Cluster;
+import net.christophschubert.kafka.clusterstate.formats.env.CloudCluster;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.neo4j.driver.Driver;
 
@@ -13,6 +13,7 @@ import org.neo4j.driver.Driver;
 import java.io.File;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 public class KnowledgeGraphViaKafkaTopic implements IKnowledgeGraph {
@@ -230,9 +231,9 @@ public class KnowledgeGraphViaKafkaTopic implements IKnowledgeGraph {
 
     }
 
-    private void mergeEnvironment(String env, Properties props) {
+    private void mergeCloudCluster(String env, Properties props) {
 
-        String q = "MERGE (t:Environment { name: '" + env + "'});";
+        String q = "MERGE (t:CloudCluster { name: '" + env + "'});";
 
         exequteCypherQuery( q );
 
@@ -241,7 +242,7 @@ public class KnowledgeGraphViaKafkaTopic implements IKnowledgeGraph {
             while( en.hasMoreElements() ) {
                 String k = en.nextElement();
                 String v = props.getProperty( k );
-                addPropertiesToNode("Environment", "name", env, k, v);
+                addPropertiesToNode("CloudCluster", "name", env, k, v);
             }
         }
 
@@ -359,7 +360,7 @@ public class KnowledgeGraphViaKafkaTopic implements IKnowledgeGraph {
     }
 
     @Override
-    public void registerEnvironment(Cluster c, File contextPath) {
+    public void registerCloudCluster(CloudCluster c, File contextPath) {
 
         String md5Hex = DigestUtils.md5Hex(contextPath.getAbsolutePath()).toUpperCase();
 
@@ -373,11 +374,86 @@ public class KnowledgeGraphViaKafkaTopic implements IKnowledgeGraph {
         props.put( "ownerContact", c.ownerContact );
         props.put( "provider",c.provider );
         props.put( "region",c.region );
-        //props.put( c.tags );
+
         props.put( "org", c.org );
         props.put( "availability", c.availability );
 
-        this.mergeEnvironment( c.name , props );
+        this.mergeCloudCluster( c.name , props );
+
+        for(String tag : c.tags ) {
+            this.addTagLink( c.name, "CloudCluster", tag );
+        }
+
+        Map<String,String> principals = c.principals;
+        for( String alias : principals.keySet() ) {
+            addLink( c.name, "CloudCluster", alias, "PrincipleAlias", "hasPrincipleAlias" );
+            addLink( alias,"PrincipleAlias", principals.get( alias ), "ServiceAccount", "hasServiceAccount" );
+            addLink( c.name, "CloudCluster", principals.get( alias ), "ServiceAccount", "hasServiceAccount" );
+        }
+
+        /**
+         * Read the Domain for a particular DOMAIN File in the DOMAIN
+         */
+        String dff = c.domainFileFolder;
+        String CCNAME = c.name;
+        if ( dff != null ) {
+            File f = new File( dff );
+
+            System.out.println( "# Link Domain to CloudCluster: " + CCNAME + " -> " + f.canRead() + " => " + dff + " :: " + f.getAbsolutePath() );
+            /**
+             * Iterate over a list of folders within a domain-folder
+             */
+            for (File folders : f.listFiles()) {
+
+                System.out.println( folders.getAbsolutePath() + " - " + folders.canRead() );
+
+                if( folders.isDirectory() ) {
+
+                    for (File file : folders.listFiles()) {
+
+                        final DomainParser parser = new DomainParser();
+
+                        try {
+                            final Domain domain = parser.loadFromFile(file);
+
+                            String DN = domain.name;
+
+                            addLink(CCNAME, "CloudCluster", DN, "Domain", "hostsDomain");
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }
+        else {
+            System.out.println( "# No Domain-Folder is available in " + CCNAME );
+        }
+
+    }
+
+    private void addLink(String sname, String stype, String tname, String ttype, String linkName) {
+
+        mergeNode( stype, sname, null );
+        mergeNode( ttype, tname, null );
+
+        String q = "MATCH (s:" + stype + "),(t:"+ ttype +") " +
+                "WHERE s.name = '" + sname + "' AND t.name = '" + tname + "' " +
+                "MERGE (s)-[r:" + linkName + "]->(t);";
+
+        exequteCypherQuery( q );
+
+    }
+
+    private void addTagLink(String name, String type, String tag) {
+
+        mergeNode( "tag", tag, null );
+
+        String q = "MATCH (n1:" + type + "),(t:tag) " +
+                "WHERE n1.name = '" + name + "' AND t.name = '" + tag + "' " +
+                "MERGE (n1)-[r:hasTag]->(t);";
+
+        exequteCypherQuery( q );
 
     }
 

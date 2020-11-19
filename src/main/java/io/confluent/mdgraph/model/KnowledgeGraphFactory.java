@@ -1,6 +1,6 @@
 package io.confluent.mdgraph.model;
 
-import io.confluent.cp.clients.FactQueryProducer;
+import io.confluent.cp.factflow.FactQueryProducer;
 
 import java.util.Properties;
 

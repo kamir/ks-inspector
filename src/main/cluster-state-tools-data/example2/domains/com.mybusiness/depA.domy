@@ -6,49 +6,38 @@
 #
 
 ---
-name: Clickstream
+name: com.mybusiness.depA
+
 projects:
-  - name: ao.socketserver
+  - name: p1
     # track the owner of the application (the project with an application, since a project may have multiple apps)
-    #owner: Jon
-    #ownerContact: jon@ao.com
+    #owner: Jack
+    #ownerContact: Jack@mybusiness.com
     topics:
-      - name: socket_visitorjourney_visitor_page_visit
+      - name: rawEvents
         dataModel:
           key:
             type: String
           value:
             type: Json
-      - name: socket_visitorjourney_visitor_interaction
+      - name: cleanEvents
         dataModel:
           key:
             type: String
           value:
             type: Json
-      - name: socket_visitorjourney_visitor_track_interaction
+      - name: enrichedEvents
         dataModel:
           key:
             type: String
           value:
             type: Json
-      - name: socket_visitorjourney_displayed_topbanner
+      - name: aggregatedFacts
         dataModel:
           key:
             type: String
           value:
             type: Json
-      - name: visitor_engine_visitor_message
-        dataModel:
-          key:
-            type: String
-          value:
-            type: Json
-      - name: OpenTSx_Episodes_A
-        dataModel:
-          key:
-            type: String
-          value:
-            type: Avro
       - name: topicA # this uses a field SSN
         dataModel:
           key:
@@ -57,17 +46,40 @@ projects:
             type: Avro
     producers:
         # todo : FIND A MECHANISM FOR VARIABLE REPLACEMENT ...
-      - principal: "${ao.socketserver.principal.prod.env}"
-        # prefixGroup: true
-        groupId: "SocketServer" # => APPLICATION INSTANCE
+      - principal: "com.mybusiness.depA.prod"
+        groupId: "appServer"
         topics:
-          - socket_visitorjourney_visitor_page_visit
-          - socket_visitorjourney_visitor_interaction
-          - socket_visitorjourney_visitor_track_interaction
-          - socket_visitorjourney_displayed_topbanner
+          - name: aggregatedFacts
+            dataModel:
+                key:
+                  type: String
+                value:
+                  type: Avro
+          - name: enrichedEvents
+            dataModel:
+              key:
+                type: String
+              value:
+                type: Avro
+          - name: cleanEvents
+            dataModel:
+              key:
+                type: String
+              value:
+                type: Avro
     consumers:
-      - principal: "${ao.socketserver.principal.cons.env}"
-        groupId: "socket-server-consumer" # => APPLICATION INSTANCE
-        # prefixGroup: true
+      - principal: "com.mybusiness.depA.cons"
+        groupId: "appServer-consumer" # => APPLICATION INSTANCE
         topics:
-          - visitor_engine_visitor_message
+          - name: topicA
+            dataModel:
+              key:
+                type: String
+              value:
+                type: Avro
+          - name: aggregatedFacts
+            dataModel:
+              key:
+                type: String
+              value:
+                type: Avro

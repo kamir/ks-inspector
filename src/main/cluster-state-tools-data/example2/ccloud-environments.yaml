@@ -1,8 +1,9 @@
 #########################################################################################
 # This file describes three Confluent Platform environments, used for our demo scenario.
 #
-cloudClusters:
-  - type: developer-sandbox #dev/QA/prod, defines the 'environment'
+clusters:
+  - name: cluster_ABC # from, e.g., the Web UI
+    type: DEV #DEV/QA/ROD
 
     # from cloud ui
     clusterId: lkc-jwgvw
@@ -10,7 +11,6 @@ cloudClusters:
     provider: GCP
     region: us-east1
     availability: single zone
-    name: cluster_AO # from, e.g., the Web UI
 
     # defined by organization
     owner: Mirko
@@ -20,14 +20,16 @@ cloudClusters:
       - low-performance
       - insecure
       - open
+      - developer_sandbox
 
     principals:
-      - ao.socketserver.principal.prod.env: USER:1234
-      - ao.socketserver.principal.cons.env: USER:5678
+      com.mybusiness.depA.prod: USER:1234
+      com.mybusiness.depA.cons: USER:5678
 
-    domainFileFolder: instances/domains
-
-    clusterLevelAccessFolder: instances/cla
+### TURN THIS INTO A list of domain folders
+    domainFileFolder: ./src/main/cluster-state-tools-data/example2/domains
+### TURN THIS INTO A files
+    clusterLevelAccessFolder: ./src/main/cluster-state-tools-data/example2/cla
 
     # provided by cluster admin
     clientProperties:
@@ -35,14 +37,14 @@ cloudClusters:
       kafka:
         bootstrap.servers: pkc-4yyd6.us-east1.gcp.confluent.cloud:9092
         security.protocol: SASL_SSL
-        sasl.jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule   required username='{{ CLUSTER_API_KEY }}'   password='{{ CLUSTER_API_SECRET }}';
+        sasl.jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username="${CLUSTER_API_KEY}"  password="{CLUSTER_API_SECRET}";
         sasl.mechanism: PLAIN
 
       # technical details for accessing schema-registry-service
       schemaRegistry:
         schema.registry.url: https://psrc-4v1qj.eu-central-1.aws.confluent.cloud
         basic.auth.credentials.source: USER_INFO
-        schema.registry.basic.auth.user.info: SR_API_KEY:SR_API_SECRET
+        schema.registry.basic.auth.user.info: ${SR_API_KEY}:${SR_API_SECRET}
 
       # technical details to access the kubernetes stack
       knowledgeGraphService:
@@ -52,80 +54,79 @@ cloudClusters:
   #
   # Here, we have only essential properties, no optional Kubernetes stack and no graph-db.
   #
-  - type: QA-Cluster
-    # from cloud ui
-    clusterId: lkc-jwxyz
+  - name: cluster_CDE # defined by organization
+    type: QA
+    clusterId: lkc-jwxyz # from cloud ui
     clusterType: basic
     provider: GCP
     region: us-east1
     availability: single zone
-    name: cluster_AO_QA
-    # defined by organization
-    owner: Jon
-    ownerContact: jon@ao.com
-    org: AO UK
+
+    owner: Jim
+    ownerContact: jim@mybusiness.com
+    org: MyBusiness
     tags:
       - high-performance
       - secure
       - managed
     principals:
-      - ao.socketserver.principal.prod.env: USER:1234
-      - ao.socketserver.principal.cons.env: USER:5678
+      ao.socketserver.principal.prod.env: USER:1234
+      ao.socketserver.principal.cons.env: USER:5678
 
-    domainFileFolder: instances/domains
+    #domainFileFolder: ./src/main/cluster-state-tools-data/example2/domains
 
-    clusterLevelAccessFolder: instances/cla
-
+    clusterLevelAccessFolder: ./src/main/cluster-state-tools-data/example2/cla
 
     clientProperties:
       # technical details for accessing kafka-service
       kafka:
         bootstrap.servers: pkc-4yyd6.us-east1.gcp.confluent.cloud:9092
         security.protocol: SASL_SSL
-        sasl.jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule   required username='{{ CLUSTER_API_KEY }}'   password='{{ CLUSTER_API_SECRET }}';
+        sasl.jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule   required username="${CLUSTER_API_KEY}"   password="${CLUSTER_API_SECRET}";
         sasl.mechanism: PLAIN
       # technical details for accessing schema-registry-service
       schemaRegistry:
         schema.registry.url: https://psrc-4v1qj.eu-central-1.aws.confluent.cloud
         basic.auth.credentials.source: USER_INFO
-        schema.registry.basic.auth.user.info: SR_API_KEY:SR_API_SECRET
+        schema.registry.basic.auth.user.info: ${SR_API_KEY}:${SR_API_SECRET}
 
   #
   # Here, we have only essential properties, no optional Kubernetes stack and no graph-db.
   #
-  - type: PROD-Cluster
+  - name: PROD-cluster-101
+    type: PROD
     # from cloud ui
     clusterId: lkc-jwxyz
     clusterType: basic
     provider: GCP
     region: us-east1
     availability: single zone
-    name: AO-PROD-cluster-101
+
     # defined by organization
-    owner: Jon
-    ownerContact: jon@ao.com
-    org: AO UK
+    owner: Jim
+    ownerContact: jim@mybusiness.com
+    org: MyBusiness
     tags:
       - high-performance
       - secure
       - managed
     principals:
-      - ao.socketserver.principal.prod.env: USER:1234
-      - ao.socketserver.principal.cons.env: USER:5678
+      ao.socketserver.principal.prod.env: USER:1234
+      ao.socketserver.principal.cons.env: USER:5678
 
-    domainFileFolder: instances/domains
+    #domainFileFolder: ./src/main/cluster-state-tools-data/example2/domains
 
-    clusterLevelAccessFolder: instances/cla
+    clusterLevelAccessFolder: ./src/main/cluster-state-tools-data/example2/cla
 
     clientProperties:
       kafka:
         # technical details for accessing kafka-service
         bootstrap.servers: pkc-4yyd6.us-east1.gcp.confluent.cloud:9092
         security.protocol: SASL_SSL
-        sasl.jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule   required username='{{ CLUSTER_API_KEY }}'   password='{{ CLUSTER_API_SECRET }}';
+        sasl.jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule   required username="${CLUSTER_API_KEY}"   password="${CLUSTER_API_SECRET}";
         sasl.mechanism: PLAIN
       # technical details for accessing schema-registry-service
       schemaRegistry:
         schema.registry.url: https://psrc-4v1qj.eu-central-1.aws.confluent.cloud
         basic.auth.credentials.source: USER_INFO
-        schema.registry.basic.auth.user.info: SR_API_KEY:SR_API_SECRET
+        schema.registry.basic.auth.user.info: ${SR_API_KEY}:${SR_API_SECRET}

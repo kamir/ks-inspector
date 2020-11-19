@@ -9,6 +9,9 @@ import java.util.Hashtable;
  * We have to implement a reader to take the real configuration instead of our "fixed tags" used for the
  * initial Demo.
  *
+ * The method: addSchemaVersionToSubject( ... ) calls this class to look-up a classification tag for a particular
+ * field in a schema.
+ *
  */
 public class Classifications {
 
@@ -26,6 +29,10 @@ public class Classifications {
         String name2 = "Name";
         String[] classifications2 = { "PII/Personal" };
         tags.put( name2, classifications2 );
+
+        String name0 = "PAN";
+        String[] classifications0 = { "PII/Personal" };
+        tags.put( name0, classifications0 );
 
         String name3 = "Address";
         String[] classifications3 = { "PII/Personal" };

@@ -15,9 +15,8 @@ import java.util.Properties;
 
 public class CCloudClusterWrapper {
 
-    public static Properties getPropsFrom_ROOT_FOLDER() {
 
-        String configFile = "./src/main/resources/ccloud.props"; // could also be a constant
+    public static Properties getPropsFrom_ROOT_FOLDER(String configFile) {
 
         Properties props = new Properties();
 
@@ -35,6 +34,14 @@ public class CCloudClusterWrapper {
         }
 
         return null;
+
+    }
+
+    public static Properties getPropsFrom_ROOT_FOLDER() {
+
+        String configFile = "./src/main/resources/ccloud.props"; // could also be a constant
+
+        return getPropsFrom_ROOT_FOLDER( configFile );
 
     }
 
@@ -57,4 +64,6 @@ public class CCloudClusterWrapper {
         return null;
 
     }
+
+
 }

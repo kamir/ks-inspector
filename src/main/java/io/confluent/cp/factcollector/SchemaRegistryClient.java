@@ -1,11 +1,10 @@
-package io.confluent.cp.clients;
+package io.confluent.cp.factcollector;
 
 import io.confluent.cp.cfg.CCloudClusterWrapper;
 import io.confluent.kafka.schemaregistry.client.rest.*;
 import io.confluent.kafka.schemaregistry.client.rest.entities.Schema;
 import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientException;
 import io.confluent.mdgraph.model.IKnowledgeGraph;
-import io.confluent.mdgraph.model.KnowledgeGraphNeo4J;
 
 import java.io.IOException;
 import java.util.HashMap;

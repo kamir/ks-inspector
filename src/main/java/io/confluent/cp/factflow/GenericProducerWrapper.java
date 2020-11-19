@@ -1,13 +1,8 @@
-package io.confluent.cp.clients;
+package io.confluent.cp.factflow;
 
 import org.apache.kafka.clients.producer.Producer;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.Properties;
-
-public class GenericProducerFactory {
+public class GenericProducerWrapper {
 
     public static Producer producer = null;
 

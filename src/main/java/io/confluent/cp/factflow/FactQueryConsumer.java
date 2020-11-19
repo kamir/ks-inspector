@@ -1,18 +1,15 @@
-package io.confluent.cp.clients;
+package io.confluent.cp.factflow;
 
 import io.confluent.mdgraph.model.KnowledgeGraphNeo4J;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.clients.producer.*;
 
 import java.util.Collections;
 import java.util.Properties;
 
-import static io.confluent.cp.clients.FactQueryProducer.createProducer;
-
-public class FactQueryConsumer extends GenericProducerFactory {
+public class FactQueryConsumer extends GenericProducerWrapper {
 
     Consumer<String, String> consumer = null;
 

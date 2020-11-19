@@ -1,19 +1,16 @@
 package io.confluent.mdgraph.model;
 
-import io.confluent.cp.clients.FactQueryConsumer;
+import io.confluent.cp.factflow.FactQueryConsumer;
 
 import org.apache.log4j.LogManager;
 import org.neo4j.driver.*;
 import org.neo4j.driver.Result;
-import org.neo4j.graphdb.Node;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 

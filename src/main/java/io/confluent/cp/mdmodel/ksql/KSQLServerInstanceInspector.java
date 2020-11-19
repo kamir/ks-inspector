@@ -1,16 +1,16 @@
 package io.confluent.cp.mdmodel.ksql;
 
 import io.confluent.cp.mdmodel.fdg.KSQLDependencyGraph;
-
-import java.io.*;
-import java.util.*;
-import java.util.logging.Logger;
-
 import org.apache.commons.cli.*;
 
-public class KSQLQueryInspector {
+import java.io.*;
+import java.util.Hashtable;
+import java.util.Vector;
+import java.util.logging.Logger;
 
-    private final static Logger log = Logger.getLogger(KSQLQueryInspector.class.getName());
+public class KSQLServerInstanceInspector {
+
+    private final static Logger log = Logger.getLogger(KSQLServerInstanceInspector.class.getName());
 
     /**
      * this is the location in which a particular KSQL-Application is provided.
@@ -42,13 +42,13 @@ public class KSQLQueryInspector {
      */
     Vector<String> statements = new Vector<>();
 
-    public KSQLQueryInspector() {
+    public KSQLServerInstanceInspector() {
 
         dg = KSQLDependencyGraph.getKSQLDependencyGraph();
 
     }
 
-    public KSQLQueryInspector(String p, String qfn) {
+    public KSQLServerInstanceInspector(String p, String qfn) {
 
         this();
 
@@ -145,7 +145,7 @@ public class KSQLQueryInspector {
             System.exit(1);
         }
 
-        KSQLQueryInspector inspector = new KSQLQueryInspector( p, qf );
+        KSQLServerInstanceInspector inspector = new KSQLServerInstanceInspector( p, qf );
 
         inspector.appContext = new KSQLDBApplicationContext( inspector.getQueryFolder(), inspector.default_queryFileName, inspector.getQueryBufferFolder(), ks, port );
 

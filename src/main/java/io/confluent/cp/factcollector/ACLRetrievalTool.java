@@ -1,4 +1,4 @@
-package io.confluent.cp.clients;
+package io.confluent.cp.factcollector;
 
 import io.confluent.cp.cfg.CCloudClusterWrapper;
 import org.apache.kafka.clients.admin.AdminClient;

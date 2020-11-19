@@ -18,50 +18,14 @@ export KST_NEO4J_USERNAME="neo4j";
 export KST_NEO4J_PASSWORD="admin";
 
 ########################################################################################################################
-# Show the commands which are available in the tool.
-########################################################################################################################
-#
-# java -jar target/ks-inspector-1.0-SNAPSHOT.jar
-
-########################################################################################################################
-# Inspect the domains defined in the DOM files in folder:
-########################################################################################################################
-#
-#   src/main/cluster-state-tools-data/contexts/example1/instances
-#
-# java -jar target/ks-inspector-1.0-SNAPSHOT.jar inspect  \
-#     -b pkc-4yyd6.us-east1.gcp.confluent.cloud:9092  \
-#     -e KST src/main/cluster-state-tools-data/contexts/example1/instances
-
-########################################################################################################################
-# Inspect the SchemaRegistry data.
-########################################################################################################################
-#
-# java -jar target/ks-inspector-1.0-SNAPSHOT.jar inspectSchemaRegistry  \
-#     -b pkc-4yyd6.us-east1.gcp.confluent.cloud:9092  \
-#     -e KST src/main/cluster-state-tools-data/contexts/example1/instances
-
-########################################################################################################################
-# Export the graph data which is persisted in the Kafka topic named _kst_knowledgegraph.
-########################################################################################################################
-#
-# java -jar target/ks-inspector-1.0-SNAPSHOT.jar export2Neo4J  \
-#      -b pkc-4yyd6.us-east1.gcp.confluent.cloud:9092  \
-#      -e KST
-
-########################################################################################################################
-# Clear the graph in NEO4J.
-########################################################################################################################
-#
-# java -jar target/ks-inspector-1.0-SNAPSHOT.jar clearGraph \
-#      -e KST
-
-########################################################################################################################
 # Query the knowledge graph with a standard query, useful for operators.
 ########################################################################################################################
-#
 java -jar target/ks-inspector-1.0-SNAPSHOT.jar queryGraph  \
      -e KST src/main/cypher/cmd/$1.cypher
 
+#------------------------------------------------------------------------
+# a very compact tutoorial for cypher queries is available here:
+#    https://nick.readthedocs.io/en/latest/Big_Data/neo4j_examples/
+#------------------------------------------------------------------------
 
 
