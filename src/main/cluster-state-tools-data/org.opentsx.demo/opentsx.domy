@@ -1,0 +1,22 @@
+---
+name: opentsx
+
+projects:
+  - name: simple.demo.1
+    topics:
+    - name:  rawEvents
+#    additionalProd:
+#    - principal: MK1
+#    additionalCons:
+#    - principal: MK1
+
+      dataModel:
+        key:
+          type: String
+        value:
+          type: Avro
+    producers:
+      - principal: "User:EA5OEKFEB2Q5DCM7"
+        topics:
+          - logistics_supplychain_app_stock_stockavailability
+ 

@@ -1,0 +1,23 @@
+---
+name: GRIDSIM
+projects:
+  - name: grid.sim.tool
+    producers:
+      - principal: "${GRID-SIM-USER-PRINCIPAL}"
+        groupId: "GRID-SIM-DATA-CREATOR"
+        topics:
+          - name: grid-regions
+              configs:
+                "num.partitions": "1"
+          - name: grid-stations
+              configs:
+                "num.partitions": "1"
+          - name: grid-plants
+              configs:
+                "num.partitions": "1"
+          - name: grid-link-flow-data
+              configs:
+                "num.partitions": "1"
+          - name: grid-static-links
+              configs:
+                "num.partitions": "1"
