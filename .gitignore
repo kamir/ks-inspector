@@ -47,3 +47,6 @@ src/main/resources/ccloud.props
 /graph-db/
 /out/
 /src/main/cluster-state-tools-data/contexts/example1/
+
+# this file contains API-Keys and API-Secrets for all environments
+bin/setenv.sh
