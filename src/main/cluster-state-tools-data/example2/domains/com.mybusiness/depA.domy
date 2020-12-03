@@ -15,12 +15,20 @@ projects:
     #ownerContact: Jack@mybusiness.com
     topics:
       - name: rawEvents
+        configs:
+          "num.partitions": "12"
+          "cleanup.policy": "compact"
+          "segment.ms": "600000"
         dataModel:
           key:
             type: String
           value:
             type: Json
       - name: cleanEvents
+        consumerPrincipals:
+          - "com.mybusiness.depA.cons"
+        producerPrincipals:
+          - "com.mybusiness.depA.prod"
         dataModel:
           key:
             type: String
@@ -43,43 +51,17 @@ projects:
           key:
             type: String
           value:
-            type: Avro
+            type: Json
     producers:
-        # todo : FIND A MECHANISM FOR VARIABLE REPLACEMENT ...
       - principal: "com.mybusiness.depA.prod"
-        groupId: "appServer"
+        groupId: "appServer-consumer" # => APPLICATION INSTANCE
         topics:
-          - name: aggregatedFacts
-            dataModel:
-                key:
-                  type: String
-                value:
-                  type: Avro
-          - name: enrichedEvents
-            dataModel:
-              key:
-                type: String
-              value:
-                type: Avro
-          - name: cleanEvents
-            dataModel:
-              key:
-                type: String
-              value:
-                type: Avro
+          - aggregatedFacts
+          - enrichedEvents
+          - cleanEvents
     consumers:
       - principal: "com.mybusiness.depA.cons"
         groupId: "appServer-consumer" # => APPLICATION INSTANCE
         topics:
-          - name: topicA
-            dataModel:
-              key:
-                type: String
-              value:
-                type: Avro
-          - name: aggregatedFacts
-            dataModel:
-              key:
-                type: String
-              value:
-                type: Avro
+          - topicA
+          - aggregatedFacts

@@ -11,10 +11,7 @@ import org.neo4j.driver.Driver;
 
 
 import java.io.File;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 public class KnowledgeGraphViaKafkaTopic implements IKnowledgeGraph {
 
@@ -394,40 +391,47 @@ public class KnowledgeGraphViaKafkaTopic implements IKnowledgeGraph {
         /**
          * Read the Domain for a particular DOMAIN File in the DOMAIN
          */
-        String dff = c.domainFileFolder;
+        Set<String> dffs = c.domainFileFolders;
+
         String CCNAME = c.name;
-        if ( dff != null ) {
-            File f = new File( dff );
 
-            System.out.println( "# Link Domain to CloudCluster: " + CCNAME + " -> " + f.canRead() + " => " + dff + " :: " + f.getAbsolutePath() );
-            /**
-             * Iterate over a list of folders within a domain-folder
-             */
-            for (File folders : f.listFiles()) {
+        if (dffs != null) {
 
-                System.out.println( folders.getAbsolutePath() + " - " + folders.canRead() );
+            for( String dff : dffs ) {
 
-                if( folders.isDirectory() ) {
+                File f = new File(dff);
 
-                    for (File file : folders.listFiles()) {
+                System.out.println("# Link Domain to CloudCluster: " + CCNAME + " -> " + f.canRead() + " => " + dff + " :: " + f.getAbsolutePath());
+                /**
+                 * Iterate over a list of folders within a domain-folder
+                 */
+                for (File folders : f.listFiles()) {
 
-                        final DomainParser parser = new DomainParser();
+                    System.out.println(folders.getAbsolutePath() + " - " + folders.canRead());
 
-                        try {
-                            final Domain domain = parser.loadFromFile(file);
+                    if (folders.isDirectory()) {
 
-                            String DN = domain.name;
+                        for (File file : folders.listFiles()) {
 
-                            addLink(CCNAME, "CloudCluster", DN, "Domain", "hostsDomain");
-                        } catch (Exception ex) {
-                            ex.printStackTrace();
+                            final DomainParser parser = new DomainParser();
+
+                            try {
+                                final Domain domain = parser.loadFromFile(file);
+
+                                String DN = domain.name;
+
+                                addLink(CCNAME, "CloudCluster", DN, "Domain", "hostsDomain");
+                            } catch (Exception ex) {
+                                ex.printStackTrace();
+                            }
                         }
                     }
                 }
             }
+
         }
         else {
-            System.out.println( "# No Domain-Folder is available in " + CCNAME );
+            System.out.println("# No Domain-Folder is available in " + CCNAME);
         }
 
     }

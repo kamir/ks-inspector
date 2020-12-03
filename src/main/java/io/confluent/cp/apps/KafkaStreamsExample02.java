@@ -3,11 +3,9 @@ package io.confluent.cp.apps;
 import io.confluent.cp.cfg.CCloudClusterWrapper;
 import io.confluent.cp.cs.AppDescriptorLoader;
 import io.confluent.cp.mdmodel.kstreams.KafkaStreamsApplicationContextHandler;
-import net.christophschubert.kafka.clusterstate.cli.PropertyMergeTool;
 import net.christophschubert.kafka.clusterstate.formats.domain.Domain;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
-
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.Topology;
@@ -18,30 +16,20 @@ import org.apache.kafka.streams.kstream.Produced;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Properties;
 
-public class KafkaStreamsExample01 {
+public class KafkaStreamsExample02 {
 
-  private static final org.apache.log4j.Logger logger = Logger.getRootLogger();
+  private static final Logger logger = Logger.getRootLogger();
 
-  private static final String env_file_path = "./src/main/cluster-state-tools-data/example2/ccloud-environments.yaml";
-
-  private static final String defautl_cluster_name = "MyClusterABC";
-
-  /**
-   * This function overwrites the default properties taken from ENV variable and ENV-SPEC file.
-   *
-   * @return
-   */
   public static Properties getFlowSpecificProperties() {
 
-    // get application client properties from central-authority:
-    // read from ENV ....
-    // if not available: use default.
+    // NO ENV DEFINED, just pick up Props from project's root folder.
+    Properties props = CCloudClusterWrapper.getPropsFrom_ROOT_FOLDER();
 
-    Properties props = PropertyMergeTool.getPropsFrom_ENV_VARS_AND_DESCRIPTOR( env_file_path, defautl_cluster_name );
-
-    props.put(StreamsConfig.APPLICATION_ID_CONFIG, "KafkaStreams_EXAMPLE_01_" + System.currentTimeMillis() );
+    props.put(StreamsConfig.APPLICATION_ID_CONFIG, "KafkaStreams_EXAMPLE_02_" + System.currentTimeMillis() );
 
     props.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass());
     props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass());
@@ -52,8 +40,7 @@ public class KafkaStreamsExample01 {
 
   public static void main(String[] args) throws Exception {
 
-    // here we have prepopulated properties based on ENVVARS and ENV_DESCRIPTOR
-    final Properties props = getFlowSpecificProperties();
+    Properties props = getFlowSpecificProperties();
 
     StreamsConfig streamsConfig = new StreamsConfig( props );
 
@@ -80,23 +67,16 @@ public class KafkaStreamsExample01 {
     /**
      * Application Context Management ... we dump PROPS and TOPOLOGY to a topic in our kafka cluster.
      */
-    String instancePath1 = "./src/main/cluster-state-tools-data/example2/instances/order-processing.domy";
-
+    String instancePath1 = "./src/main/cluster-state-tools-data/contexts/order-processing/instances/order-processing-ks1.domy";
     Domain d = AppDescriptorLoader.readAppDescriptor( instancePath1 );
 
     KafkaStreamsApplicationContextHandler.init( "MacBook PRO 2", d.name );
 
     KafkaStreamsApplicationContextHandler.persistTopology( topology.describe().toString()  );
 
-    /**
-     * TODO: MASK the credentials which have been merged into the properties at runtime from ENV variables.
-     */
     KafkaStreamsApplicationContextHandler.persistRuntimeProperties( props );
-
-    /**
-     * TODO: MASK the credentials which have been merged into the properties at runtime from ENV variables.
-     */
     KafkaStreamsApplicationContextHandler.persistRuntimeProperties( System.getenv() );
+
 
     /**
      * Now we are ready for streaming the data ...

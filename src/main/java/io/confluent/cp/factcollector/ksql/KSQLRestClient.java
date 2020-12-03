@@ -39,8 +39,8 @@ public class KSQLRestClient {
         URI uri = new URI("http://"+host+":"+port+"/ksql");
 
         HttpClient client = HttpClients.custom().build();
-/*
 
+/*
         HttpUriRequest request = RequestBuilder.get()
                 .setUri( uri )
                 .setHeader(HttpHeaders.CONTENT_TYPE, "application/vnd.ksql.v1+json; charset=utf-8")
@@ -48,7 +48,6 @@ public class KSQLRestClient {
                 .build();
 
         client.execute(request);
-
 */
 
         HttpPost httpPost = new HttpPost(uri);

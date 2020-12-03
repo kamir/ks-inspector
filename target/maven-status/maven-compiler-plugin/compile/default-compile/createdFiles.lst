@@ -11,6 +11,7 @@ io/confluent/cp/util/graph/analysis/LabelPropagationClustering$Implementation.cl
 io/confluent/mdgraph/KnowledgeGraphInspection.class
 io/confluent/cp/factflow/FactQueryProducer.class
 io/confluent/cp/factcollector/ksql/KSQLDBClient2.class
+io/confluent/cp/governanceprocess/PropertyFileExporter.class
 io/confluent/cp/util/MDLogStore.class
 io/confluent/cp/mdmodel/ksql/KSQLServerInstanceInspector.class
 io/confluent/cp/mdmodel/ksql/Helper.class
@@ -18,9 +19,11 @@ io/confluent/cp/mdmodel/ksql/KSQLQueryInspector.class
 io/confluent/mdgraph/model/KnowledgeGraphNeo4J$1.class
 io/confluent/cp/util/AppContextLogRecord.class
 io/confluent/mdgraph/model/IKnowledgeGraph.class
+io/confluent/cp/apps/KafkaStreamsExample02.class
 io/confluent/cp/factflow/GenericProducerWrapper.class
 io/confluent/cp/factcollector/ksql/KSQLDBClient.class
 io/confluent/cp/util/graph/analysis/LabelPropagationClustering.class
+io/confluent/cp/util/KSTWrapper.class
 io/confluent/cp/mdmodel/infosec/Classifications.class
 io/confluent/mdgraph/model/KnowledgeGraphFactory.class
 io/confluent/mdgraph/model/KnowledgeGraphViaKafkaTopic$1.class

@@ -48,7 +48,7 @@ class CLI {
         }
 
         final Properties properties = CLITools.loadProperties(configFile, bootstrapServer, envVarPrefix);
-        final ClientBundle bundle = ClientBundle.fromProperties(properties, contextPath);
+        final ClientBundle bundle = ClientBundle.fromProperties(properties);
 
         // bundle.describe();
 
@@ -86,7 +86,7 @@ class CLI {
         }
 
         final Properties properties = CLITools.loadProperties(configFile, bootstrapServer, envVarPrefix);
-        final ClientBundle bundle = ClientBundle.fromProperties(properties, contextPath);
+        final ClientBundle bundle = ClientBundle.fromProperties(properties);
 
         // bundle.describe();
 
@@ -133,7 +133,7 @@ class CLI {
         }
 
         final Properties propertiesKAFKA = CLITools.loadProperties(configFile, bootstrapServer, envVarPrefix);
-        final ClientBundle bundle = ClientBundle.fromProperties(propertiesKAFKA, contextPath);
+        final ClientBundle bundle = ClientBundle.fromProperties(propertiesKAFKA);
 
         // bundle.describe();
 

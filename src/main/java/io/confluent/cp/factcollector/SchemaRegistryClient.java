@@ -94,6 +94,7 @@ public class SchemaRegistryClient {
 
         System.out.println("-----subject-----"  );
         System.out.println();
+
     }
 
 }
