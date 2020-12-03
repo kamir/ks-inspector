@@ -1,5 +1,9 @@
 #!/bin/sh
 
+#
+# This script works on a demo cluster and creates the topics needed for the KnowledgeGraph tool.
+#
+
 export CLUSTER_ID=lkc-jwgvw
 
 #

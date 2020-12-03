@@ -6,7 +6,6 @@ source build-jars.sh
 docker build . -t kstb:latest
 
 #docker login --username=yourhubusername --email=youremail@company.com
-
 #docker buikd . -t kamir/kstb:latest
 #docker push yourhubusername/verse_gapminder
 

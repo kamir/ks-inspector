@@ -2,6 +2,7 @@
 /Users/mkampf/GITHUB.confluent/ks-inspector/src/main/java/io/confluent/cp/mdmodel/infosec/Classifications.java
 /Users/mkampf/GITHUB.confluent/ks-inspector/src/main/java/io/confluent/mdgraph/model/KnowledgeGraphViaKafkaTopic.java
 /Users/mkampf/GITHUB.confluent/ks-inspector/src/main/java/io/confluent/cp/apps/SimpleKafkaLoggerApp.java
+/Users/mkampf/GITHUB.confluent/ks-inspector/src/main/java/io/confluent/cp/apps/KafkaStreamsExample02.java
 /Users/mkampf/GITHUB.confluent/ks-inspector/src/main/java/io/confluent/cp/factflow/FactQueryProducer.java
 /Users/mkampf/GITHUB.confluent/ks-inspector/src/main/java/io/confluent/cp/mdmodel/fdg/KSQLDependencyGraph.java
 /Users/mkampf/GITHUB.confluent/ks-inspector/src/main/java/io/confluent/cp/mdmodel/ksql/KSQLDBApplicationPath.java
@@ -13,6 +14,7 @@
 /Users/mkampf/GITHUB.confluent/ks-inspector/src/main/java/io/confluent/cp/mdmodel/ksql/KSQLQueryInspector.java
 /Users/mkampf/GITHUB.confluent/ks-inspector/src/main/java/io/confluent/cp/mdmodel/ksql/KSQLServerInstanceInspector.java
 /Users/mkampf/GITHUB.confluent/ks-inspector/src/main/java/io/confluent/cp/mdmodel/ksql/KSQLServerInstance.java
+/Users/mkampf/GITHUB.confluent/ks-inspector/src/main/java/io/confluent/cp/util/KSTWrapper.java
 /Users/mkampf/GITHUB.confluent/ks-inspector/src/main/java/io/confluent/cp/mdmodel/fdg/DataFlowEdge.java
 /Users/mkampf/GITHUB.confluent/ks-inspector/src/main/java/io/confluent/cp/mdmodel/ksql/Helper.java
 /Users/mkampf/GITHUB.confluent/ks-inspector/src/main/java/io/confluent/cp/factcollector/TopicMDRetrievalTool.java
@@ -28,6 +30,7 @@
 /Users/mkampf/GITHUB.confluent/ks-inspector/src/main/java/io/confluent/cp/util/MDLogStore.java
 /Users/mkampf/GITHUB.confluent/ks-inspector/src/main/java/io/confluent/cp/util/graph/analysis/LabelPropagationClustering.java
 /Users/mkampf/GITHUB.confluent/ks-inspector/src/main/java/io/confluent/cp/cs/AppDescriptorLoader.java
+/Users/mkampf/GITHUB.confluent/ks-inspector/src/main/java/io/confluent/cp/governanceprocess/PropertyFileExporter.java
 /Users/mkampf/GITHUB.confluent/ks-inspector/src/main/java/io/confluent/mdgraph/model/KnowledgeGraphFactory.java
 /Users/mkampf/GITHUB.confluent/ks-inspector/src/main/java/io/confluent/cp/mdmodel/ksql/KSQLDBApplicationContext.java
 /Users/mkampf/GITHUB.confluent/ks-inspector/src/main/java/io/confluent/mdgraph/model/IKnowledgeGraph.java

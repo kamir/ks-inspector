@@ -41,7 +41,7 @@ public class KnowledgeGraphInspection {
         /**
          * Manage CloudClusters which are used as "environments" within the app life-cycle.
          */
-        String environmentPath = "./src/main/cluster-state-tools-data/example1/ccloud-environments.yaml";
+        String environmentPath = "./src/main/cluster-state-tools-data/example2/ccloud-environments.yaml";
         ClusterStateLoader.populateKnowledgeGraphWithEnvironmentDescription( g, environmentPath );
 
         /**
@@ -70,7 +70,6 @@ public class KnowledgeGraphInspection {
         String p = "./ksqldb-query-stage";;
         String qf = "200_PoC-queries-solution.sql";
         // KSQLQueryInspector.inspectQueryFile( p, qf, g );
-
         //g.show();
 
         Properties propsGDB = CCloudClusterWrapper.getPropsFrom_ROOT_FOLDER( "./src/main/resources/neo4j.props" );

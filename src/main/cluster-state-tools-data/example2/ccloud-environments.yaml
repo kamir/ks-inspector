@@ -2,14 +2,14 @@
 # This file describes three Confluent Platform environments, used for our demo scenario.
 #
 clusters:
-  - name: cluster_ABC # from, e.g., the Web UI
+  - name: cluster_0 # from, e.g., the Web UI
     type: DEV #DEV/QA/ROD
 
     # from cloud ui
-    clusterId: lkc-jwgvw
+    clusterId: lkc-d8w1o
     clusterType: basic
     provider: GCP
-    region: us-east1
+    region: us-east4
     availability: single zone
 
     # defined by organization
@@ -26,18 +26,18 @@ clusters:
       com.mybusiness.depA.prod: USER:1234
       com.mybusiness.depA.cons: USER:5678
 
-### TURN THIS INTO A list of domain folders
-    domainFileFolder: ./src/main/cluster-state-tools-data/example2/domains
-### TURN THIS INTO A files
-    clusterLevelAccessFolder: ./src/main/cluster-state-tools-data/example2/cla
+    domainFileFolders:
+      - ./src/main/cluster-state-tools-data/example2/domains/com.mybusiness
+
+    clusterLevelAccessPath: ./src/main/cluster-state-tools-data/example2/cla.yaml
 
     # provided by cluster admin
     clientProperties:
       # technical details for accessing kafka-service
       kafka:
-        bootstrap.servers: pkc-4yyd6.us-east1.gcp.confluent.cloud:9092
+        bootstrap.servers: pkc-419q3.us-east4.gcp.confluent.cloud:9092
         security.protocol: SASL_SSL
-        sasl.jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username="${CLUSTER_API_KEY}"  password="{CLUSTER_API_SECRET}";
+        sasl.jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username="${CLUSTER_API_KEY}"  password="${CLUSTER_API_SECRET}";
         sasl.mechanism: PLAIN
 
       # technical details for accessing schema-registry-service
@@ -54,12 +54,12 @@ clusters:
   #
   # Here, we have only essential properties, no optional Kubernetes stack and no graph-db.
   #
-  - name: cluster_CDE # defined by organization
+  - name: cluster_1_QA # defined by organization
     type: QA
-    clusterId: lkc-jwxyz # from cloud ui
+    clusterId: lkc-20kwy # from cloud ui
     clusterType: basic
-    provider: GCP
-    region: us-east1
+    provider: AWS
+    region: eu-north-1
     availability: single zone
 
     owner: Jim
@@ -73,33 +73,34 @@ clusters:
       ao.socketserver.principal.prod.env: USER:1234
       ao.socketserver.principal.cons.env: USER:5678
 
-    #domainFileFolder: ./src/main/cluster-state-tools-data/example2/domains
+    domainFileFolders:
+      - ./src/main/cluster-state-tools-data/example2/domains/com.mybusiness
 
-    clusterLevelAccessFolder: ./src/main/cluster-state-tools-data/example2/cla
+    clusterLevelAccessPath: ./src/main/cluster-state-tools-data/example2/cla.yaml
 
     clientProperties:
       # technical details for accessing kafka-service
       kafka:
-        bootstrap.servers: pkc-4yyd6.us-east1.gcp.confluent.cloud:9092
+        bootstrap.servers: pkc-zm3p0.eu-north-1.aws.confluent.cloud:9092
         security.protocol: SASL_SSL
         sasl.jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule   required username="${CLUSTER_API_KEY}"   password="${CLUSTER_API_SECRET}";
         sasl.mechanism: PLAIN
       # technical details for accessing schema-registry-service
       schemaRegistry:
-        schema.registry.url: https://psrc-4v1qj.eu-central-1.aws.confluent.cloud
+        schema.registry.url: https://psrc-lq3wm.eu-central-1.aws.confluent.cloud
         basic.auth.credentials.source: USER_INFO
         schema.registry.basic.auth.user.info: ${SR_API_KEY}:${SR_API_SECRET}
 
   #
   # Here, we have only essential properties, no optional Kubernetes stack and no graph-db.
   #
-  - name: PROD-cluster-101
+  - name: cluster_1_PROD
     type: PROD
     # from cloud ui
-    clusterId: lkc-jwxyz
+    clusterId: lkc-y35qj
     clusterType: basic
-    provider: GCP
-    region: us-east1
+    provider: AZURE
+    region: northeurope
     availability: single zone
 
     # defined by organization
@@ -111,22 +112,23 @@ clusters:
       - secure
       - managed
     principals:
-      ao.socketserver.principal.prod.env: USER:1234
-      ao.socketserver.principal.cons.env: USER:5678
+      com.mybusiness.depA.prod: USER:1234
+      com.mybusiness.depA.cons: USER:5678
 
-    #domainFileFolder: ./src/main/cluster-state-tools-data/example2/domains
+    domainFileFolders:
+      - ./src/main/cluster-state-tools-data/example2/domains/com.mybusiness
 
-    clusterLevelAccessFolder: ./src/main/cluster-state-tools-data/example2/cla
+    clusterLevelAccessPath: ./src/main/cluster-state-tools-data/example2/cla.yaml
 
     clientProperties:
       kafka:
         # technical details for accessing kafka-service
-        bootstrap.servers: pkc-4yyd6.us-east1.gcp.confluent.cloud:9092
+        bootstrap.servers: pkc-lz6r3.northeurope.azure.confluent.cloud:9092
         security.protocol: SASL_SSL
         sasl.jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule   required username="${CLUSTER_API_KEY}"   password="${CLUSTER_API_SECRET}";
         sasl.mechanism: PLAIN
       # technical details for accessing schema-registry-service
       schemaRegistry:
-        schema.registry.url: https://psrc-4v1qj.eu-central-1.aws.confluent.cloud
+        schema.registry.url: https://psrc-lg26v.westeurope.azure.confluent.cloud
         basic.auth.credentials.source: USER_INFO
         schema.registry.basic.auth.user.info: ${SR_API_KEY}:${SR_API_SECRET}

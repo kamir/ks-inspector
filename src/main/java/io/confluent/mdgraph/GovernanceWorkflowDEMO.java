@@ -1,5 +1,6 @@
 package io.confluent.mdgraph;
 
+import io.confluent.cp.cs.ClusterStateLoader;
 import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientException;
 import io.confluent.mdgraph.model.IKnowledgeGraph;
 import io.confluent.mdgraph.model.KnowledgeGraphFactory;
@@ -19,21 +20,28 @@ public class GovernanceWorkflowDEMO {
 
         System.out.println( "Start Knowledge Graph DEMO: => AppID : DataGovernanceDemo001_ ... ");
 
+        final Properties properties = CLITools.loadProperties(new File("src/main/cluster-state-tools-data/example2/kst.properties"), null, "KST");
+
         /**
          * Command: inspect
          */
-       // IKnowledgeGraph g1 = KnowledgeGraphFactory.getKafkaBasedKnowledgegraph("DataGovernanceDemo001");
-       // String instancesPath = "/Users/mkampf/Engagements/AO-Cloud-Project/week6/instances";
-       // ClusterStateLoader.populateKnowledgeGraphMultiDomains( g1, instancesPath );
+       IKnowledgeGraph g1 = KnowledgeGraphFactory.getKafkaBasedKnowledgegraph("DataGovernanceDemo001", properties);
+       String instancesPath = "/Users/mkampf/Engagements/AO-Cloud-Project/week6/instances";
+       ClusterStateLoader.populateKnowledgeGraphMultiDomains( g1, instancesPath );
+
+       System.out.println( "> Step 1 ... [done]");
+
+        System.exit(0);
 
         /**
          * Command: export
          */
-        final Properties properties = CLITools.loadProperties(new File("src/main/cluster-state-tools-data/contexts/example1/instances/kst.properties"), null, "KST");
         IKnowledgeGraph g2 = KnowledgeGraphFactory.getNeo4JBasedKnowledgeGraph(properties);
         KnowledgeGraphNeo4J queriableGraph = (KnowledgeGraphNeo4J)g2;
         queriableGraph.readGraphFromTopic( "DataGovernanceDemo001_" + System.currentTimeMillis(), properties);
         queriableGraph.show();
+
+        System.out.println( "> Step 2 ... [done]");
 
         System.exit(0);
 
