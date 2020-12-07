@@ -6,10 +6,10 @@ clusters:
     type: DEV #DEV/QA/ROD
 
     # from cloud ui
-    clusterId: lkc-d8w1o
+    clusterId: lkc-v5vpp
     clusterType: basic
-    provider: GCP
-    region: us-east4
+    provider: AWS
+    region: us-east-2
     availability: single zone
 
     # defined by organization
@@ -28,6 +28,7 @@ clusters:
 
     domainFileFolders:
       - ./src/main/cluster-state-tools-data/example2/domains/com.mybusiness
+      - ./src/main/cluster-state-tools-data/example2/domains/Incentives
 
     clusterLevelAccessPath: ./src/main/cluster-state-tools-data/example2/cla.yaml
 
@@ -35,7 +36,7 @@ clusters:
     clientProperties:
       # technical details for accessing kafka-service
       kafka:
-        bootstrap.servers: pkc-419q3.us-east4.gcp.confluent.cloud:9092
+        bootstrap.servers: pkc-ep9mm.us-east-2.aws.confluent.cloud:9092
         security.protocol: SASL_SSL
         sasl.jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username="${CLUSTER_API_KEY}"  password="${CLUSTER_API_SECRET}";
         sasl.mechanism: PLAIN
@@ -117,6 +118,7 @@ clusters:
 
     domainFileFolders:
       - ./src/main/cluster-state-tools-data/example2/domains/com.mybusiness
+      - ./src/main/cluster-state-tools-data/example2/domains/Incentives
 
     clusterLevelAccessPath: ./src/main/cluster-state-tools-data/example2/cla.yaml
 
