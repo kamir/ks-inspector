@@ -1,0 +1,7 @@
+{
+  "BrokerList": ":9092",
+  "SaslPassword": "",
+  "SaslUsername": "",
+  "SchemaRegistryUri": "",
+  "SchemaRegistryAuth":"",
+}

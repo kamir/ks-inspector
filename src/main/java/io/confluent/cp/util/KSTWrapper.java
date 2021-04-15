@@ -13,18 +13,18 @@ public class KSTWrapper {
 
     public static void main(String[] ARGS) {
 
-
-
         String targetClusterName = EnvVarTools.readPropertyFromEnv("KST", "TARGET_CLUSTER_NAME");
-        //String targetDomainName = EnvVarTools.readPropertyFromEnv("KST", "TARGET_DOMAIN_NAME");
 
-        System.out.println( ARGS );
+        String targetDomainName = EnvVarTools.readPropertyFromEnv("KST", "TARGET_DOMAIN_NAME");
+
+        for ( String s  : ARGS )
+            System.out.println( s );
 
 
         if ( ARGS == null || ARGS.length == 0 ) {
 
             System.out.println( "[1] > Apply all changes needed to bring the cluster: ["+targetClusterName+"] into the desired state.");
-            String[] args1 = { "applyToSelectedCluster", "./src/main/cluster-state-tools-data/example2/ccloud-environments.yaml", targetClusterName };
+            String[] args1 = { "applyToSelectedCluster", "./src/main/cluster-state-tools-data/example0/environments.yaml", targetClusterName };
             CloudGovernance.main( args1 );
 
         }

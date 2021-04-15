@@ -27,7 +27,7 @@ public class PropertyFileExporter {
 
         System.out.println( "> work on cluster: " + targetClusterName );
 
-        String[] args1 = { "build", "./src/main/cluster-state-tools-data/example2/ccloud-environments.yaml", targetClusterName };
+        String[] args1 = { "build", "./src/main/cluster-state-tools-data/example0/environments.yaml", targetClusterName };
         PropertyFileBuilder.main( args1 );
 
         /**
