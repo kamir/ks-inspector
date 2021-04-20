@@ -1,9 +1,16 @@
 ---
 name: pc
 projects:
-  - name: projectTwo
+  - name: projectHS4
     topics:
-      - name: ta
+      - name: newTopic
+        configs :
+           confluent.value.schema.validation: "true"
+           min.insync.replicas: "1"
+           flush.ms: "1000"
+           segment.bytes: "1073741824"
+           retention.ms: "3600000"
+           segment.ms: "604800000"
       - name: tb
         dataModel:
           key:
@@ -11,16 +18,14 @@ projects:
           value:
             type: Avro
             schemaFile: "schemas/test.avsc"
-    consumers:
-      - principal: "User:xxx"
-        groupId: "groupForApp"
-        prefixGroup: true
-    streamsApps:
-      - principal: "Group:DreamTeam"
-        applicationId: "dream-app"
-      - principal: "Group:StreamTeam2"
-        applicationId: "stream-app"
-        inputTopics:
-          - ta
-        outputTopics:
-          - tb
+      - name: topicB
+        configs:
+            "num.partitions": "12"
+            "cleanup.policy": "compact"
+        dataModel:
+            key:
+              type: String
+            value:
+              type: Avro
+              schemaFile: "schemas/test.avsc"
+

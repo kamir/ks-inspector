@@ -1,0 +1,13 @@
+---
+name: pc
+projects:
+  - name: hsDemo
+    topics:
+      - name: randomNumbers
+        configs :
+           min.insync.replicas: "1"
+           flush.ms: "1000"
+           segment.bytes: "1073741824"
+           retention.ms: "3600000"
+           segment.ms: "604800000"
+      - name: generatorLogs

@@ -1,4 +1,4 @@
-package io.confluent.cp.mdmodel.kstreams;
+package io.confluent.cp.mdmodel.kafka;
 
 import io.confluent.cp.util.AppContextLogRecord;
 import io.confluent.cp.util.MDLogStore;
@@ -7,11 +7,11 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- * This class collects the Topology information and the application metadata and forwards this into a topic.
+ * This class collects information and the application metadata of a Kafka Client and forwards this into a topic.
  */
-public class KafkaStreamsApplicationContextHandler {
+public class KafkaApplicationContextHandler {
 
-    public static final String APP_CONTEXT_MD_TOPIC = "_STREAMS_APP_CONTEXT_MD_TOPIC_001";
+    public static final String APP_CONTEXT_MD_TOPIC = "_KAFKA_APP_CONTEXT_MD_TOPIC_001";
 
     public static MDLogStore mdLogStream = null;
     public static String hostname = null;
@@ -25,8 +25,8 @@ public class KafkaStreamsApplicationContextHandler {
         if ( mdLogStream == null )
             mdLogStream = MDLogStore.getSimpleStore();
 
-        KafkaStreamsApplicationContextHandler.hostname = hostname;
-        KafkaStreamsApplicationContextHandler.domain = cpDomainName;
+        KafkaApplicationContextHandler.hostname = hostname;
+        KafkaApplicationContextHandler.domain = cpDomainName;
 
     }
 
@@ -40,12 +40,6 @@ public class KafkaStreamsApplicationContextHandler {
         Properties properties = new Properties();
         properties.putAll(getenv);
         persistRuntimeProperties( properties );
-    }
-
-    public static void persistTopology( String topology ) {
-        AppContextLogRecord r = new AppContextLogRecord(hostname, domain);
-        r.TOPOLOGY_YAML = topology;
-        storeRcord( r );
     }
 
     public static void persistDomain( String domain ) {
