@@ -1,0 +1,37 @@
+{
+  "schema": {
+    "type": "record",
+    "name": "DataCatalog",
+    "namespace": "com.mybusiness",
+    "fields": [
+      {
+        "name": "SSN",
+        "type": "string",
+        "classifications": [
+          "PII/Financial"
+        ]
+      },
+      {
+        "name": "Name",
+        "type": "string",
+        "classifications": [
+          "PII/Personal"
+        ]
+      },
+      {
+        "name": "Address",
+        "type": "string",
+        "classifications": [
+          "PII/Personal"
+        ]
+      },
+      {
+        "name": "Account",
+        "type": "string",
+        "classifications": [
+          "PII/Financial"
+        ]
+      }
+    ]
+  }
+}

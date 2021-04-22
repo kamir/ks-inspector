@@ -1,0 +1,35 @@
+
+#
+# Properties file for kafka-cluster-state-tools
+#
+
+############################################################################
+# This file configures the kst to interact with a Confluent cloud cluster.
+# The default cluster is defined this way.
+############################################################################
+
+
+#----------------------------------------------
+# Kafka
+bootstrap.servers=127.0.0.1:9092
+#
+# Confluent Cloud Schema Registry
+schema.registry.url=http://127.0.0.1:8081
+#----------------------------------------------
+
+
+# Required connection configs for Kafka producer, consumer, and admin
+#bootstrap.servers=pkc-4r297.europe-west1.gcp.confluent.cloud:9092
+#security.protocol=SASL_SSL
+#sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule   required username='SBYTDHIKGRB4ALBY'   password='c4VHZzx5BouA2ko4cnj3sdsTn4gU3vfDXb+cCoCZ4kL44ssE+p3nUQ6cdg091fDs';
+#sasl.mechanism=PLAIN
+# Required for correctness in Apache Kafka clients prior to 2.6
+client.dns.lookup=use_all_dns_ips
+
+# Best practice for Kafka producer to prevent data loss
+acks=all
+
+# Required connection configs for Confluent Cloud Schema Registry
+#schema.registry.url=https://psrc-4v1qj.eu-central-1.aws.confluent.cloud
+#basic.auth.credentials.source=USER_INFO
+#basic.auth.user.info=DZ43N5K7WQ7OQDCB:opH/3yrzPhGqpGxrP5xB13UCFqdya72wbWf96YmNDPJr2hJt6C5sku70r2Opmnfz
