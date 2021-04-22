@@ -45,6 +45,7 @@ src/main/resources/log4j.properties
 src/main/resources/ccloud.props
 
 /graph-db/
+/graphdb/
 /out/
 /src/main/cluster-state-tools-data/contexts/example1/
 
