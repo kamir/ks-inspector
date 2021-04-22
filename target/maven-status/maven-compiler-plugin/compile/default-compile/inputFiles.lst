@@ -12,6 +12,7 @@
 /Users/mkampf/HSWS/ks-inspector/src/main/java/io/confluent/cp/mdmodel/ksql/Helper.java
 /Users/mkampf/HSWS/ks-inspector/src/main/java/io/confluent/cp/mdmodel/ksql/KSQLQueryInspector.java
 /Users/mkampf/HSWS/ks-inspector/src/main/java/io/confluent/mdgraph/model/KnowledgeGraphViaKafkaTopic.java
+/Users/mkampf/HSWS/ks-inspector/src/main/java/io/confluent/cp/apps/RandomSeriesGeneratorApp.java
 /Users/mkampf/HSWS/ks-inspector/src/main/java/io/confluent/cp/apps/SimpleKafkaLoggerApp.java
 /Users/mkampf/HSWS/ks-inspector/src/main/java/io/confluent/mdgraph/model/IKnowledgeGraph.java
 /Users/mkampf/HSWS/ks-inspector/src/main/java/io/confluent/cp/cs/AppDescriptorLoader.java
@@ -32,6 +33,7 @@
 /Users/mkampf/HSWS/ks-inspector/src/main/java/io/confluent/cp/factcollector/TopicMDRetrievalTool.java
 /Users/mkampf/HSWS/ks-inspector/src/main/java/io/confluent/cp/factcollector/ksql/KSQLDBClient2.java
 /Users/mkampf/HSWS/ks-inspector/src/main/java/io/confluent/cp/util/MDLogStore.java
+/Users/mkampf/HSWS/ks-inspector/src/main/java/io/confluent/cp/mdmodel/kafka/KafkaApplicationContextHandler.java
 /Users/mkampf/HSWS/ks-inspector/src/main/java/io/confluent/cp/cfg/CCloudClusterWrapper.java
 /Users/mkampf/HSWS/ks-inspector/src/main/java/io/confluent/cp/factcollector/ksql/KSQLDBClient.java
 /Users/mkampf/HSWS/ks-inspector/src/main/java/io/confluent/mdgraph/model/KnowledgeGraphFactory.java

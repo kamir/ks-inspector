@@ -2,20 +2,20 @@
 # This file describes three Confluent Platform environments, used for our demo scenario.
 #
 clusters:
-  - name: cluster_0 # from, e.g., the Web UI
-    type: DEV #DEV/QA/ROD
+  - name: cluster_2 # from, e.g., the Web UI
+    type: QA
 
     # from cloud ui
-    clusterId: lkc-jwgvw
-    clusterType: local-cp-all-in-one
-    provider: docker
-    region: laptop
+    clusterId: lkc-n9j5v
+    clusterType: Basic
+    provider: GCP
+    region: europe-north1
     availability: single zone
 
     # defined by organization
     owner: Mirko
     ownerContact: mirko.kaempf@gmail.com
-    org: Confluent Inc.
+    org: Data4Fun Inc.
     tags:
       - low-performance
       - insecure
@@ -28,63 +28,16 @@ clusters:
 
     ### TURN THIS INTO A list of domain folders
     domainFileFolders:
-      - ./src/main/cluster-state-tools-data/example0/domains
+      - ./src/main/cluster-state-tools-data/example10/domains
 
     ### TURN THIS INTO A files
-    clusterLevelAccessPath: ./src/main/cluster-state-tools-data/example0/cla
+    clusterLevelAccessPath: ./src/main/cluster-state-tools-data/example10/cla
 
     # provided by cluster admin
     clientProperties:
       # technical details for accessing kafka-service
       kafka:
-        bootstrap.servers: pkc-4r297.europe-west1.gcp.confluent.cloud:9092
-
-      # technical details for accessing schema-registry-service
-      schemaRegistry:
-        schema.registry.url: https://psrc-4v1qj.eu-central-1.aws.confluent.cloud
-
-      # technical details to access the kubernetes stack
-      knowledgeGraphService:
-        type: Neo4J-service
-        url: http://localhost:7474
-
-###############################
-#
-# NO PROD CLUSTER PREPARED !!!
-#
-###############################
-  #
-  # Here, we have only essential properties, no optional Kubernetes stack and no graph-db.
-  #
-  - name: PROD-cluster-101
-    type: PROD
-    # from cloud ui
-    clusterId: lkc-jwxyz
-    clusterType: basic
-    provider: GCP
-    region: us-east1
-    availability: single zone
-
-    # defined by organization
-    owner: Jim
-    ownerContact: jim@mybusiness.com
-    org: MyBusiness
-    tags:
-      - high-performance
-      - secure
-      - managed
-    principals:
-      ao.socketserver.principal.prod.env: USER:1234
-      ao.socketserver.principal.cons.env: USER:5678
-
-    #domainFileFolders: ./src/main/cluster-state-tools-data/example2/domains
-
-    clusterLevelAccessPath: ./src/main/cluster-state-tools-data/example2/cla
-
-    clientProperties:
-      kafka:
-        # technical details for accessing kafka-service
-        bootstrap.servers: pkc-4yyd6.us-east1.gcp.confluent.cloud:9092
+        bootstrap.servers: pkc-l7q2j.europe-north1.gcp.confluent.cloud:9092
         security.protocol: SASL_SSL
         sasl.jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule   required username="${CLUSTER_API_KEY}" password="${CLUSTER_API_SECRET}";
         sasl.mechanism: PLAIN
@@ -93,3 +46,53 @@ clusters:
         schema.registry.url: https://psrc-4v1qj.eu-central-1.aws.confluent.cloud
         basic.auth.credentials.source: USER_INFO
         schema.registry.basic.auth.user.info: ${SR_API_KEY}:${SR_API_SECRET}
+
+      # technical details to access the kubernetes stack
+      knowledgeGraphService:
+        type: Neo4J-service
+        url: http://localhost:7474
+
+  - name: cluster_0 # from, e.g., the Web UI
+    type: DEV
+
+    # local cluster properties
+    clusterId: xyz
+    clusterType: single-node-cluster
+    provider: docker
+    region: local
+    availability: single zone
+
+    # defined by organization
+    owner: Mirko
+    ownerContact: mirko.kaempf@gmail.com
+    org: Data4Fun Inc.
+    tags:
+      - low-performance
+      - insecure
+      - open
+      - developer_sandbox
+
+    principals:
+      com.mybusiness.depA.prod: USER:1234
+      com.mybusiness.depA.cons: USER:5678
+
+    ### TURN THIS INTO A list of domain folders
+    domainFileFolders:
+      - ./src/main/cluster-state-tools-data/example10/domains
+
+    ### TURN THIS INTO A files
+    clusterLevelAccessPath: ./src/main/cluster-state-tools-data/example10/cla
+
+    # provided by cluster admin
+    clientProperties:
+      # technical details for accessing kafka-service
+      kafka:
+        bootstrap.servers: 127.0.0.1:9021
+
+      schemaRegistry:
+        schema.registry.url: https://127.0.0.1:8081
+
+      # technical details to access the kubernetes stack
+      knowledgeGraphService:
+        type: Neo4J-service
+        url: http://localhost:7474

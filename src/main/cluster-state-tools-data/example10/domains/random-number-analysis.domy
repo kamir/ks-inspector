@@ -12,4 +12,11 @@ projects:
            retention.ms: "3600000"
            segment.ms: "604800000"
 
-      - name: _KAFKA_APP_CONTEXT_MD_TOPIC_001
+      - name: KAFKA_APP_CONTEXT_MD
+        configs:
+          "num.partitions": "1"
+
+      - name: KAFKA_APP_LOGS
+        configs:
+          "num.partitions": "1"
+

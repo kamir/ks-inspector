@@ -2,12 +2,13 @@ package io.confluent.cp.apps;
 
 import io.confluent.cp.cs.AppDescriptorLoader;
 import io.confluent.cp.mdmodel.kafka.KafkaApplicationContextHandler;
-import io.confluent.cp.mdmodel.kstreams.KafkaStreamsApplicationContextHandler;
+import net.christophschubert.kafka.clusterstate.cli.EnvVarTools;
 import net.christophschubert.kafka.clusterstate.formats.domain.Domain;
 import org.apache.log4j.Appender;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
+import java.io.File;
 import java.util.Enumeration;
 
 /**
@@ -23,7 +24,11 @@ public class RandomSeriesGeneratorApp {
 
     public static void main(String[] argv) throws Exception {
 
-        System.out.println("> Started RandomSeriesGeneratorApp.");
+        String targetDomainName = EnvVarTools.readPropertyFromEnv("KST", "TARGET_DOMAIN_NAME");
+        String targetClusterName = EnvVarTools.readPropertyFromEnv("KST", "TARGET_CLUSTER_NAME");
+
+        System.out.println("> Started RandomSeriesGeneratorApp in Domain ["+targetDomainName+"].");
+        System.out.println("> I will work with cluster: [" + targetClusterName + "].");
 
         Enumeration appenders = logger.getAllAppenders();
 
@@ -32,14 +37,21 @@ public class RandomSeriesGeneratorApp {
             System.out.println( "[ ]-> " + a.getName() );
         }
 
-        System.out.println("> ... ");
+        System.out.println("****************** ");
+        System.out.println("* SOME TEST LOGS * ");
+        System.out.println("****************** ");
 
-        logger.debug( "This is a debug message from RandomSeriesGeneratorApp." );
-        logger.info(  "This is an info message from RandomSeriesGeneratorApp." );
-        logger.warn(  "This is a Warn message from RandomSeriesGeneratorApp.");
-        logger.error( "This is an error message from RandomSeriesGeneratorApp." );
+        logger.debug( " This is a debug message from RandomSeriesGeneratorApp." );
+        logger.info(  " This is an info message from RandomSeriesGeneratorApp." );
+        logger.warn(  " This is a Warn message from RandomSeriesGeneratorApp.");
+        logger.error( " This is an error message from RandomSeriesGeneratorApp." );
 
-        String instancePath1 = "./src/main/cluster-state-tools-data/example0/random-series-generator.domy";
+
+
+        String instancePath1 = "./src/main/cluster-state-tools-data/example10/domains/" + targetDomainName + ".domy";
+        File f = new File( instancePath1 );
+        System.out.println( f.getAbsolutePath() + " -> " + f.canRead() );
+
         Domain domain = AppDescriptorLoader.readAppDescriptor( instancePath1 );
 
         KafkaApplicationContextHandler.init( "my-host-1", domain.name );
@@ -47,6 +59,10 @@ public class RandomSeriesGeneratorApp {
         KafkaApplicationContextHandler.persistDomain( domain.toString() );
 
         KafkaApplicationContextHandler.persistRuntimeProperties( System.getenv() );
+
+        System.out.println("****************** ");
+        System.out.println("* ACTION         * ");
+        System.out.println("****************** ");
 
         //--------------------------------------------------------------------------------------------------------------
         //  Generate some data ...

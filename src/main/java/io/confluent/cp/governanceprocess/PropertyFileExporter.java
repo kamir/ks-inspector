@@ -24,12 +24,22 @@ public class PropertyFileExporter {
     public static void main(String[] ARGS) {
 
         String targetClusterName = EnvVarTools.readPropertyFromEnv( "KST" , "TARGET_CLUSTER_NAME" );
+        String envFilePath = EnvVarTools.readPropertyFromEnv( "KST" , "ENVIRONMENT_FILENAME" );
 
-        System.out.println( "> work on cluster: " + targetClusterName );
+        System.out.println( "> environmment file : " + envFilePath );
+        System.out.println( "> work on cluster   : " + targetClusterName );
 
-        String[] args1 = { "build", "./src/main/cluster-state-tools-data/example0/environments.yaml", targetClusterName };
-        PropertyFileBuilder.main( args1 );
+        if ( envFilePath != null ) {
 
+            String[] args1 = {"build", envFilePath, targetClusterName};
+            PropertyFileBuilder.main(args1);
+
+        }
+        else {
+            String[] args1 = {"build", "./src/main/cluster-state-tools-data/example10/environments.yaml", targetClusterName};
+            PropertyFileBuilder.main(args1);
+
+        }
         /**
          * Next step:
          * ----------
