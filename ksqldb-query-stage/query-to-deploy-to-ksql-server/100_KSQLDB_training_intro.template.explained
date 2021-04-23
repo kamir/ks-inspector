@@ -1,0 +1,65 @@
+########################################################
+# Simple example: create a table over a topic.
+########################################################
+#
+# CREATE TABLE s1a ( a VARCHAR PRIMARY KEY,
+#                  b STRING
+# ) WITH (KAFKA_TOPIC='s1aTop', VALUE_FORMAT='JSON');
+#
+#
+#####  Works only if the topic does not yet exist. #####
+#
+# Note:
+#
+#   Table and topic are not allowed to have the same name! The graph can't have a loop.
+#
+
+########################################################
+# Create a table with a new topic underneath
+########################################################
+#
+# CREATE TABLE s1b ( a VARCHAR PRIMARY KEY,
+#                   b STRING
+# ) WITH (KAFKA_TOPIC='s1bTop', VALUE_FORMAT='AVRO', REPLICAS='3', PARTITIONS='1');
+#
+######  This requires the SR to be configured !!!  #####
+
+
+CREATE TABLE sourceTable ( a VARCHAR PRIMARY KEY, b STRING
+) WITH (KAFKA_TOPIC='sourceTableTop', VALUE_FORMAT='JSON', REPLICAS='3', PARTITIONS='1');
+
+INSERT INTO sourceTable (a, b) VALUES ('k1', 'v1');
+INSERT INTO sourceTable (a, b) VALUES ('k1', 'v2');
+INSERT INTO sourceTable (a, b) VALUES ('k1', 'v3');
+INSERT INTO sourceTable (a, b) VALUES ('k2', 'v1');
+INSERT INTO sourceTable (a, b) VALUES ('k3', 'v1');
+
+######################################################
+# See how nice KSQLDB is to you ;-)
+######################################################
+#
+# CREATE STREAM sourceStream AS
+# SELECT a, b
+# FROM sourceTable EMIT CHANGES;
+#
+#####  We can't create a stream from a table !!!  ###
+
+
+######################################################
+# We create a materialized view over our table
+######################################################
+
+CREATE TABLE viewTable WITH (KAFKA_TOPIC='viewTableTop', PARTITIONS=1, REPLICAS=3) AS SELECT
+                                                                          t1.A A,
+                                                                          t1.B B
+                                                                      FROM sourceTable t1
+                                                                          EMIT CHANGES;
+
+SELECT * FROM viewTable WHERE a='foo' EMIT CHANGES;
+
+#
+# How to clean up the environment?
+#
+
+drop query ______ (CTAS for viewTable);
+drop table sourceTable;

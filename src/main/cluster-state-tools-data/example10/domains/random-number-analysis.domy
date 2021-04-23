@@ -1,7 +1,7 @@
 ---
-name: pc
+name: random_nr_analysis__
 projects:
-  - name: hsDemo
+  - name: hsDemo__
     topics:
 
       - name: randomNumbers
