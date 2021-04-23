@@ -98,6 +98,9 @@ public class KSQLServerInstanceInspector {
         String ks = "127.0.0.1";
         String port = "8088";
         String bss = "localhost:9092";
+        String domain = "DOMAIN";
+        String project = "PROJECT";
+
 
         try {
 
@@ -147,7 +150,7 @@ public class KSQLServerInstanceInspector {
 
         KSQLServerInstanceInspector inspector = new KSQLServerInstanceInspector( p, qf );
 
-        inspector.appContext = new KSQLDBApplicationContext( inspector.getQueryFolder(), inspector.default_queryFileName, inspector.getQueryBufferFolder(), ks, port );
+        inspector.appContext = new KSQLDBApplicationContext( inspector.getQueryFolder(), inspector.default_queryFileName, inspector.getQueryBufferFolder(), ks, port, domain, project );
 
         inspector.getQueriesFromKSQLServer(inspector.appContext);
 

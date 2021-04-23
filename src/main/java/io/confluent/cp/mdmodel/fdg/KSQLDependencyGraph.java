@@ -124,7 +124,7 @@ public class KSQLDependencyGraph {
 
     private void storeD3JSModel() throws Exception {
 
-        File data = new File( "d3js/force-directed-graph/files/graph2");
+        File data = new File( "ksqldb-query-stage/d3js/force-directed-graph/files/graph2");
         FileWriter fw = new FileWriter( data );
 
         fw.write("{\n" + "  \"nodes\": [\n");

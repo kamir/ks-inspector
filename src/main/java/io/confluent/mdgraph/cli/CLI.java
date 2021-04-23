@@ -50,6 +50,7 @@ class CLI {
         final Properties properties = CLITools.loadProperties(configFile, bootstrapServer, envVarPrefix);
         final ClientBundle bundle = ClientBundle.fromProperties(properties);
 
+        // TODO: expose the details of the bundle
         // bundle.describe();
 
         System.out.println( ">>> Use config file: [" + configFile.getAbsolutePath() + "] for Knowledge Graph creation. " );

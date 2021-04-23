@@ -1,0 +1,9 @@
+strict graph G {
+  sourceTableTopic [ label="sourceTableTopic" ];
+  sourceTable [ label="sourceTable" ];
+  viewTableTopic [ label="viewTableTopic" ];
+  viewTable [ label="viewTable" ];
+  sourceTableTopic -- sourceTable;
+  viewTableTopic -- viewTable;
+  sourceTable -- viewTable;
+}

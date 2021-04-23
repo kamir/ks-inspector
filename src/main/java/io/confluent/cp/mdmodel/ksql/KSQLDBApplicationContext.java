@@ -1,5 +1,7 @@
 package io.confluent.cp.mdmodel.ksql;
 
+import io.confluent.cp.mdmodel.TopicNamePair;
+
 import java.io.File;
 import java.util.Vector;
 
@@ -23,13 +25,22 @@ public class KSQLDBApplicationContext {
     String[] STREAMS_on_server;
     String[] QUERIES_on_server;
 
-    public KSQLDBApplicationContext(String a1, String a2, String a3, String host, String port) {
+    String[] TOPICS_in_domain_context;
+
+
+    String domain = null;
+    String project = null;
+
+    public KSQLDBApplicationContext(String a1, String a2, String a3, String host, String port, String domain, String project) {
 
         setQueryFolder( a1 );
         setKSQLFilename( a2 );
         setKSQLBufferFolder( a3 );
 
         setKSQLServerHost( host, port );
+
+        this.domain = domain;
+        this.project = project;
 
     }
 
@@ -47,6 +58,11 @@ public class KSQLDBApplicationContext {
 
     public void setKSQLFilename( String filename ) {
         this.appPath.setKSQLFilename( filename );
+    }
+
+
+    public void setTopicsInDomainContext(String[] topicsInContext) {
+        this.TOPICS_in_domain_context = topicsInContext;
     }
 
     public void setTopicsOnServer(String[] topics) {
@@ -132,4 +148,32 @@ public class KSQLDBApplicationContext {
         expected_TABLES.add( ksql );
     }
 
+
+
+    public Vector<TopicNamePair> getTopicNameContextualization() {
+
+        String[] topicINCONTEXT = new String[getTopicNames().size() ];
+
+        Vector<TopicNamePair> alLTOPICS = new Vector<TopicNamePair>();
+
+        int i = 0;
+        for ( String topic : getTopicNames() ) {
+            TopicNamePair p = new TopicNamePair( domain, project, topic );
+            alLTOPICS.add( p );
+            topicINCONTEXT[i] = p.contextualName;
+            i++;
+        }
+
+        setTopicsInDomainContext( topicINCONTEXT );
+
+        return alLTOPICS;
+
+    }
+
+    public Vector<String> getTopicNames() {
+        return expected_TOPICS;
+    }
+
 }
+
+

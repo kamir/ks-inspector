@@ -27,6 +27,7 @@
 /Users/mkampf/HSWS/ks-inspector/src/main/java/io/confluent/cp/mdmodel/ksql/KSQLServerInstance.java
 /Users/mkampf/HSWS/ks-inspector/src/main/java/io/confluent/mdgraph/cli/CLI.java
 /Users/mkampf/HSWS/ks-inspector/src/main/java/io/confluent/cp/factflow/FactQueryProducer.java
+/Users/mkampf/HSWS/ks-inspector/src/main/java/io/confluent/cp/mdmodel/kafka/TopicNamePair.java
 /Users/mkampf/HSWS/ks-inspector/src/main/java/io/confluent/cp/mdmodel/fdg/KSQLDependencyGraph.java
 /Users/mkampf/HSWS/ks-inspector/src/main/java/io/confluent/cp/mdmodel/fdg/DataFlowEdge.java
 /Users/mkampf/HSWS/ks-inspector/src/main/java/io/confluent/cp/mdmodel/ksql/KSQLServerInstanceInspector.java

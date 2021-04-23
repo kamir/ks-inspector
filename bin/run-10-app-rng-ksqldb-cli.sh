@@ -24,7 +24,7 @@ export KST_ENVIRONMENT_FILENAME=./src/main/cluster-state-tools-data/$sdf/environ
 #
 # Select a target cluster from above environment descriptor
 #
-export KST_TARGET_CLUSTER_NAME=cluster_2
+export KST_TARGET_CLUSTER_NAME=cluster_0
 
 #
 # Select a target domain, from the domain-definition-folder from above environment descriptor
@@ -64,7 +64,7 @@ java -jar ./kafka-clusterstate-tools/build/libs/kafka-clusterstate-tools-1.0.1-S
 # #  TODO: Configure log4j properties file path manually according to the environment and selected cluster.
 #          This allows logging into the Kafka topic.
 #
-java -cp target/ks-inspector-1.0-SNAPSHOT.jar io.confluent.cp.apps.RandomSeriesGeneratorApp
+# java -cp target/ks-inspector-1.0-SNAPSHOT.jar io.confluent.cp.apps.RandomSeriesGeneratorApp
 
 #
 # Start KSQL DB application
@@ -74,7 +74,7 @@ docker run -d \
   -p 127.0.0.1:8188:8188 \
   -e KSQL_BOOTSTRAP_SERVERS=pkc-l7q2j.europe-north1.gcp.confluent.cloud:9092 \
   -e KSQL_LISTENERS=http://0.0.0.0:8188/ \
-  -e KSQL_KSQL_SERVICE_ID=default_MK_ \
+  -e KSQL_KSQL_SERVICE_ID=default_MK_2 \
   -e KSQL_KSQL_SINK_REPLICAS=3 \
   -e KSQL_KSQL_STREAMS_REPLICATION_FACTOR=3 \
   -e KSQL_KSQL_INTERNAL_TOPIC_REPLICAS=3 \
@@ -82,10 +82,19 @@ docker run -d \
   -e KSQL_SASL_MECHANISM=PLAIN \
   -e KSQL_SASL_JAAS_CONFIG="org.apache.kafka.common.security.plain.PlainLoginModule required username=\"AG2X57TIVLOSA2UF\" password=\"128ALrmHYSzfyrmffHIj9HwgtEBeyjHZ2qQidBXnd/tPbpLRZL1mojIH97G05Har\";" \
   -e KSQL_SCHEMA_REGISTRY_BASIC_AUTH_CREDENTIALS_SOURCE=USER_INFO \
+  -e KSQL_SCHEMA_REGISTRY_BASIC_AUTH_USER_INFO=4TRMPKIJYHVENEPL:yNfXyhSlnRtmrl4VePfLI8KJRnDaROBMA7Rn+WV5SXQU8DLGyqiCc+fSPPVnpfqP \
   -e KSQL_SCHEMA_REGISTRY_URL=https://psrc-4v1qj.eu-central-1.aws.confluent.cloud \
   confluentinc/ksqldb-server:latest
 
 #
 # Start KSQL DB CLI
 #
-docker run -it --network=host confluentinc/ksqldb-cli ksql http://127.0.0.1:8188
+#docker run -it --network=host confluentinc/ksqldb-cli ksql http://127.0.0.1:8188
+
+#
+# Create a lineage graph for our KSQL query template file.
+#
+java -cp target/ks-inspector-1.0-SNAPSHOT.jar io.confluent.cp.mdmodel.ksql.KSQLQueryInspector 100_KSQLDB_training_intro.template.explained
+java -cp target/ks-inspector-1.0-SNAPSHOT.jar io.confluent.cp.mdmodel.ksql.KSQLQueryInspector 100_KSQLDB_training_intro.template.inspect
+
+

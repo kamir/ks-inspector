@@ -1,7 +1,7 @@
 package io.confluent.cp.mdmodel.ksql;
 
 import io.confluent.cp.mdmodel.fdg.KSQLDependencyGraph;
-import io.confluent.mdgraph.model.IKnowledgeGraph;
+import io.confluent.cp.mdmodel.TopicNamePair;
 
 import java.io.*;
 import java.util.*;
@@ -39,6 +39,8 @@ public class KSQLQueryInspector {
      */
     Vector<String> statements = new Vector<>();
 
+    StringBuffer sbFullScript = new StringBuffer();
+
     public KSQLQueryInspector() {
 
         dg = KSQLDependencyGraph.getKSQLDependencyGraph();
@@ -55,6 +57,7 @@ public class KSQLQueryInspector {
 
     }
 
+/**
     public static void inspectQueryFile(String p, String qf, IKnowledgeGraph graph) throws Exception {
 
         String ks = "127.0.0.1";
@@ -62,30 +65,53 @@ public class KSQLQueryInspector {
 
         KSQLQueryInspector inspector = new KSQLQueryInspector( p, qf );
 
-        inspector.appContext = new KSQLDBApplicationContext( inspector.getQueryStageFolder(), inspector.default_queryFileName, inspector.getQueryStageFolder(), ks, port );
+        inspector.appContext = new KSQLDBApplicationContext( inspector.getQueryStageFolder(), inspector.default_queryFileName, inspector.getQueryStageFolder(), ks, port, domain, project );
 
 ///        graph.registerKSQL
 
         inspector.processStatementsFromFile( inspector.appContext );
 
     }
+**/
 
     public static void main( String[] args ) throws Exception {
 
         String p = workdir;
-        String qf = "200_PoC-queries-solution.sql"; // ""opentsx.ksql";
+        String qf = args[0]; // "200_PoC-queries-solution.sql"; // ""opentsx.ksql";
         String ks = "127.0.0.1";
         String port = "8088";
+        String domain = "random_nr_analysis__";  // TODO: argument on CLI or ENVVAR
+        String project = "hsDemo__";  // TODO: argument on CLI or ENVVAR
 
         KSQLQueryInspector inspector = new KSQLQueryInspector( p, qf );
 
-        inspector.appContext = new KSQLDBApplicationContext( inspector.getQueryStageFolder(), inspector.default_queryFileName, inspector.getQueryStageFolder(), ks, port );
+        inspector.appContext = new KSQLDBApplicationContext( inspector.getQueryStageFolder(), inspector.default_queryFileName, inspector.getQueryStageFolder(), ks, port, domain, project );
 
         //inspector.getQueriesFromKSQLServer(inspector.appContext);
 
-        inspector.processStatementsFromFile( inspector.appContext );
+        inspector.processStatementsInContext( inspector.appContext );
+
+        inspector.contextualizeScripts();
 
         //inspector.compareExpacted_vs_available( inspector.appContext );
+
+    }
+
+    private void contextualizeScripts() throws Exception {
+
+        processStatementsInContext( appContext );
+
+        Vector<TopicNamePair> nl = appContext.getTopicNameContextualization();
+
+        String codeNew = code;
+
+        for ( TopicNamePair np : nl ) {
+            codeNew = codeNew.replaceAll( np.originalName, np.contextualName );
+        }
+
+        System.out.println( "************** CONTEXTUALIZED **************************" );
+        System.out.println( codeNew );
+        System.out.println( "********************************************************" );
 
     }
 
@@ -166,16 +192,18 @@ public class KSQLQueryInspector {
     }
 
 
-    public void processStatementsFromFile( KSQLDBApplicationContext appContext ) throws Exception {
+    String code = null;
+    public void processStatementsInContext( KSQLDBApplicationContext appContext ) throws Exception {
 
-        processStatementsFromFile( appContext.getKSQLFile() );
+        if ( code == null )
+            processStatementsFromFile( appContext.getKSQLFile() );
 
     }
 
 
     public void processStatementsFromFile(File f) throws Exception {
 
-        readQueryFile( f );
+        code = readQueryFile( f );
 
         log.info( ">>> # of parsed statements: " + statements.size() );
 
@@ -341,6 +369,8 @@ public class KSQLQueryInspector {
             while( br.ready() ) {
 
                 String line = br.readLine().trim();
+                sb.append( line );
+
                 //  System.out.println(line);
 
                 lineCount++;
@@ -355,8 +385,12 @@ public class KSQLQueryInspector {
                     if (line.startsWith("--")) {
                         commentCount++;
                         // IGNORE THAT LINE.
-
-                    } else {
+                    }
+                    else if (line.startsWith("#")) {
+                        commentCount++;
+                        // IGNORE THAT LINE.
+                    }
+                    else {
 
                         statement.append( line + " " );
 
