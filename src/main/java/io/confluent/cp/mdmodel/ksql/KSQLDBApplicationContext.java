@@ -1,6 +1,6 @@
 package io.confluent.cp.mdmodel.ksql;
 
-import io.confluent.cp.mdmodel.TopicNamePair;
+import io.confluent.cp.mdmodel.kafka.TopicNamePair;
 
 import java.io.File;
 import java.util.Vector;
@@ -10,6 +10,8 @@ import java.util.Vector;
  * Confluent cluster state tools and the knowledge graph about multiple streaming applications.
  */
 public class KSQLDBApplicationContext {
+
+    public static boolean ignoreContext = true;
 
     public KSQLServerInstance ksqlServer = new KSQLServerInstance();
 
@@ -95,6 +97,12 @@ public class KSQLDBApplicationContext {
         this.appPath.setKSQLBufferFolder(default_queryBufferFolder);
     }
 
+    public void overview() {
+
+        overview( "IN SPEC", x(expected_TOPICS), x(expected_STREAMS), x(expected_TABLES), x(expected_QUERIES) );
+
+    }
+
     public void compare() {
 
         overview( "ON SERVER" , TOPICS_on_server, STREAMS_on_server, TABLES_on_server, QUERIES_on_server );
@@ -152,12 +160,14 @@ public class KSQLDBApplicationContext {
 
     public Vector<TopicNamePair> getTopicNameContextualization() {
 
+        System.out.println( "> nr of topics: " + getTopicNames().size() );
         String[] topicINCONTEXT = new String[getTopicNames().size() ];
 
         Vector<TopicNamePair> alLTOPICS = new Vector<TopicNamePair>();
 
         int i = 0;
         for ( String topic : getTopicNames() ) {
+
             TopicNamePair p = new TopicNamePair( domain, project, topic );
             alLTOPICS.add( p );
             topicINCONTEXT[i] = p.contextualName;
@@ -174,6 +184,17 @@ public class KSQLDBApplicationContext {
         return expected_TOPICS;
     }
 
+    public void trackTopicName(String topicName) {
+        this.expected_TOPICS.add( topicName );
+    }
+
+    public String putIntoDomainContext(String entity) {
+        if ( ignoreContext ) return entity;
+        else {
+            TopicNamePair p = new TopicNamePair(domain, project, entity);
+            return p.contextualName;
+        }
+    }
 }
 
 

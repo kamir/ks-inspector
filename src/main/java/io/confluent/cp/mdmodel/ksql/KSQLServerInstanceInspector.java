@@ -295,7 +295,7 @@ public class KSQLServerInstanceInspector {
 
             if( statement.startsWith( "CREATE TABLE ")) {
 
-                dg.processCreateStatement(statement);
+                dg.processCreateStatement(statement, null);
 
                 if ( statement.contains( " AS SELECT ") ) {
                     Helper.count("CTAS", stats);
@@ -332,7 +332,7 @@ public class KSQLServerInstanceInspector {
 
                 log.info( dg.toString() );
 
-                dg.processCreateStatement(statement);
+                dg.processCreateStatement(statement, null);
 
                 if ( statement.contains( " AS SELECT ") ) {
                     Helper.count("CSAS", stats);

@@ -1,0 +1,5 @@
+{
+  "outputs": [
+    {"topic": "viewTableTopic", "timestamp": 0, "key": "foo", "value": "bar" }
+  ]
+}

@@ -1,0 +1,5 @@
+{
+  "outputs": [
+    {"topic": "filteredStreamTopic", "timestamp": 0, "key": "foo", "value": "bar" }
+  ]
+}

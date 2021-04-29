@@ -1,7 +1,7 @@
 package io.confluent.cp.mdmodel.ksql;
 
 import io.confluent.cp.mdmodel.fdg.KSQLDependencyGraph;
-import io.confluent.cp.mdmodel.TopicNamePair;
+import io.confluent.cp.mdmodel.kafka.TopicNamePair;
 
 import java.io.*;
 import java.util.*;
@@ -32,7 +32,15 @@ public class KSQLQueryInspector {
     String default_queryFileName = "opentsx.ksql";
 
     KSQLDependencyGraph dg = null;
-    KSQLDBApplicationContext appContext;
+
+    private KSQLDBApplicationContext appContext;
+
+    public void setAppContext(KSQLDBApplicationContext appContext) {
+        this.appContext = appContext;
+        if ( dg != null ) {
+            dg.setContext( appContext );
+        }
+    }
 
     /**
      * The KSQL statements loaded from the KSQL script.
@@ -43,7 +51,7 @@ public class KSQLQueryInspector {
 
     public KSQLQueryInspector() {
 
-        dg = KSQLDependencyGraph.getKSQLDependencyGraph();
+        dg = KSQLDependencyGraph.getKSQLDependencyGraph( );
 
     }
 
@@ -80,12 +88,13 @@ public class KSQLQueryInspector {
         String qf = args[0]; // "200_PoC-queries-solution.sql"; // ""opentsx.ksql";
         String ks = "127.0.0.1";
         String port = "8088";
-        String domain = "random_nr_analysis__";  // TODO: argument on CLI or ENVVAR
-        String project = "hsDemo__";  // TODO: argument on CLI or ENVVAR
+        String domain = "random_nr_analysis_";  // TODO: argument on CLI or ENVVAR
+        String project = "hsDemo_";  // TODO: argument on CLI or ENVVAR
 
         KSQLQueryInspector inspector = new KSQLQueryInspector( p, qf );
 
-        inspector.appContext = new KSQLDBApplicationContext( inspector.getQueryStageFolder(), inspector.default_queryFileName, inspector.getQueryStageFolder(), ks, port, domain, project );
+        inspector.setAppContext( new KSQLDBApplicationContext( inspector.getQueryStageFolder(), inspector.default_queryFileName, inspector.getQueryStageFolder(), ks, port, domain, project ));
+
 
         //inspector.getQueriesFromKSQLServer(inspector.appContext);
 
@@ -99,14 +108,18 @@ public class KSQLQueryInspector {
 
     private void contextualizeScripts() throws Exception {
 
-        processStatementsInContext( appContext );
-
         Vector<TopicNamePair> nl = appContext.getTopicNameContextualization();
 
         String codeNew = code;
 
+        System.out.println( "************** PUT SCRIPT IN DOMAIN CONTEXT **************************" );
+
+        appContext.overview();
+
         for ( TopicNamePair np : nl ) {
             codeNew = codeNew.replaceAll( np.originalName, np.contextualName );
+            System.out.println( np.toString() );
+
         }
 
         System.out.println( "************** CONTEXTUALIZED **************************" );
@@ -196,18 +209,18 @@ public class KSQLQueryInspector {
     public void processStatementsInContext( KSQLDBApplicationContext appContext ) throws Exception {
 
         if ( code == null )
-            processStatementsFromFile( appContext.getKSQLFile() );
+            processStatementsFromFile( appContext.getKSQLFile(), appContext );
 
     }
 
 
-    public void processStatementsFromFile(File f) throws Exception {
+    public void processStatementsFromFile(File f, KSQLDBApplicationContext appContext) throws Exception {
 
         code = readQueryFile( f );
 
         log.info( ">>> # of parsed statements: " + statements.size() );
 
-        analyseStatements( statements );
+        analyseStatements( statements, appContext );
 
         dg.analyseDependencyGraph();
 
@@ -215,7 +228,7 @@ public class KSQLQueryInspector {
 
     }
 
-    public void storeAndRenderGraph( String filename ) throws IOException {
+    public void storeAndRenderGraph( String filename ) throws Exception {
 
         File folderInsights = new File( workdir + "/insights" );
         if ( !folderInsights.exists() ) folderInsights.mkdirs();
@@ -236,10 +249,13 @@ public class KSQLQueryInspector {
 
         Process process = builder.start();
 
+        dg.storeD3JSModel( filename );
+
+
     }
 
 
-    public void analyseStatements(Vector<String> statements) {
+    public void analyseStatements(Vector<String> statements, KSQLDBApplicationContext applicationContext) {
 
         Hashtable<String,Integer> stats = new Hashtable<String,Integer>();
 
@@ -251,7 +267,7 @@ public class KSQLQueryInspector {
 
             if( statement.startsWith( "CREATE TABLE ")) {
 
-                dg.processCreateStatement(statement);
+                dg.processCreateStatement(statement, appContext);
 
                 if ( statement.contains( " AS SELECT ") ) {
                     Helper.count("CTAS", stats);
@@ -276,6 +292,7 @@ public class KSQLQueryInspector {
                 if ( statement.contains( " JOIN ") ) {
 
                     Helper.count("TJ", stats);
+
                     System.out.println("[" + i + "] " + statement );
 
                     dg.inspectJoin( statement );
@@ -288,7 +305,7 @@ public class KSQLQueryInspector {
 
                 log.info( dg.toString() );
 
-                dg.processCreateStatement(statement);
+                dg.processCreateStatement(statement,appContext);
 
                 if ( statement.contains( " AS SELECT ") ) {
                     Helper.count("CSAS", stats);
