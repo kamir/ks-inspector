@@ -1,0 +1,9 @@
+{
+  "inputs": [
+    {"topic": "sourceTableTopic", "timestamp": 0, "key": "k1", "value": { "b": "v1"}},
+    {"topic": "sourceTableTopic", "timestamp": 0, "key": "k2", "value": { "b": "v1"}},
+    {"topic": "sourceTableTopic", "timestamp": 0, "key": "k3", "value": { "b": "v1"}},
+    {"topic": "sourceTableTopic", "timestamp": 0, "key": "k4", "value": { "b": "v1"}},
+    {"topic": "sourceTableTopic", "timestamp": 0, "key": "foo", "value": "bar" }
+  ]
+}

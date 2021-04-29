@@ -1,8 +1,10 @@
 package io.confluent.cp.mdmodel.fdg;
 
 import io.confluent.cp.mdmodel.ksql.Helper;
+import io.confluent.cp.mdmodel.ksql.KSQLDBApplicationContext;
 import io.confluent.cp.mdmodel.ksql.KSQLQueryInspector;
 import io.confluent.cp.util.graph.analysis.LabelPropagationClustering;
+import org.graalvm.compiler.hotspot.phases.WriteBarrierAdditionPhase;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.cycle.CycleDetector;
 import org.jgrapht.alg.interfaces.ClusteringAlgorithm;
@@ -21,10 +23,16 @@ import java.util.logging.Logger;
 
 public class KSQLDependencyGraph {
 
+    KSQLDBApplicationContext context = null;
+
     private final static Logger log = Logger.getLogger(KSQLQueryInspector.class.getName());
 
-
     static KSQLDependencyGraph theGraph = new KSQLDependencyGraph();
+
+
+    public void setContext( KSQLDBApplicationContext context ) {
+        this.context = context;
+    }
 
     public static KSQLDependencyGraph getKSQLDependencyGraph() {
         return theGraph;
@@ -70,7 +78,7 @@ public class KSQLDependencyGraph {
 
     }
 
-    public void addLink(String s, String t) {
+    private void _addLink(String s, String t) {
 
         if ( s == null || t == null ) {
             System.out.println("**************************************************");
@@ -106,15 +114,13 @@ public class KSQLDependencyGraph {
         // this is a filter step ...
         createLargeSubgraphs( false );
 
-        _numberLargeClusters( false );
-
-        storeD3JSModel();
+        numberLargeClusters( false );
 
     }
 
     Hashtable<Integer, Set<String>> numberedClusters = new Hashtable<>();
 
-    private void _numberLargeClusters( boolean useOnlyLargeSubgraphs ) {
+    private void numberLargeClusters( boolean useOnlyLargeSubgraphs ) {
         int nr = 0;
         for( Set<String> s : largeClusters ) {
             numberedClusters.put( nr, s );
@@ -122,9 +128,9 @@ public class KSQLDependencyGraph {
         }
     }
 
-    private void storeD3JSModel() throws Exception {
+    public void storeD3JSModel(String filename) throws Exception {
 
-        File data = new File( "ksqldb-query-stage/d3js/force-directed-graph/files/graph2");
+        File data = new File( "ksqldb-query-stage/d3js/force-directed-graph/files/" + filename + ".json");
         FileWriter fw = new FileWriter( data );
 
         fw.write("{\n" + "  \"nodes\": [\n");
@@ -319,7 +325,7 @@ public class KSQLDependencyGraph {
     }
 
 
-    public void __processCS( String line ) {
+    public void processCS( String line, KSQLDBApplicationContext appContext  ) {
 
         //System.out.println( " ### " + line );
         String[] words = line.split(" ");
@@ -346,12 +352,20 @@ public class KSQLDependencyGraph {
             // String topicName = "TOPIC_" + fragment;
             String topicName = fragment;
 
-            addLink(topicName, streamName);
+            appContext.trackTopicName( topicName );
+
+            _addLink( putIntoContext( topicName ), putIntoContext( streamName ) );
 
         }
     }
 
-    public void processCreateStatement( String line ) {
+    private String putIntoContext( String entity ) {
+
+        return this.context.putIntoDomainContext( entity );
+
+    }
+
+    public void processCreateStatement( String line, KSQLDBApplicationContext appContext ) {
 
         String[] words = line.split(" ");
 
@@ -385,7 +399,10 @@ public class KSQLDependencyGraph {
             // String topicName = "TOPIC_" + fragment;
             String topicName = fragment;
 
-            addLink(topicName, tableName);
+            _addLink( putIntoContext( topicName ), putIntoContext( tableName ) );
+
+            if ( appContext != null )
+                appContext.trackTopicName( topicName );
 
         }
 
@@ -395,11 +412,12 @@ public class KSQLDependencyGraph {
 
             String streamName = fragment;
 
-            addLink(streamName, tableName);
+            _addLink( putIntoContext( streamName ), putIntoContext( tableName ) );
 
         }
 
     }
+
 
     public int inspectJoin(String statement) {
 
@@ -434,11 +452,12 @@ public class KSQLDependencyGraph {
             };
             if (lastWord.equals("FROM")) {
                 s1 = current_word;
-                addLink( s1, target );
+
+                _addLink( putIntoContext( s1 ), putIntoContext( target ) );
             };
             if (lastWord.equals("JOIN")) {
                 s2 = current_word;
-                addLink( s2, target );
+                _addLink( putIntoContext( s2 ), putIntoContext( target) );
             };
 
             lastWord = w;

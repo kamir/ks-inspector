@@ -1,4 +1,4 @@
-package io.confluent.cp.mdmodel;
+package io.confluent.cp.mdmodel.kafka;
 
 public class TopicNamePair {
 
@@ -10,4 +10,8 @@ public class TopicNamePair {
         contextualName = domain + project + topic;
     }
 
+    @Override
+    public String toString() {
+        return "Topic name [" + originalName  + "] in context doain context : {" + "contextualName='" + contextualName + "\'";
+    }
 }

@@ -1,0 +1,34 @@
+strict graph G {
+  grid_regions [ label="grid-regions" ];
+  regionTable [ label="regionTable" ];
+  grid_stations [ label="grid-stations" ];
+  stationTable [ label="stationTable" ];
+  grid_plants [ label="grid-plants" ];
+  plantsTable [ label="plantsTable" ];
+  grid_static_links [ label="grid-static-links" ];
+  linkTable [ label="linkTable" ];
+  grid_link_flow_data [ label="grid-link-flow-data" ];
+  gridLinkFlowDataStream [ label="gridLinkFlowDataStream" ];
+  grid_flow_enriched_sample_stream2 [ label="grid-flow-enriched-sample-stream2" ];
+  gridflowEnrichedSampleStream2 [ label="gridflowEnrichedSampleStream2" ];
+  grid_cross_region_flows [ label="grid-cross-region-flows" ];
+  crossRegionFlows [ label="crossRegionFlows" ];
+  grid_cross_region_flow_stream [ label="grid-cross-region-flow-stream" ];
+  crossRegionFlowStream [ label="crossRegionFlowStream" ];
+  grid_cross_region_flow3 [ label="grid-cross-region-flow3" ];
+  crossRegionFlowStream3 [ label="crossRegionFlowStream3" ];
+  grid_cross_region_flow4 [ label="grid-cross-region-flow4" ];
+  crossRegionFlowStream4 [ label="crossRegionFlowStream4" ];
+  grid_regions -- regionTable;
+  grid_stations -- stationTable;
+  grid_plants -- plantsTable;
+  grid_static_links -- linkTable;
+  grid_link_flow_data -- gridLinkFlowDataStream;
+  grid_flow_enriched_sample_stream2 -- gridflowEnrichedSampleStream2;
+  gridLinkFlowDataStream -- gridflowEnrichedSampleStream2;
+  linkTable -- gridflowEnrichedSampleStream2;
+  grid_cross_region_flows -- crossRegionFlows;
+  grid_cross_region_flow_stream -- crossRegionFlowStream;
+  grid_cross_region_flow3 -- crossRegionFlowStream3;
+  grid_cross_region_flow4 -- crossRegionFlowStream4;
+}

@@ -3,7 +3,6 @@ io/confluent/cp/mdmodel/ksql/KSQLDBApplicationPath.class
 io/confluent/cp/mdmodel/ksql/KSQLServerInstance.class
 io/confluent/cp/mdmodel/kafka/KafkaApplicationContextHandler.class
 io/confluent/cp/util/graph/analysis/LabelPropagationClustering$Implementation.class
-io/confluent/cp/mdmodel/TopicNamePair.class
 io/confluent/cp/factflow/FactQueryProducer.class
 io/confluent/mdgraph/model/IKnowledgeGraph.class
 io/confluent/cp/apps/KafkaStreamsExample02.class
@@ -14,6 +13,7 @@ io/confluent/cp/apps/SimpleKafkaLoggerApp.class
 io/confluent/mdgraph/KnowledgeGraphExporter.class
 io/confluent/cp/factcollector/ACLRetrievalTool.class
 io/confluent/cp/cfg/CCloudClusterWrapper.class
+io/confluent/cp/mdmodel/kafka/TopicNamePair.class
 io/confluent/cp/factflow/FactQueryConsumer.class
 io/confluent/mdgraph/model/KnowledgeGraphViaKafkaTopic.class
 io/confluent/cp/factcollector/ksql/KSQLRestClient.class
