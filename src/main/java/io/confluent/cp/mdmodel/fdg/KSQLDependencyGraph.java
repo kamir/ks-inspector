@@ -4,7 +4,6 @@ import io.confluent.cp.mdmodel.ksql.Helper;
 import io.confluent.cp.mdmodel.ksql.KSQLDBApplicationContext;
 import io.confluent.cp.mdmodel.ksql.KSQLQueryInspector;
 import io.confluent.cp.util.graph.analysis.LabelPropagationClustering;
-import org.graalvm.compiler.hotspot.phases.WriteBarrierAdditionPhase;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.cycle.CycleDetector;
 import org.jgrapht.alg.interfaces.ClusteringAlgorithm;

@@ -36,7 +36,7 @@ public class GovernanceWorkflowDEMO {
         /**
          * Command: export
          */
-        IKnowledgeGraph g2 = KnowledgeGraphFactory.getNeo4JBasedKnowledgeGraph(properties);
+        IKnowledgeGraph g2 = KnowledgeGraphFactory.getNeo4JBasedKnowledgeGraph(null, properties);
         KnowledgeGraphNeo4J queriableGraph = (KnowledgeGraphNeo4J)g2;
         queriableGraph.readGraphFromTopic( "DataGovernanceDemo001_" + System.currentTimeMillis(), properties);
         queriableGraph.show();

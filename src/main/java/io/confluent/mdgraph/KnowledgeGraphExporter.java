@@ -22,7 +22,7 @@ public class KnowledgeGraphExporter {
         Properties propertiesKAFKA = CCloudClusterWrapper.getPropsFrom_ROOT_FOLDER();
 
         Properties propsGDB = CCloudClusterWrapper.getPropsFrom_ROOT_FOLDER( "./src/main/resources/neo4j.props" );
-        IKnowledgeGraph g2 = KnowledgeGraphFactory.getNeo4JBasedKnowledgeGraph(propsGDB);
+        IKnowledgeGraph g2 = KnowledgeGraphFactory.getNeo4JBasedKnowledgeGraph(null, propsGDB);
 
         KnowledgeGraphNeo4J queriableGraph = (KnowledgeGraphNeo4J)g2;
 

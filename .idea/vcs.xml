@@ -2,7 +2,6 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/HelloKafkaLogger" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/kafka-clusterstate-tools" vcs="Git" />
   </component>
 </project>
