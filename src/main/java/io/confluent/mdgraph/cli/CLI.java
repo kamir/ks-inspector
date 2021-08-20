@@ -1,6 +1,5 @@
 package io.confluent.mdgraph.cli;
 
-
 import io.confluent.cp.cs.ClusterStateLoader;
 import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientException;
 import io.confluent.mdgraph.model.IKnowledgeGraph;
@@ -21,13 +20,51 @@ import java.io.IOException;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 
-
-
 @Command(name= "ksi", subcommands = { CommandLine.HelpCommand.class }, version = "ksi 0.1.0",
         description = "Inspect kafka based streaming processes via flow- and knowledge-graphs.")
 class CLI {
 
     private Logger logger = LoggerFactory.getLogger(CLI.class);
+
+    @Command(name = "inspectCSV", description = "Inspect domain description from cluster context.")
+    int inspect(
+            @Option(names = { "-wp", "--working-path" }, paramLabel = "<working-path>",
+                    description = "bootstrap server of the cluster to connect too") String workingPath,
+            @Option(names = { "-bss", "--bootstrap-server" }, paramLabel = "<bootstrap-server>",
+                    description = "bootstrap server of the cluster to connect too") String bootstrapServer,
+            @Option(names = { "-c", "--command-properties"}, paramLabel = "<command properties>",
+                    description = "command config file") File configFile,
+            @Option(names = { "-e", "--env-var-prefix"}, paramLabel = "<prefix>",
+                    description = "prefix for env vars to be added to properties ") String envVarPrefix,
+            @CommandLine.Parameters(paramLabel = "context", description = "path to the context", defaultValue = ".") File contextPath
+    ) throws IOException, ExecutionException, InterruptedException {
+        if (!contextPath.isDirectory()) {
+            logger.error("Given context {} is not a folder", contextPath);
+            return 1;
+        }
+        if (configFile == null) {
+            configFile = new File(contextPath, "kst.properties");
+        }
+
+        System.out.println("> Start inspection of a data flow file. {"+workingPath+"}");
+
+        final Properties properties = CLITools.loadProperties(configFile, bootstrapServer, envVarPrefix);
+        final ClientBundle bundle = ClientBundle.fromProperties(properties);
+
+        // TODO: expose the details of the bundle
+        // bundle.describe();
+
+        System.out.println( ">>> Use config file: [" + configFile.getAbsolutePath() + "] for Knowledge Graph creation. " );
+
+        IKnowledgeGraph g1 = KnowledgeGraphFactory.getNeo4JBasedKnowledgeGraph("DataGovernanceDemo001", properties);
+
+        ClusterStateLoader.populateKnowledgeGraphFromCSVFlows( g1, workingPath + "/services2.tsv" );
+
+        System.out.println( ">>> Finished collecting the facts for our Streaming Processes Knowledge Graph in a topic." );
+
+        return 0;
+
+    }
 
     @Command(name = "inspect", description = "Inspect domain description from cluster context.")
     int inspect(
@@ -144,7 +181,7 @@ class CLI {
         System.out.println( ">>> Use config file: [" + configFile.getAbsolutePath() + "](fileExists: " + configFile.exists() + ") for Knowledge Graph creation. " );
         System.out.println( ">>> Properties are overwritten by ENV_VARIABLES with prefix: " +  envVarPrefix );
 
-        IKnowledgeGraph g2 = KnowledgeGraphFactory.getNeo4JBasedKnowledgeGraph(propsNeo4J);
+        IKnowledgeGraph g2 = KnowledgeGraphFactory.getNeo4JBasedKnowledgeGraph(null, propsNeo4J);
 
         KnowledgeGraphNeo4J queriableGraph = (KnowledgeGraphNeo4J)g2;
         queriableGraph.readGraphFromTopic( "DataGovernanceDemo001_" + System.currentTimeMillis(), propertiesKAFKA );
@@ -165,7 +202,7 @@ class CLI {
         Properties p = new Properties();
         p.putAll( System.getenv() );
 
-        IKnowledgeGraph g2 = KnowledgeGraphFactory.getNeo4JBasedKnowledgeGraph(p);
+        IKnowledgeGraph g2 = KnowledgeGraphFactory.getNeo4JBasedKnowledgeGraph(null,p);
 
         KnowledgeGraphNeo4J queriableGraph = (KnowledgeGraphNeo4J)g2;
         queriableGraph.deleteAllFacts();
@@ -187,7 +224,7 @@ class CLI {
         Properties p = new Properties();
         p.putAll( System.getenv() );
 
-        IKnowledgeGraph g2 = KnowledgeGraphFactory.getNeo4JBasedKnowledgeGraph(p);
+        IKnowledgeGraph g2 = KnowledgeGraphFactory.getNeo4JBasedKnowledgeGraph(null,p);
 
         KnowledgeGraphNeo4J queriableGraph = (KnowledgeGraphNeo4J)g2;
         queriableGraph.queryFromFile( queryFilePath );

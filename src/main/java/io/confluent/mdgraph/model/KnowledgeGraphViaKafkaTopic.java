@@ -90,7 +90,7 @@ public class KnowledgeGraphViaKafkaTopic implements IKnowledgeGraph {
 
     }
 
-    private void addNode(String type, String name ) {
+    public void addNode(String type, String name ) {
 
         exequteCypherQuery( "CREATE (N:" + type + " { name : '" + name + "' } );" );
 
@@ -98,8 +98,33 @@ public class KnowledgeGraphViaKafkaTopic implements IKnowledgeGraph {
 
     @Override
     public void addTopicNode(String name) {
-         addNode( "Topic", name );
+         mergeNode( "Topic", name );
     }
+
+    @Override
+    public void addServiceNode(String name) {
+        mergeNode( "Service", name );
+    }
+
+    @Override
+    public void addTeamNode(String name) {
+        mergeNode( "Team", name );
+    }
+
+    public void addCGNode(String cgId) {
+        mergeNode( "consumer-group", cgId );
+    }
+
+    public void addTopicToConsume(String service, String topic) {
+        addTopicNode( topic );
+        addLink( service, "Service", topic, "Topic", "consumes");
+    }
+
+    public void addTopicToPublish(String service, String topic) {
+        addTopicNode( topic );
+        addLink(service, "Service", topic, "Topic", "publishes");
+    }
+
 
     @Override
     public void registerSchema(Schema schema) {
@@ -194,7 +219,15 @@ public class KnowledgeGraphViaKafkaTopic implements IKnowledgeGraph {
         this.mergeTopic( topic, null );
     }
 
-    private void mergeNode(String type, String name, Properties props) {
+    public void mergeNode(String type, String name) {
+
+        String q = "MERGE (t:" + type + " { name: '" + name + "'});";
+
+        exequteCypherQuery( q );
+
+    }
+
+    public void mergeNode(String type, String name, Properties props) {
 
         String q = "MERGE (t:" + type + " { name: '" + name + "'});";
 

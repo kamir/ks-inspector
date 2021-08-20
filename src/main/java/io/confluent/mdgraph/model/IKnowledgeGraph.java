@@ -10,7 +10,23 @@ import java.util.Properties;
 
 public interface IKnowledgeGraph {
 
+    void addCGNode(String cgId);
+
+    void addTopicToConsume(String service, String topic);
+
+    void addTopicToPublish(String service, String topic);
+
+    void mergeNode(String type, String name);
+
+    void mergeNode(String type, String name, Properties props);
+
     void addTopicNode(String name);
+
+    void addServiceNode(String name);
+
+    void addTeamNode(String name);
+
+    void addNode(String type, String name);
 
     void addNode(String type, String name, Properties props);
 

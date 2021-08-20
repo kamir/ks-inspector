@@ -21,6 +21,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
+        <!-- Some default CLI arguments for Maven exec task -->
         <argument1k>-p</argument1k>
         <argument1v>.</argument1v>
         <argument2k>-ksql-server</argument2k>
@@ -38,6 +39,7 @@
             <id>p1</id>
             <properties>
                 <maven.test.skip>true</maven.test.skip>
+                <argument0>inspect</argument0>
                 <argument1k>-p</argument1k>
                 <argument1v>/Users/mkampf/Engagements/KSQL/P1</argument1v>
                 <argument2k>-ks</argument2k>
@@ -56,12 +58,39 @@
                 <!-- Maven properties for compilation -->
                 <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
                 <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+            </properties>
+        </profile>
+        <profile>
+            <id>p2</id>
+            <properties>
+                <maven.test.skip>true</maven.test.skip>
+                <argument0>inspectCSV</argument0>
+                <argument1k>-wp</argument1k>
+                <argument1v>/Users/mkaempf/Documents/CONFLUENT-PARTNERSCHAFT/ENGAGEMENTS/WorldRemit/P2</argument1v>
+                <argument2k>-bss</argument2k>
+                <argument2v>192.168.3.172:9092</argument2v>
 
+                <!-- Keep versions as properties to allow easy modification -->
+                <maven.compiler.target>1.8</maven.compiler.target>
+                <maven.compiler.source>1.8</maven.compiler.source>
+
+                <java.version>8</java.version>
+
+                <!-- Maven properties for compilation -->
+                <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+                <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
             </properties>
         </profile>
     </profiles>
 
     <dependencies>
+
+        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-csv -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-csv</artifactId>
+            <version>1.9.0</version>
+        </dependency>
 
         <dependency>
             <groupId>org.apache.kafka</groupId>
@@ -197,7 +226,7 @@
         <repository>
             <id>confluent_repo</id>
             <name>confluent_repo</name>
-            <url>http://packages.confluent.io/maven/</url>
+            <url>https://packages.confluent.io/maven/</url>
         </repository>
 
         <repository>
@@ -320,14 +349,15 @@
                     <configuration>
                         <mainClass>io.confluent.mdgraph.cli.CLI</mainClass>
                         <arguments>
+                            <argument>${argument0}</argument>
                             <argument>${argument1k}</argument>
                             <argument>${argument1v}</argument>
                             <argument>${argument2k}</argument>
                             <argument>${argument2v}</argument>
-                            <argument>${argument3k}</argument>
+                            <!--argument>${argument3k}</argument>
                             <argument>${argument3v}</argument>
                             <argument>${argument4k}</argument>
-                            <argument>${argument4v}</argument>
+                            <argument>${argument4v}</argument-->
                         </arguments>
                     </configuration>
                 </plugin>

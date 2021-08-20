@@ -22,15 +22,22 @@ public class KnowledgeGraphNeo4J extends KnowledgeGraphViaKafkaTopic {
     static String DEFAULT_DATABASE_NAME = "neo4j";
     static String uri = "bolt://localhost:7687";
     static String username = "neo4j";
-    static String password = "admin";
+    static String password = "test";
 
     public static void init(Properties properties) {
 
-        databaseDirectory = properties.getProperty( "KST_NEO4J_DATABASE_DIRECTORY" );
-        DEFAULT_DATABASE_NAME = properties.getProperty( "KST_NEO4J_DEFAULT_DATABASE_NAME" );
-        uri = properties.getProperty( "KST_NEO4J_URI" );
-        username = properties.getProperty( "KST_NEO4J_USERNAME" );
-        password = properties.getProperty( "KST_NEO4J_PASSWORD" );
+        String databaseDirectoryTEMP = properties.getProperty( "KST_NEO4J_DATABASE_DIRECTORY" );
+        String DEFAULT_DATABASE_NAME_TEMP = properties.getProperty( "KST_NEO4J_DEFAULT_DATABASE_NAME" );
+        String uriTEMP = properties.getProperty( "KST_NEO4J_URI" );
+        String usernameTEMP = properties.getProperty( "KST_NEO4J_USERNAME" );
+        String passwordTEMP = properties.getProperty( "KST_NEO4J_PASSWORD" );
+
+        if ( usernameTEMP != null ) username = usernameTEMP;
+        if ( passwordTEMP != null ) password = passwordTEMP;
+
+        if ( databaseDirectoryTEMP != null ) databaseDirectory = databaseDirectoryTEMP;
+        if ( DEFAULT_DATABASE_NAME_TEMP != null ) DEFAULT_DATABASE_NAME = DEFAULT_DATABASE_NAME_TEMP;
+        if ( uriTEMP != null ) uri = uriTEMP;
 
         /**
         System.out.println( databaseDirectory );
@@ -137,7 +144,7 @@ public class KnowledgeGraphNeo4J extends KnowledgeGraphViaKafkaTopic {
 
                 while (result.hasNext()) {
 
-                    Record row = result.next();
+                    org.neo4j.driver.Record row = result.next();
 
                     System.out.println(row.asMap().toString());
 

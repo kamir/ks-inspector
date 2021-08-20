@@ -16,6 +16,7 @@ import java.io.IOException;
  *
  */
 
+import io.confluent.cp.mdmodel.CSVFileFlowGraphProcessor;
 import io.confluent.mdgraph.model.IKnowledgeGraph;
 import io.confluent.mdgraph.model.KnowledgeGraphNeo4J;
 import net.christophschubert.kafka.clusterstate.cli.CLITools;
@@ -134,6 +135,28 @@ public class ClusterStateLoader {
 
 
     }
+
+    /**
+     * Reads all files for this domain.
+     *
+     * @param kg
+     * @param csvPath
+     * @throws IOException
+     */
+    public static void populateKnowledgeGraphFromCSVFlows( IKnowledgeGraph kg, String csvPath ) throws IOException {
+
+        System.out.println( "### CSV-PATH : " + csvPath );
+        //logger.info( "### CSV-PATH : " + csvPath );
+
+        File csvFile = new File( csvPath );
+
+        CSVFileFlowGraphProcessor.process(csvFile,kg);
+
+        //ogger.info( "### DONE ###" );
+        System.out.println( "### DONE ###" );
+
+    }
+
 
     public static void main(String[] args) throws IOException {
 
