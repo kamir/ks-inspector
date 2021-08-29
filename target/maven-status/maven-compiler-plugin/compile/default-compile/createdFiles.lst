@@ -14,7 +14,7 @@ io/confluent/cp/factcollector/ksql/KSQLRestClient.class
 io/confluent/cp/factcollector/SchemaRegistryClient.class
 io/confluent/cp/mdmodel/ksql/KSQLDBApplicationContext.class
 io/confluent/cp/apps/RandomSeriesGeneratorApp.class
-io/confluent/cp/mdmodel/CSVFileFlowGraphProcessor.class
+io/confluent/cp/mdmodel/kafka/CSVFileFlowGraphProcessor.class
 io/confluent/cp/governanceprocess/PropertyFileExporter.class
 io/confluent/cp/util/MDLogStore.class
 io/confluent/cp/mdmodel/ksql/KSQLServerInstanceInspector.class

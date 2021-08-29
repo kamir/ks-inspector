@@ -10,11 +10,19 @@ import java.util.Properties;
 
 public interface IKnowledgeGraph {
 
+    void exportFullGraphAsGraphML( File outputFile );
+
+    void exportFullGraphAsCSV(File outputFile);
+
+    void exportFullGraphsNodeListAsCSV(File outputFile);
+
+    void exportFullGraphsEdgeListAsCSV(File outputFile);
+
     void addCGNode(String cgId);
 
-    void addTopicToConsume(String service, String topic);
+    void addServiceAsConsumerOfTopic(String service, String topic);
 
-    void addTopicToPublish(String service, String topic);
+    void addServiceAsPublisherToTopic(String service, String topic);
 
     void mergeNode(String type, String name);
 
@@ -40,4 +48,5 @@ public interface IKnowledgeGraph {
 
     void registerSchema(Schema schema);
 
+    void clearGraph();
 }

@@ -6,13 +6,8 @@ import org.apache.log4j.LogManager;
 import org.neo4j.driver.*;
 import org.neo4j.driver.Result;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-
+import java.io.*;
+import java.util.*;
 
 public class KnowledgeGraphNeo4J extends KnowledgeGraphViaKafkaTopic {
 
@@ -22,7 +17,7 @@ public class KnowledgeGraphNeo4J extends KnowledgeGraphViaKafkaTopic {
     static String DEFAULT_DATABASE_NAME = "neo4j";
     static String uri = "bolt://localhost:7687";
     static String username = "neo4j";
-    static String password = "test";
+    static String password = "neo4j";
 
     public static void init(Properties properties) {
 
@@ -111,6 +106,8 @@ public class KnowledgeGraphNeo4J extends KnowledgeGraphViaKafkaTopic {
 
     public void deleteAllFacts() {
 
+        System.out.println( ">>> Deletion of graph starts ... " );
+
         Session s = driver.session();
 
         String st = s.writeTransaction( new TransactionWork<String>()
@@ -129,9 +126,11 @@ public class KnowledgeGraphNeo4J extends KnowledgeGraphViaKafkaTopic {
 
         System.out.println( st );
 
+        System.out.println( ">>> Deletion of graph DONE." );
+
     }
 
-    public void exequteCypherQuery(String q) {
+    public void exequteCypherQuery(String q, boolean verbose, StringBuffer logger, String qid) {
 
         Session s = driver.session();
 
@@ -140,18 +139,57 @@ public class KnowledgeGraphNeo4J extends KnowledgeGraphViaKafkaTopic {
             @Override
             public String execute(org.neo4j.driver.Transaction tx) {
 
-                Result result = tx.run( q );
+                try {
 
-                while (result.hasNext()) {
+                    Result result = tx.run(q);
 
-                    org.neo4j.driver.Record row = result.next();
+                    int i = 0;
+                    while (result.hasNext()) {
 
-                    System.out.println(row.asMap().toString());
+                        i++;
+
+                        org.neo4j.driver.Record row = result.next();
+
+                        String content = row.asMap().toString();
+
+                        if ( verbose ) {
+                            System.out.println(content);
+                        }
+                        logger.append(content + "\n");
+
+                    }
+
+                    System.out.println( "> Result (" + qid + ") : " + i + " rows." );
+
+                    logger.append( "> Result (" + qid + ") : " + i + " rows.\n" );
+
+                    return result.toString();
 
                 }
+                catch(Exception ex) {
 
-                return result.toString();
+                    tx.close();
+                    System.err.println( "*****************" );
+                    System.err.println( "*** EXCEPTION ***" );
+                    System.err.println( "*****************" );
+                    System.err.println( " " + ex.getMessage() + "\n\n");
 
+                    if ( ex.getMessage().startsWith("Expected exactly one statement per query but got:") ) {
+
+                        System.out.println( "*** TRY MULTI-QUERY PROCESSING MODE ***");
+
+                        String logs = processMultiLineQuery( q, true, logger );
+
+                        if ( verbose )
+                            System.out.println( logs );
+
+                        return logs;
+
+                    }
+                    else
+                        return ex.getMessage();
+
+                }
 
             }
 
@@ -160,8 +198,119 @@ public class KnowledgeGraphNeo4J extends KnowledgeGraphViaKafkaTopic {
 
     }
 
+    private String processMultiLineQuery(String q, boolean verbose, StringBuffer logger) {
 
-    public void queryFromFile(File queryFilePath) {
+        String[] cypherCommands = splitIntoCommands( q );
+
+        System.out.println( "\n" + cypherCommands.length + " queries loaded from query string with " + q.length() + " bytes .\n");
+
+        StringBuffer responses = new StringBuffer();
+
+        int i = 0;
+        boolean executeAll = false;
+
+        for ( String c : cypherCommands ) {
+
+            boolean executeTHIS = false;
+
+            i++;
+
+            Scanner scanner = new Scanner(System.in);
+
+            System.out.println( "\n----------------" );
+            System.out.println( "QUERY ("+i+"):       ["+c+"]" );
+            System.out.println( "----------------" );
+
+            logger.append( "\n----------------\n" );
+            logger.append( "QUERY ("+i+"):       ["+c+"]\n" );
+            logger.append( "----------------\n" );
+
+            if ( !executeAll ) {
+
+                System.out.print("(s)kip or (e)xecute the query? (a) for execution of all remaining queries. ");
+
+                System.out.println(" ");
+
+                String decision = scanner.next();
+
+                if (decision.equals("a")) executeAll = true;
+
+                if (decision.equals("e")) executeTHIS = true;
+
+            }
+            if ( executeAll || executeTHIS ) {
+
+                boolean success = executeSingleQueryCypherCOMMAND(c, true, logger, "MCQ:"+i);
+
+                System.out.println("> Execution done : [" + success + "]");
+
+                responses.append("EXECUTION (" + i + ")-->[" + success + "] \n");
+
+            }
+            else {
+                System.out.println("> SKIPPED the query! ");
+                responses.append("SKIPPED (" + i + ")\n");
+            }
+        }
+
+        logger.append( "\n\nSummary:\n");
+        logger.append( "\n" + responses.toString() + "\n");
+
+        return responses.toString();
+    }
+
+    private String[] splitIntoCommands(String q) {
+
+        Vector<String> commands = new Vector<String>();
+
+        String[] LINES = q.split("\n" );
+
+        System.out.println( "*** LINES: " +LINES.length );
+
+        StringBuffer sb = new StringBuffer();
+        for( String ll : LINES ) {
+            String l = ll.trim();
+            if (l.length() > 0) {
+                sb.append( l + " " );
+                System.out.println( sb.toString().length() + " :: " + l );
+            }
+            else {
+                if ( sb.toString().length() > 0 ) {
+                    commands.add(sb.toString());
+                    sb = new StringBuffer();
+                    System.out.println( " NEW CMD IDENTIFIED. ");
+                }
+            }
+        }
+
+        return commands.toArray( new String[commands.size()] );
+    }
+
+    public boolean executeSingleQueryCypherCOMMAND(String c, boolean verbose, StringBuffer logger, String qid) {
+
+        try {
+
+            System.out.println( "#####################################################################################" );
+            System.out.println( "# Query: " );
+            System.out.println( "  " + c );
+
+            exequteCypherQuery( c, verbose, logger, qid );
+
+            System.out.println( "#####################################################################################" );
+
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        };
+
+        return true;
+
+    }
+
+    public void queryFromFile(File queryFilePath, File resultFile) {
+
+        StringBuffer sbLogger = new StringBuffer();
 
         try {
 
@@ -171,17 +320,23 @@ public class KnowledgeGraphNeo4J extends KnowledgeGraphViaKafkaTopic {
             while( br.ready() ) {
                 String line = br.readLine();
                 if ( !line.startsWith("#") )
-                    sb.append( line + " " );
+                    sb.append( line + " \n" );
             }
             System.out.println( "#####################################################################################" );
             System.out.println( "# Query Path: " +  queryFilePath.getAbsolutePath() );
             System.out.println( "# " );
-            System.out.println( "# Query: " );
-            System.out.println( "# ------ " );
-            System.out.println( "  " + sb.toString() );
             System.out.println( "#####################################################################################" );
 
-            exequteCypherQuery( sb.toString() );
+            executeSingleQueryCypherCOMMAND( sb.toString() , true, sbLogger, "SCQ:1" );
+
+            if ( resultFile != null ) {
+                FileWriter fw = new FileWriter( resultFile );
+                BufferedWriter bw = new BufferedWriter( fw );
+                bw.write( sbLogger.toString() );
+                bw.flush();
+                bw.close();
+                System.out.println( "> Graph Query Processor Result file has been written to: " + resultFile.getAbsolutePath() );
+            }
 
         }
         catch (Exception e) {

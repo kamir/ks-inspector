@@ -36,6 +36,7 @@
     <!-- use custom project and overwrite default settings for KSQL application context.  -->
     <profiles>
         <profile>
+            <!-- Analyse the KSQLDB scripts of a project. -->
             <id>p1</id>
             <properties>
                 <maven.test.skip>true</maven.test.skip>
@@ -61,6 +62,7 @@
             </properties>
         </profile>
         <profile>
+            <!-- READ THE CSV with multiple Service-Topic relations -->
             <id>p2</id>
             <properties>
                 <maven.test.skip>true</maven.test.skip>
@@ -69,6 +71,33 @@
                 <argument1v>/Users/mkaempf/Documents/CONFLUENT-PARTNERSCHAFT/ENGAGEMENTS/WorldRemit/P2</argument1v>
                 <argument2k>-bss</argument2k>
                 <argument2v>192.168.3.172:9092</argument2v>
+                <argument3k>-fn</argument3k>
+                <argument3v>servicesWeek2.txt</argument3v>
+
+                <!-- Keep versions as properties to allow easy modification -->
+                <maven.compiler.target>1.8</maven.compiler.target>
+                <maven.compiler.source>1.8</maven.compiler.source>
+
+                <java.version>8</java.version>
+
+                <!-- Maven properties for compilation -->
+                <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+                <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+            </properties>
+        </profile>
+        <profile>
+            <!-- Analyse the KG using named graphs and Cypher analysis functions. -->
+            <id>p3</id>
+            <properties>
+                <maven.test.skip>true</maven.test.skip>
+                <argument0>queryGraph</argument0>
+                <argument1k>-wp</argument1k>
+                <argument1v>/Users/mkaempf/Documents/CONFLUENT-PARTNERSCHAFT/ENGAGEMENTS/WorldRemit/P2</argument1v>
+                <argument2k>-bss</argument2k>
+                <argument2v>192.168.3.172:9092</argument2v>
+                <argument3k>-e</argument3k>
+                <argument3v>KST</argument3v>
+                <argument4>src/main/cypher/cmd/q4.cypher</argument4>
 
                 <!-- Keep versions as properties to allow easy modification -->
                 <maven.compiler.target>1.8</maven.compiler.target>
@@ -354,9 +383,9 @@
                             <argument>${argument1v}</argument>
                             <argument>${argument2k}</argument>
                             <argument>${argument2v}</argument>
-                            <!--argument>${argument3k}</argument>
+                            <argument>${argument3k}</argument>
                             <argument>${argument3v}</argument>
-                            <argument>${argument4k}</argument>
+                            <!--argument>${argument4k}</argument>
                             <argument>${argument4v}</argument-->
                         </arguments>
                     </configuration>

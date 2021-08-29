@@ -8,17 +8,18 @@ import java.io.File;
 import java.io.IOException;
 
 /**
+ * The ClusterState Loader reads the Kafka Cluster state from a DOMAIN definition.
+ * The data is used to populate a KnowledgeGraph.
  *
- * This class uses the Cluster State Tools to read the DOMAIN definition file
- * as defined in CST project.
+ *   This class uses the Cluster State Tools (by Cristoph Schubert)
+ *   to read the DOMAIN definition file as defined in CST project.
  *
- * It can create the Knowledge Graph using a Neo4J database.
- *
+ *   Typically, we create the Knowledge Graph using a Neo4J database, and Kafka topics
+ *   to keep the content creation statements.
  */
 
-import io.confluent.cp.mdmodel.CSVFileFlowGraphProcessor;
+import io.confluent.cp.mdmodel.kafka.CSVFileFlowGraphProcessor;
 import io.confluent.mdgraph.model.IKnowledgeGraph;
-import io.confluent.mdgraph.model.KnowledgeGraphNeo4J;
 import net.christophschubert.kafka.clusterstate.cli.CLITools;
 import net.christophschubert.kafka.clusterstate.formats.domain.Domain;
 import net.christophschubert.kafka.clusterstate.formats.domain.DomainParser;
@@ -145,18 +146,23 @@ public class ClusterStateLoader {
      */
     public static void populateKnowledgeGraphFromCSVFlows( IKnowledgeGraph kg, String csvPath ) throws IOException {
 
-        System.out.println( "### CSV-PATH : " + csvPath );
-        //logger.info( "### CSV-PATH : " + csvPath );
+        System.out.println( "### Processing data in CSV file in PATH : " + csvPath );
+        //logger.info( "### Processing data in CSV file in PATH : " + csvPath );
 
         File csvFile = new File( csvPath );
 
-        CSVFileFlowGraphProcessor.process(csvFile,kg);
+        CSVFileFlowGraphProcessor.process(csvFile, kg, false);
 
-        //ogger.info( "### DONE ###" );
-        System.out.println( "### DONE ###" );
+        //logger.info( "### DONE ###" );
+        System.out.println( "### DONE ###\n" );
+
+        File fOutGraphML = new File( csvFile.getAbsoluteFile() + ".graphML" );
+        kg.exportFullGraphAsGraphML( fOutGraphML );
+
+        File fOutCSV = new File( csvFile.getAbsoluteFile() + ".out.csv" );
+        kg.exportFullGraphAsCSV( fOutCSV );
 
     }
-
 
     public static void main(String[] args) throws IOException {
 
@@ -185,6 +191,7 @@ public class ClusterStateLoader {
         System.out.println( "# Domains: " + domains.size() );
 
         System.exit( 0 );
+
     }
 
     public static void populateKnowledgeGraphWithEnvironmentDescription(IKnowledgeGraph g, String environmentPath) throws Exception {
@@ -205,4 +212,5 @@ public class ClusterStateLoader {
         }
 
     }
+
 }
