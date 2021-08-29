@@ -29,7 +29,9 @@ class CLI {
     @Command(name = "inspectCSV", description = "Inspect domain description from cluster context.")
     int inspect(
             @Option(names = { "-wp", "--working-path" }, paramLabel = "<working-path>",
-                    description = "bootstrap server of the cluster to connect too") String workingPath,
+                    description = "working path for reading the input file") String workingPath,
+            @Option(names = { "-fn", "--file-name" }, paramLabel = "<file-name>",
+                    description = "filename for the input") String fileName,
             @Option(names = { "-bss", "--bootstrap-server" }, paramLabel = "<bootstrap-server>",
                     description = "bootstrap server of the cluster to connect too") String bootstrapServer,
             @Option(names = { "-c", "--command-properties"}, paramLabel = "<command properties>",
@@ -46,7 +48,7 @@ class CLI {
             configFile = new File(contextPath, "kst.properties");
         }
 
-        System.out.println("> Start inspection of a data flow file. {"+workingPath+"}");
+        System.out.println("> Start inspection of a data flow file. {"+workingPath + "/" + fileName + "}");
 
         final Properties properties = CLITools.loadProperties(configFile, bootstrapServer, envVarPrefix);
         final ClientBundle bundle = ClientBundle.fromProperties(properties);
@@ -58,7 +60,7 @@ class CLI {
 
         IKnowledgeGraph g1 = KnowledgeGraphFactory.getNeo4JBasedKnowledgeGraph("DataGovernanceDemo001", properties);
 
-        ClusterStateLoader.populateKnowledgeGraphFromCSVFlows( g1, workingPath + "/services2.tsv" );
+        ClusterStateLoader.populateKnowledgeGraphFromCSVFlows( g1, workingPath + "/" + fileName );
 
         System.out.println( ">>> Finished collecting the facts for our Streaming Processes Knowledge Graph in a topic." );
 
@@ -215,19 +217,37 @@ class CLI {
 
     @Command(name = "queryGraph", description = "Query the knowledge graph in a Neo4J service with a predefined analysis query.")
     int queryGraph(
+            @Option(names = { "-wp", "--working-path" }, paramLabel = "<working-path>",
+                    description = "working path for reading the input file") String workingPath,
+            @Option(names = { "-fno", "--file-name-out" }, paramLabel = "<file-name-out>",
+                    description = "filename for the output") String fileNameOut,
+            @Option(names = { "-bss", "--bootstrap-server" }, paramLabel = "<bootstrap-server>",
+                    description = "bootstrap server of the cluster to connect too") String bootstrapServer,
+            @Option(names = { "-qfp", "--query-file-path"}, paramLabel = "<query-file-path>",
+                    description = "path of a text file with a cypher query ") String qfp,
             @Option(names = { "-e", "--env-var-prefix"}, paramLabel = "<prefix>",
                     description = "prefix for env vars to be added to properties ") String envVarPrefix,
-            @CommandLine.Parameters(paramLabel = "queryFilePath", description = "path to a cypher queryfile", defaultValue = "./src/main/cypher/q1.cypher") File queryFilePath
+            @CommandLine.Parameters(paramLabel = "queryFilePath", description = "path to a cypher queryfile", defaultValue = "./src/main/cypher/cmd/q4.cypher") File queryFilePath
 
     ) throws IOException, ExecutionException, InterruptedException {
 
         Properties p = new Properties();
         p.putAll( System.getenv() );
 
+        if ( qfp != null ) {
+            File queryFilePathTEMP = new File( qfp );
+            if( queryFilePathTEMP.canRead() ) {
+                queryFilePath = queryFilePathTEMP;
+                System.out.println(  "> QFP: " + queryFilePathTEMP.getAbsolutePath() );
+            }
+        }
+
+        File resultFilePath = new File( queryFilePath + ".gqpr.txt" );
+
         IKnowledgeGraph g2 = KnowledgeGraphFactory.getNeo4JBasedKnowledgeGraph(null,p);
 
         KnowledgeGraphNeo4J queriableGraph = (KnowledgeGraphNeo4J)g2;
-        queriableGraph.queryFromFile( queryFilePath );
+        queriableGraph.queryFromFile( queryFilePath, resultFilePath );
 
         System.out.println( ">>> Finished analysis work." );
 

@@ -57,8 +57,6 @@ MATCH (a:Topic),(b:KSQLDB)
 WHERE a.name = 'customers' and b.name = 'order-processor'
 CREATE (a)-[r:consumedByStreamingApp]->(b)
 
-
-
 #
 # Define or overwrite a property of a node
 #
@@ -75,8 +73,6 @@ CREATE (a)-[r:consumedByStreamingApp]->(b)
 MATCH (N:T) { SK: 'SV' })
 SET N.K = 'V';
 
-
-
 #
 # Find all topics with two registered subjects
 #
@@ -88,6 +84,5 @@ RETURN n
 #
 MATCH p=()<-[r1:hasSchemaString]-(n)
 RETURN n
-
 
 MATCH p=()<-[r1:hasSubject]-(n)-[r2:hasSubject]->() RETURN n

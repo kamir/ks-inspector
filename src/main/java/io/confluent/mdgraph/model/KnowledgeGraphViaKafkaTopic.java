@@ -8,7 +8,9 @@ import net.christophschubert.kafka.clusterstate.formats.domain.*;
 import net.christophschubert.kafka.clusterstate.formats.env.CloudCluster;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.neo4j.driver.Driver;
-
+import org.neo4j.driver.Result;
+import org.neo4j.driver.Session;
+import org.neo4j.driver.TransactionWork;
 
 import java.io.File;
 import java.util.*;
@@ -85,42 +87,71 @@ public class KnowledgeGraphViaKafkaTopic implements IKnowledgeGraph {
 
     @Override
     public void addPropertiesToNode(String T, String SK, String SV, String K, String V) {
-
         exequteCypherQuery( "MATCH (N:" + T + "{ " + SK + ":'" + SV + "' } ) SET N." + K + " = '" + V + "';" );
-
     }
 
     public void addNode(String type, String name ) {
-
-        exequteCypherQuery( "CREATE (N:" + type + " { name : '" + name + "' } );" );
-
+        exequteCypherQuery( "CREATE (N:" + type + " { name : '" + name + "' label : '" + type + ":" + name + "' } );" );
     }
 
     @Override
-    public void addTopicNode(String name) {
-         mergeNode( "Topic", name );
-    }
+    public void addTopicNode(String name) { mergeNode( "Topic", name ); }
 
     @Override
-    public void addServiceNode(String name) {
-        mergeNode( "Service", name );
-    }
+    public void addServiceNode(String name) { mergeNode( "Service", name ); }
 
     @Override
     public void addTeamNode(String name) {
         mergeNode( "Team", name );
     }
 
-    public void addCGNode(String cgId) {
-        mergeNode( "consumer-group", cgId );
+    @Override
+    public void exportFullGraphAsCSV(File outputFile) {
+        showExportInfo("exportFullGraphAsCSV");
+        exequteCypherQuery( "CALL apoc.export.csv.all(\"" + outputFile.getAbsolutePath() + "\", {})" );
     }
 
-    public void addTopicToConsume(String service, String topic) {
+    @Override
+    public void exportFullGraphsEdgeListAsCSV(File outputFile) {
+        showExportInfo( "exportFullGraphsEdgeListAsCSV" );
+        // exequteCypherQuery( "CALL apoc.export.csv.all(\"" + outputFile.getAbsolutePath() + "\", {})" );
+    }
+
+    @Override
+    public void exportFullGraphAsGraphML(File outputFile) {
+        showExportInfo( "exportFullGraphAsGraphML" );
+        exequteCypherQuery( "CALL apoc.export.graphml.all(\"" + outputFile.getAbsolutePath() + "\", {})" );
+    }
+
+    @Override
+    public void exportFullGraphsNodeListAsCSV(File outputFile) {
+        showExportInfo( "exportFullGraphsNodeListAsCSV" );
+        exequteCypherQuery( "CALL apoc.export.csv.all(\"" + outputFile.getAbsolutePath() + "\", {})" );
+    }
+
+    private void showExportInfo(String CALLER) {
+        System.out.println( "\n*** NOTE *** {"+CALLER+"}" );
+        System.out.println( "  - Documentation with details regarding Neo4J setup for data export is available here:" );
+        System.out.println( "    https://neo4j.com/labs/apoc/4.1/export\n" );
+        System.out.println( "--- Did you set? -------------------------------------- ");
+        System.out.println( " apoc.export.file.enabled=true" );
+        System.out.println( " apoc.import.file.use_neo4j_config=false" );
+        System.out.println( "------------------------------------------------------- ");
+    }
+
+
+    public void addCGNode(String cgId) {
+        mergeNode( "ConsumerGroup", cgId );
+    }
+
+    public void addServiceAsConsumerOfTopic(String service, String topic) {
+        addServiceNode( service );
         addTopicNode( topic );
         addLink( service, "Service", topic, "Topic", "consumes");
     }
 
-    public void addTopicToPublish(String service, String topic) {
+    public void addServiceAsPublisherToTopic(String service, String topic) {
+        addServiceNode( service );
         addTopicNode( topic );
         addLink(service, "Service", topic, "Topic", "publishes");
     }
@@ -166,6 +197,17 @@ public class KnowledgeGraphViaKafkaTopic implements IKnowledgeGraph {
         }
 
 
+
+    }
+
+    @Override
+    public void clearGraph() {
+        deleteAllFacts();
+    }
+
+    public void deleteAllFacts() {
+
+        System.out.println( ">>> Deletion of graph is not supported in [class :: " + this.getClass() + "]" );
 
     }
 
@@ -435,6 +477,7 @@ public class KnowledgeGraphViaKafkaTopic implements IKnowledgeGraph {
                 File f = new File(dff);
 
                 System.out.println("# Link Domain to CloudCluster: " + CCNAME + " -> " + f.canRead() + " => " + dff + " :: " + f.getAbsolutePath());
+
                 /**
                  * Iterate over a list of folders within a domain-folder
                  */
@@ -449,12 +492,15 @@ public class KnowledgeGraphViaKafkaTopic implements IKnowledgeGraph {
                             final DomainParser parser = new DomainParser();
 
                             try {
+
                                 final Domain domain = parser.loadFromFile(file);
 
                                 String DN = domain.name;
 
                                 addLink(CCNAME, "CloudCluster", DN, "Domain", "hostsDomain");
-                            } catch (Exception ex) {
+
+                            }
+                            catch (Exception ex) {
                                 ex.printStackTrace();
                             }
                         }
