@@ -3,6 +3,7 @@ package io.confluent.cp.factflow;
 import org.apache.kafka.clients.producer.*;
 
 import java.util.Properties;
+import java.util.concurrent.ExecutionException;
 
 public class FactQueryProducer extends GenericProducerWrapper {
 
@@ -20,7 +21,11 @@ public class FactQueryProducer extends GenericProducerWrapper {
         startTime = System.currentTimeMillis();
     }
 
-    public static void sendFact( String query ) {
+    public static boolean showNote = true;
+
+    public static int sentCounter = 0;
+
+    public static void sendFact( String query ) throws ExecutionException, InterruptedException {
 
         try {
 
@@ -31,11 +36,26 @@ public class FactQueryProducer extends GenericProducerWrapper {
             final ProducerRecord<String, String> record =
                     new ProducerRecord<String,String>(TOPIC, startTime+"_"+nrOfStatements, query );
 
-            producer.send(record).get();
-
+            if ( producer != null ) {
+                producer.send(record).get();
+                sentCounter++;
+            }
+            else {
+                if ( showNote ) {
+                    showNote = false;
+                    System.out.println(">>> NOTE <<< \n\t  No Kafka Producer configured! Data will be collected in Neo4J Graph.\n\n");
+                }
+            }
         }
         catch (Exception ex) {
+
             ex.printStackTrace();
+
+            props.list( System.out );
+
+            System.out.println( "  " );
+
+            throw ex;
         }
 
     }
@@ -54,6 +74,9 @@ public class FactQueryProducer extends GenericProducerWrapper {
 
     }
 
+    public static boolean isReady() {
+        return producer != null;
+    }
 }
 
 

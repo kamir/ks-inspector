@@ -2,8 +2,10 @@
 /Users/mkaempf/GITHUB.public/ks-inspector/src/main/java/io/confluent/cp/util/MDLogStore.java
 /Users/mkaempf/GITHUB.public/ks-inspector/src/main/java/io/confluent/cp/apps/KafkaStreamsExample02.java
 /Users/mkaempf/GITHUB.public/ks-inspector/src/main/java/io/confluent/cp/factcollector/SchemaRegistryClient.java
+/Users/mkaempf/GITHUB.public/ks-inspector/src/main/java/io/confluent/cp/mdmodel/GraphMapper.java
 /Users/mkaempf/GITHUB.public/ks-inspector/src/main/java/io/confluent/cp/cfg/CCloudClusterWrapper.java
 /Users/mkaempf/GITHUB.public/ks-inspector/src/main/java/io/confluent/cp/apps/RandomSeriesGeneratorApp.java
+/Users/mkaempf/GITHUB.public/ks-inspector/src/main/java/io/confluent/cp/mdmodel/kafka/CSVFileFlowGraphProcessorExternalServices.java
 /Users/mkaempf/GITHUB.public/ks-inspector/src/main/java/io/confluent/cp/util/KSTWrapper.java
 /Users/mkaempf/GITHUB.public/ks-inspector/src/main/java/io/confluent/cp/cs/AppDescriptorLoader.java
 /Users/mkaempf/GITHUB.public/ks-inspector/src/main/java/io/confluent/cp/mdmodel/kafka/CSVFileFlowGraphProcessor.java
@@ -37,6 +39,7 @@
 /Users/mkaempf/GITHUB.public/ks-inspector/src/main/java/io/confluent/cp/mdmodel/ksql/KSQLServerInstance.java
 /Users/mkaempf/GITHUB.public/ks-inspector/src/main/java/io/confluent/cp/factcollector/ksql/KSQLDBClient2.java
 /Users/mkaempf/GITHUB.public/ks-inspector/src/main/java/io/confluent/mdgraph/model/KnowledgeGraphNeo4J.java
+/Users/mkaempf/GITHUB.public/ks-inspector/src/main/java/io/confluent/cp/mdmodel/kafka/CSVFileFlowGraphProcessorExternalTopics.java
 /Users/mkaempf/GITHUB.public/ks-inspector/src/main/java/io/confluent/cp/cs/ClusterStateLoader.java
 /Users/mkaempf/GITHUB.public/ks-inspector/src/main/java/io/confluent/cp/apps/KafkaStreamsExample01.java
 /Users/mkaempf/GITHUB.public/ks-inspector/src/main/java/io/confluent/cp/factflow/GenericProducerWrapper.java

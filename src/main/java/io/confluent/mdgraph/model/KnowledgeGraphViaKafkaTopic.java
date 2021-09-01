@@ -50,9 +50,19 @@ public class KnowledgeGraphViaKafkaTopic implements IKnowledgeGraph {
      * @param q
      */
     public void exequteCypherQuery(String q) {
+        StringBuffer sb = new StringBuffer();
+        exequteCypherQuery( q, false, sb, "0" );
+    }
 
-        FactQueryProducer.sendFact( q );
+    public void exequteCypherQuery(String q, boolean verbose, StringBuffer logger, String qid) {
 
+        try {
+            FactQueryProducer.sendFact(q);
+        }
+        catch( Exception ex ) {
+            ex.printStackTrace();
+            System.exit(-1);
+        }
     }
 
     @Override
@@ -91,7 +101,7 @@ public class KnowledgeGraphViaKafkaTopic implements IKnowledgeGraph {
     }
 
     public void addNode(String type, String name ) {
-        exequteCypherQuery( "CREATE (N:" + type + " { name : '" + name + "' label : '" + type + ":" + name + "' } );" );
+        exequteCypherQuery( "CREATE (N:" + type + " { name : '" + name + "' label : '" + type + "_" + name + "' } );" );
     }
 
     @Override
@@ -196,13 +206,24 @@ public class KnowledgeGraphViaKafkaTopic implements IKnowledgeGraph {
 
         }
 
-
-
     }
 
     @Override
     public void clearGraph() {
         deleteAllFacts();
+    }
+
+    @Override
+    public boolean describe() {
+        System.out.println( "{" + this.getClass().getName() + "} implements the KG module.");
+        return this.isReadyForDataProcessing();
+    }
+
+    @Override
+    public boolean isReadyForDataProcessing() {
+        if ( this.graph != null && FactQueryProducer.isReady() ) return true;
+        else
+            return false;
     }
 
     public void deleteAllFacts() {

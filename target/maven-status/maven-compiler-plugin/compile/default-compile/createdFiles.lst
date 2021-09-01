@@ -2,6 +2,7 @@ io/confluent/cp/mdmodel/fdg/DataFlowEdge.class
 io/confluent/cp/mdmodel/ksql/KSQLDBApplicationPath.class
 io/confluent/cp/mdmodel/ksql/KSQLServerInstance.class
 io/confluent/cp/mdmodel/kafka/KafkaApplicationContextHandler.class
+io/confluent/cp/mdmodel/kafka/CSVFileFlowGraphProcessorExternalServices.class
 io/confluent/cp/factflow/FactQueryProducer.class
 io/confluent/mdgraph/model/IKnowledgeGraph.class
 io/confluent/cp/apps/KafkaStreamsExample02.class
@@ -21,7 +22,9 @@ io/confluent/cp/mdmodel/ksql/KSQLServerInstanceInspector.class
 io/confluent/cp/mdmodel/ksql/Helper.class
 io/confluent/cp/mdmodel/ksql/KSQLQueryInspector.class
 io/confluent/cp/util/AppContextLogRecord.class
+io/confluent/cp/mdmodel/GraphMapper.class
 io/confluent/cp/util/KSTWrapper.class
 io/confluent/cp/mdmodel/fdg/KSQLDependencyGraph.class
+io/confluent/cp/mdmodel/kafka/CSVFileFlowGraphProcessorExternalTopics.class
 io/confluent/cp/mdmodel/kstreams/KafkaStreamsApplicationContextHandler.class
 io/confluent/cp/apps/KafkaStreamsExample01.class

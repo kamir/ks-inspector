@@ -1,14 +1,17 @@
 package io.confluent.cp.mdmodel.kafka;
 
+import io.confluent.cp.mdmodel.GraphMapper;
 import io.confluent.mdgraph.model.IKnowledgeGraph;
-import org.apache.commons.csv.*;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 
 
-public class CSVFileFlowGraphProcessor {
+public class CSVFileFlowGraphProcessorExternalServices implements GraphMapper {
 
     /**
      * We read the CSV file and populate the provided KG instance.
@@ -19,13 +22,13 @@ public class CSVFileFlowGraphProcessor {
      * @param kg
      * @param append
      */
-    public static void process(File csvFile, IKnowledgeGraph kg, boolean append) {
+    public void process(File csvFile, IKnowledgeGraph kg, boolean append) {
 
         if ( !append ) kg.clearGraph();
 
         CSVParser parser = null;
 
-        System.out.println( "*** CSVFileFlowGraphProcessor *** ==> start working on CSV file: " + csvFile.getAbsolutePath() );
+        System.out.println( "*** CSVFileFlowGraphProcessor2 *** ==> start working on CSV file: " + csvFile.getAbsolutePath() );
 
         try {
 
@@ -113,6 +116,7 @@ public class CSVFileFlowGraphProcessor {
             System.out.println( " services with no Kafka consumer   :" + nc );
             System.out.println( " services with no Kafka producer   :" + np );
             System.out.println( " services with no Kafka connection :" + nk );
+            System.out.println( "\n Used GraphMapper: ["+this.getClass().getName()+"]" );
             System.out.println( "==================================================================================" );
 
         }
