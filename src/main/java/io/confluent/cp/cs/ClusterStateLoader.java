@@ -1,7 +1,5 @@
 package io.confluent.cp.cs;
 
-
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import java.io.File;
@@ -18,7 +16,8 @@ import java.io.IOException;
  *   to keep the content creation statements.
  */
 
-import io.confluent.cp.mdmodel.kafka.CSVFileFlowGraphProcessor;
+import io.confluent.cp.mdmodel.GraphMapper;
+import io.confluent.cp.mdmodel.kafka.DefaultCSVFileFlowGraphProcessor;
 import io.confluent.mdgraph.model.IKnowledgeGraph;
 import net.christophschubert.kafka.clusterstate.cli.CLITools;
 import net.christophschubert.kafka.clusterstate.formats.domain.Domain;
@@ -138,20 +137,55 @@ public class ClusterStateLoader {
     }
 
     /**
-     * Reads all files for this domain.
+     * Reads data from a CSV file using the default CSV to graph mapper.
+     *
+     * In this case we reuse the graph and extend it with multiple views.
+     *
+     * @param kg
+     * @param csvPath
+     * @throws IOException
+     */
+    public static void populateKnowledgeGraphFromCSVFlows( IKnowledgeGraph kg, String csvPath, String graphMapperClassName ) throws IOException {
+        // This is now your custom GraphMapper
+        try {
+            System.out.println( "> load GraphMapper class: {" + graphMapperClassName + "}" );
+            GraphMapper gmi = (GraphMapper) Class.forName(graphMapperClassName).newInstance();
+            populateKnowledgeGraphFromCSVFlows(kg, csvPath, (GraphMapper)gmi, true);
+        }
+        catch(Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Reads data from a CSV file using the default CSV to graph mapper.
+     * Im default modus haben legen wir einen neuen Graph an.
      *
      * @param kg
      * @param csvPath
      * @throws IOException
      */
     public static void populateKnowledgeGraphFromCSVFlows( IKnowledgeGraph kg, String csvPath ) throws IOException {
+        // This is our default CSVFileProcessor
+        DefaultCSVFileFlowGraphProcessor processor = new DefaultCSVFileFlowGraphProcessor();
+        populateKnowledgeGraphFromCSVFlows( kg, csvPath, (GraphMapper)processor, false );
+    }
+
+    /**
+     * Reads data from a CSV file using the provided CSV to graph mapper.
+     *
+     * @param kg
+     * @param csvPath
+     * @throws IOException
+     */
+    public static void populateKnowledgeGraphFromCSVFlows( IKnowledgeGraph kg, String csvPath, GraphMapper processor, boolean append ) throws IOException {
 
         System.out.println( "### Processing data in CSV file in PATH : " + csvPath );
         //logger.info( "### Processing data in CSV file in PATH : " + csvPath );
 
         File csvFile = new File( csvPath );
 
-        CSVFileFlowGraphProcessor.process(csvFile, kg, false);
+        processor.process(csvFile, kg, true);
 
         //logger.info( "### DONE ###" );
         System.out.println( "### DONE ###\n" );

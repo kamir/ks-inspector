@@ -49,4 +49,8 @@ public interface IKnowledgeGraph {
     void registerSchema(Schema schema);
 
     void clearGraph();
+
+    boolean describe();
+
+    boolean isReadyForDataProcessing();
 }

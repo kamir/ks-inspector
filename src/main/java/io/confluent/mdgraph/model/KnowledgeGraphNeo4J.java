@@ -34,13 +34,13 @@ public class KnowledgeGraphNeo4J extends KnowledgeGraphViaKafkaTopic {
         if ( DEFAULT_DATABASE_NAME_TEMP != null ) DEFAULT_DATABASE_NAME = DEFAULT_DATABASE_NAME_TEMP;
         if ( uriTEMP != null ) uri = uriTEMP;
 
-        /**
-        System.out.println( databaseDirectory );
+
+        System.out.println( "Neo4J - Props\n--------------------\n" + databaseDirectory );
+
         System.out.println( DEFAULT_DATABASE_NAME );
         System.out.println( uri );
         System.out.println( username );
         System.out.println( password );
-        **/
 
     }
 
@@ -94,6 +94,21 @@ public class KnowledgeGraphNeo4J extends KnowledgeGraphViaKafkaTopic {
     }
 
 
+    @Override
+    public boolean isReadyForDataProcessing() {
+
+        if ( driver != null ) {
+            try {
+                driver.verifyConnectivity();
+                return true;
+            }
+            catch (Exception ex) {
+                return false;
+            }
+        }
+        else return false;
+
+    }
 
     private KnowledgeGraphNeo4J() {
 
@@ -130,6 +145,13 @@ public class KnowledgeGraphNeo4J extends KnowledgeGraphViaKafkaTopic {
 
     }
 
+    @Override
+    public boolean describe() {
+        boolean s = super.describe();
+        System.out.println( "> nr of nodes: " + this.getAllNodes().size() );
+        return s;
+    }
+
     public void exequteCypherQuery(String q, boolean verbose, StringBuffer logger, String qid) {
 
         Session s = driver.session();
@@ -159,7 +181,7 @@ public class KnowledgeGraphNeo4J extends KnowledgeGraphViaKafkaTopic {
 
                     }
 
-                    System.out.println( "> Result (" + qid + ") : " + i + " rows." );
+                    // System.out.println( "> Result (" + qid + ") : " + i + " rows." );
 
                     logger.append( "> Result (" + qid + ") : " + i + " rows.\n" );
 
@@ -173,6 +195,7 @@ public class KnowledgeGraphNeo4J extends KnowledgeGraphViaKafkaTopic {
                     System.err.println( "*** EXCEPTION ***" );
                     System.err.println( "*****************" );
                     System.err.println( " " + ex.getMessage() + "\n\n");
+                    ex.printStackTrace();
 
                     if ( ex.getMessage().startsWith("Expected exactly one statement per query but got:") ) {
 

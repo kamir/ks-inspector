@@ -1,6 +1,7 @@
 package io.confluent.mdgraph.cli;
 
 import io.confluent.cp.cs.ClusterStateLoader;
+import io.confluent.cp.factflow.FactQueryProducer;
 import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientException;
 import io.confluent.mdgraph.model.IKnowledgeGraph;
 import io.confluent.mdgraph.model.KnowledgeGraphFactory;
@@ -26,6 +27,13 @@ class CLI {
 
     private Logger logger = LoggerFactory.getLogger(CLI.class);
 
+    // *** profile p20 ***
+    //
+    // We read the facts into a Neo4J database. Kafka topic is not involved.
+    // This is part of the analysis procedure we develop.
+    // Temporary data is not stored in the MD topic inside the Kafka cluster.
+    // The MD topic stores only the real facts related to the real cluster.
+    //
     @Command(name = "inspectCSV", description = "Inspect domain description from cluster context.")
     int inspect(
             @Option(names = { "-wp", "--working-path" }, paramLabel = "<working-path>",
@@ -49,6 +57,7 @@ class CLI {
         }
 
         System.out.println("> Start inspection of a data flow file. {"+workingPath + "/" + fileName + "}");
+        System.out.println("> Use processing context path : " + contextPath.getAbsolutePath() );
 
         final Properties properties = CLITools.loadProperties(configFile, bootstrapServer, envVarPrefix);
         final ClientBundle bundle = ClientBundle.fromProperties(properties);
@@ -60,17 +69,34 @@ class CLI {
 
         IKnowledgeGraph g1 = KnowledgeGraphFactory.getNeo4JBasedKnowledgeGraph("DataGovernanceDemo001", properties);
 
-        ClusterStateLoader.populateKnowledgeGraphFromCSVFlows( g1, workingPath + "/" + fileName );
+        // Here we work with the default CSV Processor which projects the special CSV file into a graph.
+        //    ClusterStateLoader.populateKnowledgeGraphFromCSVFlows( g1, workingPath + "/" + fileName );
+
+        // Here we still work with the default CSV Processor which projects the special CSV file into a graph.
+        String defaultMapper = "io.confluent.cp.mdmodel.kafka.CSVFileFlowGraphProcessor";
+        ClusterStateLoader.populateKnowledgeGraphFromCSVFlows( g1, workingPath + "/" + fileName, defaultMapper );
 
         System.out.println( ">>> Finished collecting the facts for our Streaming Processes Knowledge Graph in a topic." );
+        g1.describe();
 
         return 0;
 
     }
 
-    @Command(name = "inspect", description = "Inspect domain description from cluster context.")
-    int inspect(
-            @Option(names = { "-b", "--bootstrap-server" }, paramLabel = "<bootstrap-server>",
+    // *** profile p21 ***
+    //
+    // We read the facts into a Neo4J database. Kafka topic is not involved.
+    // This is part of the analysis procedure we develop.
+    // Temporary data is not stored in the MD topic inside the Kafka cluster.
+    // The MD topic stores only the real facts related to the real cluster.
+    //
+    @Command(name = "inspectCSV_EXT", description = "Inspect domain description from cluster context.")
+    int inspectExt(
+            @Option(names = { "-wp", "--working-path" }, paramLabel = "<working-path>",
+                    description = "working path for reading the input file") String workingPath,
+            @Option(names = { "-fn", "--file-name" }, paramLabel = "<file-name>",
+                    description = "filename for the input") String fileName,
+            @Option(names = { "-bss", "--bootstrap-server" }, paramLabel = "<bootstrap-server>",
                     description = "bootstrap server of the cluster to connect too") String bootstrapServer,
             @Option(names = { "-c", "--command-properties"}, paramLabel = "<command properties>",
                     description = "command config file") File configFile,
@@ -82,6 +108,59 @@ class CLI {
             logger.error("Given context {} is not a folder", contextPath);
             return 1;
         }
+        if (configFile == null) {
+            configFile = new File(contextPath, "kst.properties");
+        }
+
+        System.out.println("> Start inspection of a data flow file. {"+workingPath + "/" + fileName + "}");
+        System.out.println("> Use processing context path : " + contextPath.getAbsolutePath() );
+
+        final Properties properties = CLITools.loadProperties(configFile, bootstrapServer, envVarPrefix);
+        final ClientBundle bundle = ClientBundle.fromProperties(properties);
+
+        // TODO: expose the details of the bundle
+        // bundle.describe();
+
+        System.out.println( ">>> Use config file: [" + configFile.getAbsolutePath() + "] for Knowledge Graph creation. " );
+
+        IKnowledgeGraph g1 = KnowledgeGraphFactory.getNeo4JBasedKnowledgeGraph("DataGovernanceDemo001", properties);
+
+        // Here we work with the default CSV Processor which projects the special CSV file into a graph.
+        //    ClusterStateLoader.populateKnowledgeGraphFromCSVFlows( g1, workingPath + "/" + fileName );
+
+        // Here we still work with the default CSV Processor which projects the special CSV file into a graph.
+        String customMapper1 = "io.confluent.cp.mdmodel.kafka.CSVFileFlowGraphProcessorExternalServices";
+        ClusterStateLoader.populateKnowledgeGraphFromCSVFlows( g1, workingPath + "/" + fileName, customMapper1 );
+
+        // Here we still work with the default CSV Processor which projects the special CSV file into a graph.
+        String customMapper2 = "io.confluent.cp.mdmodel.kafka.CSVFileFlowGraphProcessorExternalTopics";
+        ClusterStateLoader.populateKnowledgeGraphFromCSVFlows( g1, workingPath + "/" + fileName, customMapper2 );
+
+        System.out.println( ">>> Finished collecting the facts for our Streaming Processes Knowledge Graph in a topic." );
+        g1.describe();
+
+        return 0;
+
+    }
+
+    // profile p10-1
+    @Command(name = "inspectDomain", description = "Inspect domain description from cluster context.")
+    int inspect(
+            @Option(names = { "-bss", "--bootstrap-server" }, paramLabel = "<bootstrap-server>",
+                    description = "bootstrap server of the cluster to connect too") String bootstrapServer,
+            @Option(names = { "-wp", "--working-path" }, paramLabel = "<working-path>",
+                    description = "working path for reading the input file") String workingPath,
+            @Option(names = { "-c", "--command-properties-configuration-file"}, paramLabel = "<command properties cfg>",
+                    description = "command config file") File configFile,
+            @Option(names = { "-e", "--env-var-prefix"}, paramLabel = "<prefix>",
+                    description = "prefix for env vars to be added to properties ") String envVarPrefix,
+            @CommandLine.Parameters(paramLabel = "context", description = "path to the context", defaultValue = ".") File contextPath
+    ) throws IOException, ExecutionException, InterruptedException {
+        if (!contextPath.isDirectory()) {
+            logger.error("Given context {} is not a folder", contextPath);
+            return 1;
+        }
+
         if (configFile == null) {
             configFile = new File(contextPath, "kst.properties");
         }
@@ -92,25 +171,34 @@ class CLI {
         // TODO: expose the details of the bundle
         // bundle.describe();
 
-        System.out.println( ">>> Use config file: [" + configFile.getAbsolutePath() + "] for Knowledge Graph creation. " );
+        System.out.println( ">>> Use config file: [" + configFile.getAbsolutePath() + "] (canRead::"+configFile.canRead()+") for Knowledge Graph creation. " );
+        System.out.println("> Use processing context path : " + contextPath.getAbsolutePath() );
 
         String instancesPath = contextPath.getPath();
-        System.out.println( ">>> Start reading facts from instancesPath [" +instancesPath + "]." );
+
+        System.out.println( ">>> Start reading facts from instancesPath [" +contextPath.getAbsolutePath() + "]." );
 
         IKnowledgeGraph g1 = KnowledgeGraphFactory.getKafkaBasedKnowledgegraph("DataGovernanceDemo001", properties);
+
+        System.out.println( "[KG SETUP]");
+        boolean status = g1.describe();
+        System.out.println( "Knowledge graph is ready: " + status );
 
         ClusterStateLoader.populateKnowledgeGraphMultiDomains( g1, instancesPath );
 
         System.out.println( ">>> Finished collecting the facts for our Streaming Processes Knowledge Graph in a topic." );
-
+        System.out.println( "> " + FactQueryProducer.sentCounter + " fact creation queries sent." );
         return 0;
 
     }
 
+    // profile p10-2
     @Command(name = "inspectSchemaRegistry", description = "Inspect and load SchemaRegistry information.")
     int inspectSchemaRegistry(
-            @Option(names = { "-b", "--bootstrap-server" }, paramLabel = "<bootstrap-server>",
+            @Option(names = { "-bss", "--bootstrap-server" }, paramLabel = "<bootstrap-server>",
                     description = "bootstrap server of the cluster to connect too") String bootstrapServer,
+            @Option(names = { "-wp", "--working-path" }, paramLabel = "<working-path>",
+                    description = "working path for reading the input file") String workingPath,
             @Option(names = { "-c", "--command-properties"}, paramLabel = "<command properties>",
                     description = "command config file") File configFile,
             @Option(names = { "-e", "--env-var-prefix"}, paramLabel = "<prefix>",
@@ -131,6 +219,7 @@ class CLI {
         // bundle.describe();
 
         System.out.println( ">>> Use config file: [" + configFile.getAbsolutePath() + "] for Knowledge Graph creation. " );
+        System.out.println("> Use processing context path : " + contextPath.getAbsolutePath() );
 
         String instancesPath = contextPath.getPath();
         System.out.println( ">>> Start reading facts from SchemaRegistry configured in property file [" +instancesPath + "]." );
@@ -149,17 +238,21 @@ class CLI {
         }
 
         System.out.println( ">>> Finished collecting the facts from SchemaRegistry for our Streaming Processes Knowledge Graph in a topic." );
+        System.out.println( "> " + FactQueryProducer.sentCounter + " fact creation queries sent." );
 
         return 0;
 
     }
 
+    // profile p11
     @Command(name = "export2Neo4J", description = "Export the knowledge graph to a Neo4J service.")
     int exportGraphToNeo4JService(
-            @Option(names = { "-b", "--bootstrap-server" }, paramLabel = "<bootstrap-server>",
+            @Option(names = { "-bss", "--bootstrap-server" }, paramLabel = "<bootstrap-server>",
                     description = "bootstrap server of the cluster to connect too") String bootstrapServer,
             @Option(names = { "-c", "--command-properties"}, paramLabel = "<command properties>",
                     description = "command config file") File configFile,
+            @Option(names = { "-wp", "--working-path" }, paramLabel = "<working-path>",
+                    description = "working path for reading the input file") String workingPath,
             @Option(names = { "-e", "--env-var-prefix"}, paramLabel = "<prefix>",
                     description = "prefix for env vars to be added to properties ") String envVarPrefix,
             @CommandLine.Parameters(paramLabel = "context", description = "path to the context", defaultValue = ".") File contextPath
@@ -182,39 +275,27 @@ class CLI {
 
         System.out.println( ">>> Use config file: [" + configFile.getAbsolutePath() + "](fileExists: " + configFile.exists() + ") for Knowledge Graph creation. " );
         System.out.println( ">>> Properties are overwritten by ENV_VARIABLES with prefix: " +  envVarPrefix );
+        System.out.println( "> Use processing context path : " + contextPath.getAbsolutePath() );
 
         IKnowledgeGraph g2 = KnowledgeGraphFactory.getNeo4JBasedKnowledgeGraph(null, propsNeo4J);
 
         KnowledgeGraphNeo4J queriableGraph = (KnowledgeGraphNeo4J)g2;
-        queriableGraph.readGraphFromTopic( "DataGovernanceDemo001_" + System.currentTimeMillis(), propertiesKAFKA );
 
-        System.out.println( ">>> Finished exporting the facts for our Streaming Processes Knowledge Graph to Neo4J." );
-
-        return 0;
-
-    }
-
-    @Command(name = "clearGraph", description = "Clear the knowledge graph in Neo4J service.")
-    int clearGraph(
-            @Option(names = { "-e", "--env-var-prefix"}, paramLabel = "<prefix>",
-                    description = "prefix for env vars to be added to properties ") String envVarPrefix
-    ) throws IOException, ExecutionException, InterruptedException {
-
-
-        Properties p = new Properties();
-        p.putAll( System.getenv() );
-
-        IKnowledgeGraph g2 = KnowledgeGraphFactory.getNeo4JBasedKnowledgeGraph(null,p);
-
-        KnowledgeGraphNeo4J queriableGraph = (KnowledgeGraphNeo4J)g2;
+        System.out.println( "> NOTE (1) : We clear the graph in our temporary graph db.");
         queriableGraph.deleteAllFacts();
 
-        System.out.println( ">>> Finished housekeeping work." );
+        String cg = "DataGovernanceDemo001_" + System.currentTimeMillis();
+        System.out.println( "> NOTE (2) : We read the full topic content because we use a new CG each time we run the tool. (CG: " + cg + ")" );
+        queriableGraph.readGraphFromTopic( cg, propertiesKAFKA );
+
+        System.out.println( ">>> Finished creation of the knowledge graph based on facts from our MD Topic in Kafka." );
+        queriableGraph.describe();
 
         return 0;
 
     }
 
+    // profile p12
     @Command(name = "queryGraph", description = "Query the knowledge graph in a Neo4J service with a predefined analysis query.")
     int queryGraph(
             @Option(names = { "-wp", "--working-path" }, paramLabel = "<working-path>",
@@ -250,10 +331,44 @@ class CLI {
         queriableGraph.queryFromFile( queryFilePath, resultFilePath );
 
         System.out.println( ">>> Finished analysis work." );
+        queriableGraph.describe();
+
 
         return 0;
 
     }
+
+
+    // profile p100
+    @Command(name = "clearGraph", description = "Clear the knowledge graph in Neo4J service.")
+    int clearGraph(
+            @Option(names = { "-bss", "--bootstrap-server" }, paramLabel = "<bootstrap-server>",
+                    description = "bootstrap server of the cluster to connect too") String bootstrapServer,
+            @Option(names = { "-c", "--command-properties"}, paramLabel = "<command properties>",
+                    description = "command config file") File configFile,
+            @Option(names = { "-wp", "--working-path" }, paramLabel = "<working-path>",
+                    description = "working path for reading the input file") String workingPath,
+            @Option(names = { "-e", "--env-var-prefix"}, paramLabel = "<prefix>",
+                    description = "prefix for env vars to be added to properties ") String envVarPrefix,
+            @CommandLine.Parameters(paramLabel = "resultFilePath", description = "path to a status result file", defaultValue = "./cleanup-status.log") File cleanUpLogFilePath
+    ) throws IOException, ExecutionException, InterruptedException {
+
+        Properties p = new Properties();
+        p.putAll( System.getenv() );
+
+        IKnowledgeGraph g2 = KnowledgeGraphFactory.getNeo4JBasedKnowledgeGraph(null,p);
+
+        KnowledgeGraphNeo4J queriableGraph = (KnowledgeGraphNeo4J)g2;
+        queriableGraph.deleteAllFacts();
+
+        System.out.println( ">>> Finished housekeeping work." );
+
+        queriableGraph.describe();
+
+        return 0;
+
+    }
+
 
     public static void main(String[] args) {
         final int status = new CommandLine(new CLI()).execute(args);

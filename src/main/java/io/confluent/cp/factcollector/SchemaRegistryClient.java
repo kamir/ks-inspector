@@ -27,7 +27,8 @@ public class SchemaRegistryClient {
      */
     public SchemaRegistryClient() {
 
-        String baseUrlConfig = "https://psrc-4v1qj.eu-central-1.aws.confluent.cloud";
+        // String baseUrlConfig = "https://psrc-4v1qj.eu-central-1.aws.confluent.cloud";
+        String baseUrlConfig = "http://192.168.3.172:8081";
 
         srr = new RestService( baseUrlConfig );
 

@@ -6,7 +6,6 @@ public class GenericProducerWrapper {
 
     public static Producer producer = null;
 
-
     public static void flush() {
 
         if( producer != null ) {

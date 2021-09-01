@@ -46,7 +46,7 @@ public class FactQueryConsumer extends GenericProducerWrapper {
 
         final int giveUp = 10;   int noRecordsCount = 0;
 
-        System.out.println( "Read fact queries ...");
+        System.out.println( "> Read fact queries ...");
 
         while (true) {
 
@@ -63,11 +63,20 @@ public class FactQueryConsumer extends GenericProducerWrapper {
             }
 
             consumerRecords.forEach(record -> {
-                System.out.printf("Consumer Record:(%s, %s, %s, %s)\n",
-                        record.key(), record.value(),
-                        record.partition(), record.offset());
 
-                knowledgeGraphNeo4J.exequteCypherQuery( record.value() );
+                System.out.println( " " );
+                System.out.printf("Consumer Record: [%s, %s]:(%s)\n\t<%s>\n",
+                        record.partition(), record.offset(), record.key(), record.value()
+                        );
+
+                try {
+                    knowledgeGraphNeo4J.exequteCypherQuery( record.value() );
+                    System.out.println( " \t[OK]" );
+
+                }
+                catch(Exception e) {
+                    System.out.println ( "\t****> " + e.getCause() );
+                }
 
             });
 

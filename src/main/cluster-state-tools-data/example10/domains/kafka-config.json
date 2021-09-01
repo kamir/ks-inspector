@@ -3,5 +3,5 @@
   "SaslPassword": "",
   "SaslUsername": "",
   "SchemaRegistryUri": "",
-  "SchemaRegistryAuth":"",
+  "SchemaRegistryAuth":""
 }
