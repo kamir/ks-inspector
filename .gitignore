@@ -55,3 +55,6 @@ bin/setenv.sh
 
 
 /insights/worldremit-v1.graphml
+/last-export.graphml
+/latest-graph.gephi
+/src/main/cypher/cmd/q1.cypher.gqpr.txt
