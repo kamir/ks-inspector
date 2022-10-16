@@ -1,0 +1,186 @@
+#
+#
+#
+
+
+CREATE TYPE ET_ENTGELT AS STRUCT
+<
+    Nummer bigint,
+    Name string
+>;
+
+
+CREATE TYPE ET_ADRESSE AS STRUCT
+<
+    Strasse string,
+    Hausnummer string,
+    Plz string,
+    Ort string,
+    Ortsteil string,
+    Staat string,
+    Bundesland string
+>;
+
+
+CREATE TYPE ET_BUERO AS STRUCT
+<
+    Bueronummer string,
+    Unterbueronummer string,
+    Zeile1 string,
+    Zeile2 string,
+    Zeile3 string,
+    Adresse ET_ADRESSE,
+    Telefon string,
+    Webseite string,
+    Email string,
+    Fax string
+>;
+
+
+CREATE TYPE ET_LEISTUNG AS STRUCT
+<
+    Leistungsartreferenz string,
+    Leistungsreferenz string,
+    Status string,
+    BerichtNr string,
+    BerichtUrl string,
+    BerichtMehrfertigungUrl string
+>;
+
+
+CREATE TYPE ET_FAHRZEUG AS STRUCT
+<
+    Id string,
+    Kennzeichen string,
+    Fin string,
+    HalterVorname string,
+    HalterNachname string,
+    Laufleistung integer,
+    IsGesperrt boolean,
+    BasisFahrzeugklasse string
+>;
+
+
+CREATE TYPE ET_NUTZUNGSVERGUETUNG AS STRUCT
+<
+    NvTonnage_75 integer,
+    NvTonnage_grgl75 integer,
+    Currency string
+>;
+
+
+CREATE TYPE ET_ABRECHNUNG AS STRUCT
+<
+    Kunde string,
+    Zahlweise string,
+    AuftragsnummerWerkstatt string,
+    Auftragsart string,
+    Fakturierungsart string,
+    Rechnungserstellung string,
+    Nutzungsverguetung boolean,
+    ZentralerAbrechnungskunde boolean
+>;
+
+
+CREATE TYPE ET_PRUEFMITTELSTATUS AS STRUCT
+<
+    Status string,
+    Beschreibung string,
+    Datum timestamp
+>;
+
+
+CREATE TYPE ET_KASSIERERMITARBEITER AS STRUCT
+<
+    Mitarbeiternummer string,
+    Bueronummer string
+>;
+
+
+CREATE TYPE ET_NACHARBEIT AS STRUCT
+<
+    Berichtsnummer string
+>;
+
+
+CREATE TYPE ET_BESICHTIGUNGSORT AS STRUCT
+<
+    Buero string,
+    Nummer string,
+    Name1 string,
+    Name2 string,
+    Name3 string,
+    Typ string,
+    Adresse ET_ADRESSE,
+    Entgelt ET_ENTGELT,
+    Grosskunde boolean,
+    UmaKontrollnummer string,
+    GwpKontrollnummer string,
+    Ablaufdatum string,
+    Rechnungsnummer string,
+    AuftragsnummerBenoetigt boolean,
+    TpGebiet integer,
+    Pruefmittelstatus ET_PRUEFMITTELSTATUS,
+    ErlaubteFahrzeugklassen ARRAY<string>,
+    Nutzungsverguetung ET_NUTZUNGSVERGUETUNG
+>;
+
+
+CREATE TYPE ET_AUFTRAG AS STRUCT
+<
+    Id string,
+    Buero ET_BUERO,
+    Fahrzeug ET_FAHRZEUG,
+    Auftragsnummer string,
+    Abrechnung ET_ABRECHNUNG,
+    Nacharbeit ET_NACHARBEIT,
+    KassiererMitarbeiter ET_KASSIERERMITARBEITER,
+    Besichtigungsort ET_BESICHTIGUNGSORT,
+    Leistungen ARRAY<ET_LEISTUNG>,
+    Untersuchungsdatum time,
+    IsGeloescht boolean,
+    AuftragStatus string
+>;
+
+
+CREATE TYPE ET_AnderesFahrzeugAusgewaehlt AS STRUCT
+<
+    AuftragReference string,
+    Auftrag ET_AUFTRAG,
+    FahrzeugReference string
+>;
+
+
+CREATE TYPE CE_AnderesFahrzeugAusgewaehlt AS STRUCT
+<
+    SpecVersion string,
+    Type string,
+    Source string,
+    Id string,
+    Subject string,
+    Time string,
+    DataContentType string,
+    EventData ET_AnderesFahrzeugAusgewaehlt
+>;
+
+
+CREATE TYPE CE_FahrzeugdatenGeaendert AS STRUCT
+<
+    SpecVersion string,
+    Type string,
+    Source string,
+    Id string,
+    Subject string,
+    Time string,
+    DataContentType string,
+    EventData Fahrzeug
+>
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,437 @@
+
+#
+# Data is injected to the topic with our test scenario script.
+# Assumption: only messages of type "Fahrzeug_Geaendert" are valid in this topic.
+#
+
+#
+# just some fields from the CloudEvent are selected
+#
+CREATE STREAM fv_f (
+    SpecVersion string,
+    Type string,
+    EventData Fahrzeug_Geaendert )
+WITH (KAFKA_TOPIC='Fahrzeugverwaltung-Fahrzeug', VALUE_FORMAT = 'JSON');
+
+
+#
+# all fields from the CloudEvent are selected
+#
+CREATE STREAM fv_fahrzeug
+(
+    SpecVersion string,
+    Type string,
+    Source string,
+    Id string,
+    Subject string,
+    Time string,
+    DataContentType string,
+    EventData Fahrzeug_Geaendert
+)
+WITH (KAFKA_TOPIC='Fahrzeugverwaltung-Fahrzeug', VALUE_FORMAT = 'JSON');
+
+
+#
+# We extract the field "FahrzeugReference" from the payload and add it as a separate column.
+#
+CREATE STREAM fv_fahrzeug_expanded
+WITH (KAFKA_TOPIC='poc_fahrzeug_stream_expanded', VALUE_FORMAT = 'JSON')
+as select
+   EventData->FahrzeugReference as ref,
+   'TYPE',
+   EventData from fv_fahrzeug emit changes;
+
+
+#
+# We partition the Fahrzeug-Data by "FahrzeugReference"
+#
+CREATE STREAM FAHRZEUGE WITH (KAFKA_TOPIC='poc_stream_fahrzeuge', VALUE_FORMAT='JSON', PARTITIONS=1, REPLICAS=3 )
+AS SELECT
+  FV_FAHRZEUGE.REF ref,
+  FV_FAHRZEUGE.EventData data
+FROM fv_fahrzeug_expanded FV_FAHRZEUGE
+PARTITION BY FV_FAHRZEUGE.REF
+EMIT CHANGES;
+
+
+
+CREATE TABLE TAB_FAHRZEUG
+(
+  ref string PRIMARY KEY,
+  data Fahrzeug_Geaendert
+)
+WITH (KAFKA_TOPIC='poc_stream_fahrzeuge', VALUE_FORMAT='JSON');
+
+
+
+CREATE TABLE TAB_FAHRZEUG2
+(
+  ref string PRIMARY KEY,
+  data Fahrzeug
+)
+WITH (KAFKA_TOPIC='poc_stream_fahrzeuge', VALUE_FORMAT='JSON');
+
+
+#
+#
+#
+#
+########################################################################################################################
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#
+# alle Auftragsevents werden hier erfasst ...
+#
+
+CREATE STREAM av_auftrag
+(
+   TYPE string,
+   EventData string
+)
+WITH (KAFKA_TOPIC='Auftragsverwaltung-Auftrag', VALUE_FORMAT = 'JSON' );
+
+
+#
+# We extract the field "AuftragReference" from the payload and add it as a separate column.
+#
+CREATE STREAM av_auftrag_expanded
+WITH (KAFKA_TOPIC='poc_auftrag_stream_expanded', VALUE_FORMAT = 'JSON')
+as select
+   EXTRACTJSONFIELD( EventData, '$.AuftragReference') AS ref,
+   'TYPE',
+   EventData from av_auftrag emit changes;
+
+
+
+
+
+
+
+
+#
+# We partition the Auftrag-Data by "AuftragReference"
+#
+CREATE STREAM AUFTRAEGE WITH (KAFKA_TOPIC='poc_stream_auftraege', VALUE_FORMAT='JSON', PARTITIONS=1, REPLICAS=3 )
+AS SELECT
+  AV_AUFTRAEGE.REF ref,
+  AV_AUFTRAEGE.EventData data
+FROM av_auftrag_expanded AV_AUFTRAEGE
+PARTITION BY AV_AUFTRAEGE.REF
+EMIT CHANGES;
+
+CREATE TABLE TAB_AUFTRAG
+(
+  ref string PRIMARY KEY,
+  data string
+)
+WITH (KAFKA_TOPIC='poc_stream_auftraege', VALUE_FORMAT='JSON');
+
+
+
+
+
+
+
+
+
+#
+# Wir extrahieren die Referenzen des Auftrags auf das Fahrzeug.
+#
+
+CREATE STREAM av_auftrag_references
+WITH (KAFKA_TOPIC='av_auftrag_references', VALUE_FORMAT = 'JSON', PARTITIONS = 1, REPLICAS = 3)
+AS SELECT
+  TYPE as event_type,
+  EXTRACTJSONFIELD( EventData, '$.FahrzeugReference') AS fRef,
+  EXTRACTJSONFIELD( EventData, '$.AuftragReference') AS aRef,
+  EXTRACTJSONFIELD( EventData, '$.Auftrag') AS auftrag
+FROM av_auftrag
+EMIT CHANGES;
+
+select * from av_auftrag_references emit changes;
+
+CREATE STREAM av_auftrag_neues_fahrzeug
+WITH (KAFKA_TOPIC='av_auftrag_neues_fahrzeug', VALUE_FORMAT = 'JSON', PARTITIONS = 1, REPLICAS = 3)
+AS SELECT
+  TYPE as event_type,
+  EXTRACTJSONFIELD( EventData, '$.FahrzeugReference') AS fRef,
+  EXTRACTJSONFIELD( EventData, '$.Auftrag.Fahrzeug') AS fahrzeug,
+  EXTRACTJSONFIELD( EventData, '$.AuftragReference') AS aRef,
+  EXTRACTJSONFIELD( EventData, '$.Auftrag') AS auftrag
+FROM av_auftrag
+WHERE TYPE LIKE 'AnderesFahrzeugAusgewaehlt'
+EMIT CHANGES;
+
+#CREATE STREAM av_auftrag_neues_fahrzeug_struct (
+#  fRef string,
+#  fahrzeug Fahrzeug,
+#  aRef string,
+#  auftrag ET_AUFTRAG
+#)
+#WITH
+#(
+#    KAFKA_TOPIC = 'av_auftrag_neues_fahrzeug',
+#    VALUE_FORMAT = 'JSON',
+#    PARTITIONS = 1,
+#    REPLICAS = 3
+#)
+
+#
+# We partition the NEW Fahrzeug-Data by "FahrzeugReference"
+#
+#CREATE STREAM FAHRZEUGE_FROM_AUFTRAG
+#WITH (KAFKA_TOPIC='poc_stream_fahrzeuge', VALUE_FORMAT='JSON', PARTITIONS=1, REPLICAS=3 )
+#AS SELECT
+#  AV_FAHRZEUG.fRef ref,
+#  AV_FAHRZEUG.fahrzeug data
+#FROM av_auftrag_neues_fahrzeug_struct AV_FAHRZEUG
+#PARTITION BY AV_FAHRZEUG.fRef
+#EMIT CHANGES;
+
+#
+# At this point, we get incomplete Fahrzeug-Data from Auftragsverwaltung. We ignore these events.
+########################################################################################################################
+
+
+
+
+CREATE STREAM av_auftrag_updates
+WITH (KAFKA_TOPIC='av_auftrag_updates', VALUE_FORMAT = 'JSON', PARTITIONS = 1, REPLICAS = 3)
+AS SELECT
+  TYPE as event_type,
+  EXTRACTJSONFIELD( EventData, '$.AuftragReference') AS aRef,
+  EXTRACTJSONFIELD( EventData, '$.Auftrag') AS auftrag
+FROM av_auftrag
+EMIT CHANGES;
+
+
+CREATE STREAM av_auftrag_evolution
+WITH (KAFKA_TOPIC='av_auftrag_references', VALUE_FORMAT = 'JSON', PARTITIONS = 1, REPLICAS = 3)
+AS SELECT
+*
+FROM av_auftrag_updates
+JOIN TAB_AUFTRAG on TAB_AUFTRAG.ref=av_auftrag_updates.aRef
+EMIT CHANGES;
+
+
+
+
+Drop STREAM AUFTRAEGE_CHANGES;
+CREATE STREAM AUFTRAEGE_CHANGES
+WITH (KAFKA_TOPIC='poc_stream_auftraege', VALUE_FORMAT='JSON', PARTITIONS=1, REPLICAS=3 )
+AS SELECT
+  a.AV_AUFTRAG_UPDATES_AREF ref,
+  a.AV_AUFTRAG_UPDATES_EVENT_TYPE event_type,
+  a.AV_AUFTRAG_UPDATES_AUFTRAG data_new,
+  a.TAB_AUFTRAG_DATA data_old
+FROM av_auftrag_evolution a
+PARTITION BY a.AV_AUFTRAG_UPDATES_AREF
+EMIT CHANGES;
+
+Select * from AUFTRAEGE_CHANGES emit changes;
+
+#
+# Here we have the old and the new data, together with the event_type which can determine the manipulation
+# of the old data so that the Auftrag-Object is available in it's most recent representation.
+#
+
+
+
+
+
+
+
+CREATE STREAM av_auftrag_step2
+WITH (KAFKA_TOPIC='poc_auftrag_stream_step2', VALUE_FORMAT = 'JSON', PARTITIONS = 1, REPLICAS = 3)
+AS SELECT
+  EXTRACTJSONFIELD( EventData, '$.FahrzeugReference') AS fRef,
+  EXTRACTJSONFIELD( EventData, '$.AuftragReference') AS aRef,
+  EXTRACTJSONFIELD( EventData, '$.Auftrag') AS auftrag
+FROM av_auftrag
+EMIT CHANGES;
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE STREAM av_auftrag_step3
+WITH (KAFKA_TOPIC='poc_auftrag_stream_step3', VALUE_FORMAT = 'JSON', PARTITIONS = 1, REPLICAS = 3
+)
+AS SELECT
+  fRef,
+  aRef,
+  EXTRACTJSONFIELD( auftrag, '$.id') AS aID,
+  EXTRACTJSONFIELD( auftrag, '$.IsGeloescht') AS aIsGeloescht
+FROM av_auftrag_step2
+EMIT CHANGES;
+
+SELECT * FROM av_auftrag_step3 EMIT CHANGES
+WHERE aIsGeloescht = 'TRUE';
+
+
+
+
+
+
+
+
+
+
+  CREATE TYPE AuftragDetails6 AS
+  STRUCT<
+     Buero VARCHAR,
+     Auftragsnummer INT,
+     Leistungen VARCHAR,
+     Abrechnung VARCHAR,
+     Besichtigungsort VARCHAR,
+     AuftragStatus VARCHAR
+  >;
+
+  CREATE TYPE Auftrag6 AS
+  STRUCT<
+    AuftragReference VARCHAR,
+    Auftrag AuftragDetails6,
+    FahrzeugReference VARCHAR
+  >;
+
+
+  CREATE STREAM av_auftrag_TMP6
+  (
+  	EventData Auftrag6
+  )
+  WITH (KAFKA_TOPIC='Auftragsverwaltung-Auftrag', VALUE_FORMAT = 'JSON');
+
+
+create stream auftrag_stream7
+WITH (KAFKA_TOPIC='auftrag_stream7', VALUE_FORMAT = 'JSON')
+as select
+    EventData->AuftragReference,
+    EventData->FahrzeugReference,
+    EXTRACTJSONFIELD( EventData->Auftrag->Buero, '$.Bueronummer') AS Bueronummer,
+    EventData->Auftrag->Auftragsnummer,
+    EventData->Auftrag->Leistungen,
+    EventData->Auftrag->Abrechnung,
+    EXTRACTJSONFIELD( EventData->Auftrag->Abrechnung, '$.Nutzungsverguetung') AS Nutzungsverguetung,
+    EXTRACTJSONFIELD( EventData->Auftrag->Abrechnung, '$.Kunde.Nutzungsverguetung') AS Kunde_Nutzungsverguetung,
+    EXTRACTJSONFIELD( EventData->Auftrag->Besichtigungsort, '$.Nutzungsverguetung') AS BO_Nutzungsverguetung,
+    EventData->Auftrag->Besichtigungsort,
+    EXTRACTJSONFIELD( EventData->Auftrag->Besichtigungsort, '$.Adresse.Bundesland') AS BO_Bundesland,
+    EXTRACTJSONFIELD( EventData->Auftrag->Besichtigungsort, '$.TpGebiet') AS BO_TpGebiet,
+    EventData->Auftrag->AuftragStatus
+from av_auftrag_TMP6 emit changes;
+
+
+
+create stream auftrag_stream7a
+WITH (KAFKA_TOPIC= auftrag_stream7a', VALUE_FORMAT = 'JSON')
+as select
+    EventData->AuftragReference,
+    EventData->FahrzeugReference,
+    EXTRACTJSONFIELD( EventData->Auftrag->Buero, '$.Bueronummer') AS Bueronummer,
+    EventData->Auftrag->Auftragsnummer,
+    EventData->Auftrag->AuftragStatus,
+    EventData->Auftrag->Leistungen,
+    EXTRACTJSONFIELD( EventData->Auftrag->Abrechnung, '$.Nutzungsverguetung') AS Nutzungsverguetung,
+    EXTRACTJSONFIELD( EventData->Auftrag->Abrechnung, '$.Kunde.Nutzungsverguetung') AS Kunde_Nutzungsverguetung,
+    EXTRACTJSONFIELD( EventData->Auftrag->Besichtigungsort, '$.Nutzungsverguetung') AS BO_Nutzungsverguetung,
+    EXTRACTJSONFIELD( EventData->Auftrag->Besichtigungsort, '$.Adresse.Bundesland') AS BO_Bundesland,
+    EXTRACTJSONFIELD( EventData->Auftrag->Besichtigungsort, '$.TpGebiet') AS BO_TpGebiet
+from av_auftrag_TMP6 emit changes;
+
+
+
+create stream fahrzeug_stream7
+WITH (KAFKA_TOPIC='fahrzeug_stream7', VALUE_FORMAT = 'JSON')
+as select
+  ref as FahrzeugReference,
+  data->BasisFahrzeugklasse,
+  data->Erstzulassung,
+  data->ZulaessigeGesamtmasse,
+  data->Gebremst
+from FAHRZEUGE emit changes;
+
+
+
+
+
+
+#
+# Resulting Stream: Persisted for usage by external client.
+#
+
+create stream entgelt_input_event_candidates
+WITH (KAFKA_TOPIC='entgelt_input_event', VALUE_FORMAT = 'JSON')
+as select
+  *
+from auftrag_stream7
+JOIN TAB_FAHRZEUG ON TAB_FAHRZEUG.ref = auftrag_stream7.FAHRZEUGREFERENCE
+emit changes;
+
+
+CREATE STREAM Trigger_Entgelt_Berechnung
+WITH (KAFKA_TOPIC='trigger_entgelt_berechnung_stream', VALUE_FORMAT = 'JSON')
+AS SELECT
+    AUFTRAG_STREAM7_AuftragReference AuftragReference,
+    AUFTRAG_STREAM7_FAHRZEUGREFERENCE FahrzeugReference,
+    AUFTRAG_STREAM7_Auftragsnummer Auftragsnummer,
+    AUFTRAG_STREAM7_Bueronummer Bueronummer,
+    CAST( AUFTRAG_STREAM7_BO_Bundesland as int) BO_Bundesland,
+    CAST( AUFTRAG_STREAM7_BO_TpGebiet as int) BO_TpGebiet ,
+    CAST( AUFTRAG_STREAM7_Nutzungsverguetung as boolean) as NutzungsverguetungErhoben,
+    AUFTRAG_STREAM7_Kunde_Nutzungsverguetung Kunde_Nutzungsverguetung,
+    AUFTRAG_STREAM7_BO_Nutzungsverguetung BO_Nutzungsverguetung,
+    TAB_FAHRZEUG_DATA->BasisFahrzeugklasse BasisFahrzeugklasse,
+    CAST( TAB_FAHRZEUG_DATA->Erstzulassung as date) Erstzulassung,
+    CAST( TAB_FAHRZEUG_DATA->ZulaessigeGesamtmasse as int) ZulaessigeGesamtmasse,
+    CAST( TAB_FAHRZEUG_DATA->Gebremst as boolean) Gebremst,
+    AUFTRAG_STREAM7_AuftragStatus AuftragStatus,
+    AUFTRAG_STREAM7_Leistungen Leistungen,
+    CAST( CONCAT('true') as boolean) as ready_for_calculation,
+    CAST( CONCAT('true') as boolean) as relevant_change
+FROM entgelt_input_event_candidates
+EMIT CHANGES;
+
+CREATE STREAM CloudEvent_ENTGELT_INPUT
+WITH (KAFKA_TOPIC='CloudEvent_ENTGELT_INPUT', VALUE_FORMAT = 'JSON')
+AS SELECT
+    AuftragReference,
+    FahrzeugReference,
+    Auftragsnummer,
+    Bueronummer,
+    BO_Bundesland,
+    BO_TpGebiet ,
+    NutzungsverguetungErhoben,
+    Kunde_Nutzungsverguetung,
+    BO_Nutzungsverguetung,
+    BasisFahrzeugklasse,
+    Erstzulassung,
+    ZulaessigeGesamtmasse,
+    Gebremst,
+    AuftragStatus,
+    Leistungen
+FROM Trigger_Entgelt_Berechnung
+WHERE ready_for_calculation = true
+  AND relevant_change = true
+  EMIT changes

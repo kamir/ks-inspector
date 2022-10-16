@@ -79,6 +79,9 @@ public class KSQLDependencyGraph {
 
     private void _addLink(String s, String t) {
 
+        s = s.replaceAll("-", "_" );
+        t = t.replaceAll("-", "_" );
+
         if ( s == null || t == null ) {
             System.out.println("**************************************************");
             System.out.println("***** BAD VERTEX : " + s + " - " + t);
@@ -94,8 +97,18 @@ public class KSQLDependencyGraph {
         flowDependencyGraph.addVertex( s );
         flowDependencyGraph.addVertex( t );
 
-        flowDependencyGraph.addEdge( s, t, new io.confluent.cp.mdmodel.fdg.DataFlowEdge(s,t,1.0));
+        try {
+            flowDependencyGraph.addEdge(s, t, new io.confluent.cp.mdmodel.fdg.DataFlowEdge(s, t, 1.0));
+        }
+        catch(Exception ex) {
+            System.out.println( "*********************" );
+            System.out.println( ex.getMessage() );
+            System.out.println( "*********************" );
 
+            t = t+"__IN_LOOP__";
+            flowDependencyGraph.addVertex( t );
+            flowDependencyGraph.addEdge(s, t, new io.confluent.cp.mdmodel.fdg.DataFlowEdge(s, t, 1.0));
+        }
         flowDependencyGraph_undirected.addVertex( s );
         flowDependencyGraph_undirected.addVertex( t );
 
@@ -365,6 +378,10 @@ public class KSQLDependencyGraph {
     }
 
     public void processCreateStatement( String line, KSQLDBApplicationContext appContext ) {
+
+        System.out.println( "_________________________________" );
+        System.out.println( "LINE: " + line );
+        System.out.println( "_________________________________" );
 
         String[] words = line.split(" ");
 
