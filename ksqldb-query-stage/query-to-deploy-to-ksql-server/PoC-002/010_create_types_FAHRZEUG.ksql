@@ -1,0 +1,83 @@
+#
+# Order of Type creation is critical!
+# -------------------------------------
+
+
+CREATE TYPE FT_Buero AS STRUCT
+<
+    Bueronummer string,
+    Unterbueronummer string
+>;
+
+CREATE TYPE Fahrzeug_Geaendert AS STRUCT
+<
+   FahrzeugReference string,
+   Fahrzeugidentifikationsnummer string,
+   Kennzeichen string,
+   Erstzulassung string,
+   HerstellerSchluesselnummer string,
+   TypVarianteVersion string,
+   Marke string,
+   ZulaessigeGesamtmasse int,
+   Fahrzeugklasse string,
+   ArtDesAufbaus string,
+   BasisFahrzeugklasse string,
+   Laufleistung string,
+   LaufleistungEinheit int,
+   Verkaufsbezeichnung string,
+   Energiequelle string,
+   EnergiequelleCode string,
+   LetzteHauptuntersuchung string,
+   NaechsteHu string,
+   Fahrzeughalter string,
+   Zugelassen string,
+   HalterEntsprichtAbrechnungskunde string,
+   Schadstoffschluessel int,
+   SummeDerAchslasten int,
+   Motorcode string,
+   Betriebszeitraum string,
+   Fahrzeugtyp string,
+   Timestamp string,
+   Gebremst string,
+   GwpErforderlich string,
+   Leergewicht int,
+   Hoechstgeschwindigkeit int,
+   Buero FT_Buero
+>
+
+
+CREATE TYPE Fahrzeug AS STRUCT
+<
+   FahrzeugReference string,
+   Fahrzeugidentifikationsnummer string,
+   Kennzeichen string,
+   Erstzulassung string,
+   HerstellerSchluesselnummer string,
+   TypVarianteVersion string,
+   Marke string,
+   ZulaessigeGesamtmasse int,
+   Fahrzeugklasse string,
+   ArtDesAufbaus string,
+   BasisFahrzeugklasse string,
+   Laufleistung string,
+   LaufleistungEinheit int,
+   Verkaufsbezeichnung string,
+   Energiequelle string,
+   EnergiequelleCode string,
+   LetzteHauptuntersuchung string,
+   NaechsteHu string,
+   Fahrzeughalter string,
+   Zugelassen string,
+   HalterEntsprichtAbrechnungskunde string,
+   Schadstoffschluessel int,
+   SummeDerAchslasten int,
+   Motorcode string,
+   Betriebszeitraum string,
+   Fahrzeugtyp string,
+   Timestamp string,
+   Gebremst string,
+   GwpErforderlich string,
+   Leergewicht int,
+   Hoechstgeschwindigkeit int,
+   Buero FT_Buero
+>

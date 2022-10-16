@@ -2,6 +2,7 @@ package io.confluent.mdgraph.cli;
 
 import io.confluent.cp.cs.ClusterStateLoader;
 import io.confluent.cp.factflow.FactQueryProducer;
+import io.confluent.cp.mdmodel.JiraTicketFlowGraph;
 import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientException;
 import io.confluent.mdgraph.model.IKnowledgeGraph;
 import io.confluent.mdgraph.model.KnowledgeGraphFactory;
@@ -332,6 +333,43 @@ class CLI {
 
         System.out.println( ">>> Finished analysis work." );
         queriableGraph.describe();
+
+
+        return 0;
+
+    }
+
+    // profile p200
+    @Command(name = "readEvents", description = "Read JIRA ticket flow events into the knowledge graph.")
+    int readEvents(
+            @Option(names = { "-wp", "--working-path" }, paramLabel = "<working-path>",
+                    description = "working path for reading the input file") String workingPath,
+            @Option(names = { "-fno", "--file-name-out" }, paramLabel = "<file-name-out>",
+                    description = "filename for the output") String fileNameOut,
+            @Option(names = { "-bss", "--bootstrap-server" }, paramLabel = "<bootstrap-server>",
+                    description = "bootstrap server of the cluster to connect too") String bootstrapServer,
+            @Option(names = { "-qfp", "--query-file-path"}, paramLabel = "<query-file-path>",
+                    description = "path of a text file with a cypher query ") String qfp,
+            @Option(names = { "-e", "--env-var-prefix"}, paramLabel = "<prefix>",
+                    description = "prefix for env vars to be added to properties ") String envVarPrefix,
+            @CommandLine.Parameters(paramLabel = "queryFilePath", description = "path to a cypher queryfile", defaultValue = "./src/main/cypher/cmd/q4.cypher") File queryFilePath
+
+    ) throws IOException, ExecutionException, InterruptedException {
+
+        Properties p = new Properties();
+        p.putAll( System.getenv() );
+
+        if ( qfp != null ) {
+            File queryFilePathTEMP = new File( qfp );
+            if( queryFilePathTEMP.canRead() ) {
+                queryFilePath = queryFilePathTEMP;
+                System.out.println(  "> QFP: " + queryFilePathTEMP.getAbsolutePath() );
+            }
+        }
+
+        JiraTicketFlowGraph.run( p );
+
+        System.out.println( ">>> Finished event processing work." );
 
 
         return 0;

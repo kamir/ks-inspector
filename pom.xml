@@ -257,9 +257,43 @@
                 <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
             </properties>
         </profile>
+
+        <profile>
+            <!--
+              Analyse the APPLICATION DOMAIN incl KSQLDB scripts of a project.
+
+              Step 4: run a named query.
+            -->
+            <id>p200</id>
+            <properties>
+                <maven.test.skip>true</maven.test.skip>
+                <argument0>readEvents</argument0>
+                <argument1k>-wp</argument1k>
+                <argument1v>./src/main/cypher/cmd/</argument1v>
+                <argument2k>-e</argument2k>
+                <argument2v>KST</argument2v>
+                <argument3k>-qfp</argument3k>
+                <argument3v>q1.cypher</argument3v>
+                <argument4>./src/main/cypher/cmd/q1.cypher</argument4>
+
+                <!-- Keep versions as properties to allow easy modification -->
+                <maven.compiler.target>1.8</maven.compiler.target>
+                <maven.compiler.source>1.8</maven.compiler.source>
+
+                <java.version>8</java.version>
+
+                <!-- Maven properties for compilation -->
+                <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+                <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+            </properties>
+        </profile>
+
     </profiles>
 
     <dependencies>
+
+
+
 
         <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-csv -->
         <dependency>
