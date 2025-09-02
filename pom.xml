@@ -12,10 +12,10 @@
     <properties>
 
         <!-- Keep versions as properties to allow easy modification -->
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+        <maven.compiler.source>21</maven.compiler.source>
 
-        <java.version>8</java.version>
+        <java.version>21</java.version>
 
         <!-- Maven properties for compilation -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -54,10 +54,10 @@
                 <argument4>./src/main/cluster-state-tools-data/example10</argument4>
 
                 <!-- Keep versions as properties to allow easy modification -->
-                <maven.compiler.target>1.8</maven.compiler.target>
-                <maven.compiler.source>1.8</maven.compiler.source>
+                <maven.compiler.target>21</maven.compiler.target>
+                <maven.compiler.source>21</maven.compiler.source>
 
-                <java.version>8</java.version>
+                <java.version>21</java.version>
 
                 <!-- Maven properties for compilation -->
                 <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -84,10 +84,10 @@
                 <argument4>./src/main/cluster-state-tools-data/example10</argument4>
 
                 <!-- Keep versions as properties to allow easy modification -->
-                <maven.compiler.target>1.8</maven.compiler.target>
-                <maven.compiler.source>1.8</maven.compiler.source>
+                <maven.compiler.target>21</maven.compiler.target>
+                <maven.compiler.source>21</maven.compiler.source>
 
-                <java.version>8</java.version>
+                <java.version>21</java.version>
 
                 <!-- Maven properties for compilation -->
                 <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -114,10 +114,10 @@
                 <argument4>./src/main/cluster-state-tools-data/example10</argument4>
 
                 <!-- Keep versions as properties to allow easy modification -->
-                <maven.compiler.target>1.8</maven.compiler.target>
-                <maven.compiler.source>1.8</maven.compiler.source>
+                <maven.compiler.target>21</maven.compiler.target>
+                <maven.compiler.source>21</maven.compiler.source>
 
-                <java.version>8</java.version>
+                <java.version>21</java.version>
 
                 <!-- Maven properties for compilation -->
                 <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -144,10 +144,10 @@
                 <argument4>./src/main/cypher/cmd/q1.cypher</argument4>
 
                 <!-- Keep versions as properties to allow easy modification -->
-                <maven.compiler.target>1.8</maven.compiler.target>
-                <maven.compiler.source>1.8</maven.compiler.source>
+                <maven.compiler.target>21</maven.compiler.target>
+                <maven.compiler.source>21</maven.compiler.source>
 
-                <java.version>8</java.version>
+                <java.version>21</java.version>
 
                 <!-- Maven properties for compilation -->
                 <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -170,10 +170,10 @@
                 <argument4>.</argument4>
 
                 <!-- Keep versions as properties to allow easy modification -->
-                <maven.compiler.target>1.8</maven.compiler.target>
-                <maven.compiler.source>1.8</maven.compiler.source>
+                <maven.compiler.target>21</maven.compiler.target>
+                <maven.compiler.source>21</maven.compiler.source>
 
-                <java.version>8</java.version>
+                <java.version>21</java.version>
 
                 <!-- Maven properties for compilation -->
                 <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -196,10 +196,10 @@
                 <argument4>.</argument4>
 
                 <!-- Keep versions as properties to allow easy modification -->
-                <maven.compiler.target>1.8</maven.compiler.target>
-                <maven.compiler.source>1.8</maven.compiler.source>
+                <maven.compiler.target>21</maven.compiler.target>
+                <maven.compiler.source>21</maven.compiler.source>
 
-                <java.version>8</java.version>
+                <java.version>21</java.version>
 
                 <!-- Maven properties for compilation -->
                 <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -222,10 +222,10 @@
                 <argument4>src/main/cypher/cmd/q4.cypher</argument4>
 
                 <!-- Keep versions as properties to allow easy modification -->
-                <maven.compiler.target>1.8</maven.compiler.target>
-                <maven.compiler.source>1.8</maven.compiler.source>
+                <maven.compiler.target>21</maven.compiler.target>
+                <maven.compiler.source>21</maven.compiler.source>
 
-                <java.version>8</java.version>
+                <java.version>21</java.version>
 
                 <!-- Maven properties for compilation -->
                 <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -247,10 +247,10 @@
                 <argument4>src/main/cypher/cmd/q4.cypher</argument4>
 
                 <!-- Keep versions as properties to allow easy modification -->
-                <maven.compiler.target>1.8</maven.compiler.target>
-                <maven.compiler.source>1.8</maven.compiler.source>
+                <maven.compiler.target>21</maven.compiler.target>
+                <maven.compiler.source>21</maven.compiler.source>
 
-                <java.version>8</java.version>
+                <java.version>21</java.version>
 
                 <!-- Maven properties for compilation -->
                 <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -277,10 +277,10 @@
                 <argument4>./src/main/cypher/cmd/q1.cypher</argument4>
 
                 <!-- Keep versions as properties to allow easy modification -->
-                <maven.compiler.target>1.8</maven.compiler.target>
-                <maven.compiler.source>1.8</maven.compiler.source>
+                <maven.compiler.target>21</maven.compiler.target>
+                <maven.compiler.source>21</maven.compiler.source>
 
-                <java.version>8</java.version>
+                <java.version>21</java.version>
 
                 <!-- Maven properties for compilation -->
                 <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -299,13 +299,13 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-csv</artifactId>
-            <version>1.9.0</version>
+            <version>1.10.0</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka-streams</artifactId>
-            <version>2.6.0</version>
+            <version>3.7.0</version>
         </dependency>
 
         <!--dependency>
@@ -318,109 +318,119 @@
         <dependency>
             <groupId>io.confluent</groupId>
             <artifactId>confluent-log4j-extensions</artifactId>
-            <version>5.5.1</version>
+            <version>7.6.0</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/io.confluent/common -->
         <dependency>
             <groupId>io.confluent</groupId>
             <artifactId>common-logging</artifactId>
-            <version>5.5.1</version>
+            <version>7.6.0</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka-log4j-appender</artifactId>
-            <version>2.6.0</version>
+            <version>3.7.0</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka-clients</artifactId>
-            <version>2.6.0</version>
+            <version>3.7.0</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.11.3</version>
+            <version>2.17.0</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
-            <version>2.13.1</version>
+            <version>2.23.1</version>
         </dependency>
 
+        <!-- Jackson YAML support for domain parsing -->
         <dependency>
-            <groupId>net.christophschubert</groupId>
-            <artifactId>kafka-clusterstate-tools</artifactId>
-            <version>1.0.1-SNAPSHOT</version>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-yaml</artifactId>
+            <version>2.17.0</version>
         </dependency>
+
+        <!-- Modern KSQLDB client for KSQLDB integration -->
+        <dependency>
+            <groupId>io.confluent.ksql</groupId>
+            <artifactId>ksqldb-api-client</artifactId>
+            <version>7.6.0</version>
+        </dependency>
+
+        <!-- Removed kafka-clusterstate-tools dependency - replaced with modern implementations -->
 
         <dependency>
             <groupId>io.confluent</groupId>
             <artifactId>kafka-schema-registry-client</artifactId>
-            <version>6.0.1</version>
+            <version>7.6.0</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/commons-cli/commons-cli -->
         <dependency>
             <groupId>commons-cli</groupId>
             <artifactId>commons-cli</artifactId>
-            <version>1.4</version>
+            <version>1.6.0</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-            <version>4.5.12</version>
+            <version>4.5.14</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            <version>2.8.6</version>
+            <version>2.10.1</version>
         </dependency>
 
         <dependency>
             <groupId>org.jgrapht</groupId>
             <artifactId>jgrapht-core</artifactId>
-            <version>1.4.0</version>
+            <version>1.5.2</version>
         </dependency>
 
         <dependency>
             <groupId>org.jgrapht</groupId>
             <artifactId>jgrapht-io</artifactId>
-            <version>1.4.0</version>
+            <version>1.5.2</version>
         </dependency>
 
         <dependency>
             <groupId>org.jgrapht</groupId>
             <artifactId>jgrapht-ext</artifactId>
-            <version>1.4.0</version>
+            <version>1.5.2</version>
         </dependency>
 
         <dependency>
             <groupId>org.neo4j</groupId>
             <artifactId>neo4j</artifactId>
-            <version>4.1.3</version>
+            <version>5.18.0</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.neo4j.driver/neo4j-java-driver -->
         <dependency>
             <groupId>org.neo4j.driver</groupId>
             <artifactId>neo4j-java-driver</artifactId>
-            <version>4.1.1</version>
+            <version>5.18.0</version>
         </dependency>
 
         <dependency>
             <groupId>io.confluent.ksql</groupId>
             <artifactId>ksqldb-api-client</artifactId>
-            <version>0.12.0</version>
+            <version>7.6.0</version>
         </dependency>
 
     </dependencies>
@@ -442,7 +452,7 @@
         <repository>
             <id>confluent</id>
             <name>Confluent</name>
-            <url>https://jenkins-confluent-packages-beta-maven.s3.amazonaws.com/6.1.0-beta200825192044/1/maven/</url>
+            <url>https://packages.confluent.io/maven/</url>
         </repository>
 
     </repositories>
@@ -454,14 +464,15 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
+                <version>3.12.1</version>
                 <configuration>
                     <fork>false</fork>
                     <encoding>UTF-8</encoding>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
+                    <source>21</source>
+                    <target>21</target>
                     <compilerArgs>
                         <arg>-Xlint:all</arg>
+                        <arg>--enable-preview</arg>
                     </compilerArgs>
                 </configuration>
             </plugin>

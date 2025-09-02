@@ -19,11 +19,12 @@ import java.io.IOException;
 import io.confluent.cp.mdmodel.GraphMapper;
 import io.confluent.cp.mdmodel.kafka.DefaultCSVFileFlowGraphProcessor;
 import io.confluent.mdgraph.model.IKnowledgeGraph;
-import net.christophschubert.kafka.clusterstate.cli.CLITools;
-import net.christophschubert.kafka.clusterstate.formats.domain.Domain;
-import net.christophschubert.kafka.clusterstate.formats.domain.DomainParser;
-import net.christophschubert.kafka.clusterstate.formats.env.CloudCluster;
-import net.christophschubert.kafka.clusterstate.formats.env.Environment;
+import io.confluent.ks.modern.utils.ModernCLITools;
+import io.confluent.ks.modern.model.Domain;
+import io.confluent.ks.modern.parser.DomainParser;
+import io.confluent.ks.modern.model.CloudCluster;
+import io.confluent.ks.modern.model.Environment;
+// Environment class moved to CloudCluster.java
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -99,7 +100,7 @@ public class ClusterStateLoader {
         File contextPath = new File( domainPath );
 
         final List<Domain> domains = Files.list(contextPath.toPath())
-                .filter(CLITools::isDomainFile)
+                .filter(ModernCLITools::isDomainFile)
                 .flatMap(path -> {
                     try {
 
@@ -205,7 +206,7 @@ public class ClusterStateLoader {
         File contextPath = new File( "./src/main/cluster-state-tools/contexts/order-processing");
 
         final List<Domain> domains = Files.list(contextPath.toPath())
-                .filter(CLITools::isDomainFile)
+                .filter(ModernCLITools::isDomainFile)
                 .flatMap(path -> {
                     try {
                         return Stream.of(parser.loadFromFile(path.toFile()));

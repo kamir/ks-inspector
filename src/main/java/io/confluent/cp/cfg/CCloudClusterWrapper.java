@@ -1,7 +1,7 @@
 package io.confluent.cp.cfg;
 
-import net.christophschubert.kafka.clusterstate.cli.EnvVarTools;
-import net.christophschubert.kafka.clusterstate.cli.PropertyMergeTool;
+import io.confluent.ks.modern.utils.ModernEnvVarTools;
+import io.confluent.ks.modern.kafka.ModernKafkaClient;
 
 import java.io.File;
 import java.io.FileInputStream;

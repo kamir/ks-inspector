@@ -1,7 +1,7 @@
 package io.confluent.mdgraph.model;
 
-import net.christophschubert.kafka.clusterstate.formats.domain.Domain;
-import net.christophschubert.kafka.clusterstate.formats.env.CloudCluster;
+import io.confluent.ks.modern.model.Domain;
+import io.confluent.ks.modern.model.CloudCluster;
 
 import io.confluent.kafka.schemaregistry.client.rest.entities.Schema;
 

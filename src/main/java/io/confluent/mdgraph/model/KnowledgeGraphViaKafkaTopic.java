@@ -4,8 +4,14 @@ import io.confluent.cp.factflow.FactQueryProducer;
 import io.confluent.cp.mdmodel.infosec.Classifications;
 import io.confluent.kafka.schemaregistry.client.rest.entities.Schema;
 import io.confluent.kafka.schemaregistry.client.rest.entities.SchemaReference;
-import net.christophschubert.kafka.clusterstate.formats.domain.*;
-import net.christophschubert.kafka.clusterstate.formats.env.CloudCluster;
+import io.confluent.ks.modern.model.Domain;
+import io.confluent.ks.modern.model.CloudCluster;
+import io.confluent.ks.modern.model.Project;
+import io.confluent.ks.modern.model.StreamsApp;
+import io.confluent.ks.modern.model.Consumer;
+import io.confluent.ks.modern.model.Producer;
+import io.confluent.ks.modern.parser.DomainParser;
+import java.util.HashSet;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.Result;
@@ -487,7 +493,7 @@ public class KnowledgeGraphViaKafkaTopic implements IKnowledgeGraph {
         /**
          * Read the Domain for a particular DOMAIN File in the DOMAIN
          */
-        Set<String> dffs = c.domainFileFolders;
+        List<String> dffs = c.domainFileFolders;
 
         String CCNAME = c.name;
 

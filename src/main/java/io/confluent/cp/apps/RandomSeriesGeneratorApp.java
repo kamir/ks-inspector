@@ -2,8 +2,8 @@ package io.confluent.cp.apps;
 
 import io.confluent.cp.cs.AppDescriptorLoader;
 import io.confluent.cp.mdmodel.kafka.KafkaApplicationContextHandler;
-import net.christophschubert.kafka.clusterstate.cli.EnvVarTools;
-import net.christophschubert.kafka.clusterstate.formats.domain.Domain;
+import io.confluent.ks.modern.utils.ModernEnvVarTools;
+import io.confluent.ks.modern.model.Domain;
 import org.apache.log4j.Appender;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -24,8 +24,8 @@ public class RandomSeriesGeneratorApp {
 
     public static void main(String[] argv) throws Exception {
 
-        String targetDomainName = EnvVarTools.readPropertyFromEnv("KST", "TARGET_DOMAIN_NAME");
-        String targetClusterName = EnvVarTools.readPropertyFromEnv("KST", "TARGET_CLUSTER_NAME");
+        String targetDomainName = ModernEnvVarTools.readPropertyFromEnv("KST", "TARGET_DOMAIN_NAME");
+        String targetClusterName = ModernEnvVarTools.readPropertyFromEnv("KST", "TARGET_CLUSTER_NAME");
 
         System.out.println("> Started RandomSeriesGeneratorApp in Domain ["+targetDomainName+"].");
         System.out.println("> I will work with cluster: [" + targetClusterName + "].");

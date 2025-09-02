@@ -10,8 +10,8 @@ package io.confluent.cp.cs;
  */
 
 
-import net.christophschubert.kafka.clusterstate.formats.domain.Domain;
-import net.christophschubert.kafka.clusterstate.formats.domain.DomainParser;
+import io.confluent.ks.modern.model.Domain;
+import io.confluent.ks.modern.parser.DomainParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

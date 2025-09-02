@@ -8,8 +8,8 @@ import io.confluent.mdgraph.model.IKnowledgeGraph;
 import io.confluent.mdgraph.model.KnowledgeGraphFactory;
 
 import io.confluent.mdgraph.model.KnowledgeGraphNeo4J;
-import net.christophschubert.kafka.clusterstate.ClientBundle;
-import net.christophschubert.kafka.clusterstate.cli.CLITools;
+import io.confluent.ks.modern.kafka.ModernKafkaClient;
+import io.confluent.ks.modern.utils.ModernCLITools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
@@ -60,8 +60,8 @@ class CLI {
         System.out.println("> Start inspection of a data flow file. {"+workingPath + "/" + fileName + "}");
         System.out.println("> Use processing context path : " + contextPath.getAbsolutePath() );
 
-        final Properties properties = CLITools.loadProperties(configFile, bootstrapServer, envVarPrefix);
-        final ClientBundle bundle = ClientBundle.fromProperties(properties);
+        final ModernKafkaClient kafkaClient = ModernKafkaClient.fromProperties(configFile, bootstrapServer, envVarPrefix);
+        final Properties properties = kafkaClient.getKafkaProperties();
 
         // TODO: expose the details of the bundle
         // bundle.describe();
@@ -116,8 +116,8 @@ class CLI {
         System.out.println("> Start inspection of a data flow file. {"+workingPath + "/" + fileName + "}");
         System.out.println("> Use processing context path : " + contextPath.getAbsolutePath() );
 
-        final Properties properties = CLITools.loadProperties(configFile, bootstrapServer, envVarPrefix);
-        final ClientBundle bundle = ClientBundle.fromProperties(properties);
+        final ModernKafkaClient kafkaClient = ModernKafkaClient.fromProperties(configFile, bootstrapServer, envVarPrefix);
+        final Properties properties = kafkaClient.getKafkaProperties();
 
         // TODO: expose the details of the bundle
         // bundle.describe();
@@ -166,8 +166,8 @@ class CLI {
             configFile = new File(contextPath, "kst.properties");
         }
 
-        final Properties properties = CLITools.loadProperties(configFile, bootstrapServer, envVarPrefix);
-        final ClientBundle bundle = ClientBundle.fromProperties(properties);
+        final ModernKafkaClient kafkaClient = ModernKafkaClient.fromProperties(configFile, bootstrapServer, envVarPrefix);
+        final Properties properties = kafkaClient.getKafkaProperties();
 
         // TODO: expose the details of the bundle
         // bundle.describe();
@@ -214,8 +214,8 @@ class CLI {
             configFile = new File(contextPath, "kst.properties");
         }
 
-        final Properties properties = CLITools.loadProperties(configFile, bootstrapServer, envVarPrefix);
-        final ClientBundle bundle = ClientBundle.fromProperties(properties);
+        final ModernKafkaClient kafkaClient = ModernKafkaClient.fromProperties(configFile, bootstrapServer, envVarPrefix);
+        final Properties properties = kafkaClient.getKafkaProperties();
 
         // bundle.describe();
 
@@ -266,8 +266,8 @@ class CLI {
             configFile = new File(contextPath, "kst.properties");
         }
 
-        final Properties propertiesKAFKA = CLITools.loadProperties(configFile, bootstrapServer, envVarPrefix);
-        final ClientBundle bundle = ClientBundle.fromProperties(propertiesKAFKA);
+        final ModernKafkaClient kafkaClientKAFKA = ModernKafkaClient.fromProperties(configFile, bootstrapServer, envVarPrefix);
+        final Properties propertiesKAFKA = kafkaClientKAFKA.getKafkaProperties();
 
         // bundle.describe();
 

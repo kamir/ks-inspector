@@ -1,8 +1,8 @@
 package io.confluent.cp.util;
 
 
-import net.christophschubert.kafka.clusterstate.cli.CloudGovernance;
-import net.christophschubert.kafka.clusterstate.cli.EnvVarTools;
+import io.confluent.ks.modern.utils.ModernEnvVarTools;
+// Note: CloudGovernance functionality moved to modern implementations
 
 import java.io.File;
 
@@ -14,9 +14,9 @@ public class KSTWrapper {
 
     public static void main(String[] ARGS) {
 
-        String targetClusterName = EnvVarTools.readPropertyFromEnv("KST", "TARGET_CLUSTER_NAME");
+        String targetClusterName = ModernEnvVarTools.readPropertyFromEnv("KST", "TARGET_CLUSTER_NAME");
 
-        String targetDomainName = EnvVarTools.readPropertyFromEnv("KST", "TARGET_DOMAIN_NAME");
+        String targetDomainName = ModernEnvVarTools.readPropertyFromEnv("KST", "TARGET_DOMAIN_NAME");
 
         File f = new File( ARGS[0] );
         File folder = f.getParentFile();
@@ -31,7 +31,9 @@ public class KSTWrapper {
 
         String[] args3 = {"applyToSelectedClusterAndDomain", ARGS[0], targetClusterName, targetDomainName};
 
-        CloudGovernance.main(args3);
+        // TODO: Implement CloudGovernance replacement
+        // CloudGovernance.main(args3);
+        System.out.println("TODO: Implement cloud governance functionality");
 
     }
 

@@ -7,7 +7,7 @@ import org.apache.kafka.common.KafkaFuture;
 import org.apache.kafka.common.acl.AccessControlEntryFilter;
 import org.apache.kafka.common.acl.AclBinding;
 import org.apache.kafka.common.acl.AclBindingFilter;
-import org.apache.kafka.common.resource.ResourceFilter;
+import org.apache.kafka.common.resource.ResourcePatternFilter;
 
 import java.util.Collection;
 import java.util.concurrent.ExecutionException;
@@ -24,7 +24,7 @@ public class ACLRetrievalTool {
 
         AdminClient kac = AdminClient.create( CCloudClusterWrapper.getPropsFrom_ROOT_FOLDER() );
 
-        AclBindingFilter aclBindingFilter = new AclBindingFilter(ResourceFilter.ANY, AccessControlEntryFilter.ANY);
+        AclBindingFilter aclBindingFilter = new AclBindingFilter(ResourcePatternFilter.ANY, AccessControlEntryFilter.ANY);
 
         System.out.println( " * ");
 

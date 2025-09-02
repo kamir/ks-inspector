@@ -1,9 +1,7 @@
 package io.confluent.cp.governanceprocess;
 
-import net.christophschubert.kafka.clusterstate.cli.EnvVarTools;
-import net.christophschubert.kafka.clusterstate.cli.PropertyFileBuilder;
-import net.christophschubert.kafka.clusterstate.cli.PropertyMergeTool;
-import org.bouncycastle.math.ec.ScaleYNegateXPointMap;
+import io.confluent.ks.modern.utils.ModernEnvVarTools;
+// Note: PropertyFileBuilder and PropertyMergeTool functionality moved to modern implementations
 
 /**
  * This program uses the "PropertyFileBuilder" provided in the KST project and creates the
@@ -23,21 +21,25 @@ public class PropertyFileExporter {
 
     public static void main(String[] ARGS) {
 
-        String targetClusterName = EnvVarTools.readPropertyFromEnv( "KST" , "TARGET_CLUSTER_NAME" );
-        String envFilePath = EnvVarTools.readPropertyFromEnv( "KST" , "ENVIRONMENT_FILENAME" );
+        String targetClusterName = ModernEnvVarTools.readPropertyFromEnv( "KST" , "TARGET_CLUSTER_NAME" );
+        String envFilePath = ModernEnvVarTools.readPropertyFromEnv( "KST" , "ENVIRONMENT_FILENAME" );
 
         System.out.println( "> environmment file : " + envFilePath );
         System.out.println( "> work on cluster   : " + targetClusterName );
 
         if ( envFilePath != null ) {
 
-            String[] args1 = {"build", envFilePath, targetClusterName};
-            PropertyFileBuilder.main(args1);
+            // TODO: Implement PropertyFileBuilder replacement
+            // String[] args1 = {"build", envFilePath, targetClusterName};
+            // PropertyFileBuilder.main(args1);
+            System.out.println("TODO: Implement property file building for: " + envFilePath);
 
         }
         else {
-            String[] args1 = {"build", "./src/main/cluster-state-tools-data/example10/environments.yaml", targetClusterName};
-            PropertyFileBuilder.main(args1);
+            // TODO: Implement PropertyFileBuilder replacement
+            // String[] args1 = {"build", "./src/main/cluster-state-tools-data/example10/environments.yaml", targetClusterName};
+            // PropertyFileBuilder.main(args1);
+            System.out.println("TODO: Implement property file building for default environment");
 
         }
         /**

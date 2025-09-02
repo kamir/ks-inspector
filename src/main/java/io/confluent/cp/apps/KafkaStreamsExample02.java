@@ -3,7 +3,7 @@ package io.confluent.cp.apps;
 import io.confluent.cp.cfg.CCloudClusterWrapper;
 import io.confluent.cp.cs.AppDescriptorLoader;
 import io.confluent.cp.mdmodel.kstreams.KafkaStreamsApplicationContextHandler;
-import net.christophschubert.kafka.clusterstate.formats.domain.Domain;
+import io.confluent.ks.modern.model.Domain;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.StreamsBuilder;

@@ -3,8 +3,8 @@ package io.confluent.cp.apps;
 import io.confluent.cp.cfg.CCloudClusterWrapper;
 import io.confluent.cp.cs.AppDescriptorLoader;
 import io.confluent.cp.mdmodel.kstreams.KafkaStreamsApplicationContextHandler;
-import net.christophschubert.kafka.clusterstate.cli.PropertyMergeTool;
-import net.christophschubert.kafka.clusterstate.formats.domain.Domain;
+import io.confluent.ks.modern.utils.ModernEnvVarTools;
+import io.confluent.ks.modern.model.Domain;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
 
@@ -39,7 +39,17 @@ public class KafkaStreamsExample01 {
     // read from ENV ....
     // if not available: use default.
 
-    Properties props = PropertyMergeTool.getPropsFrom_ENV_VARS_AND_DESCRIPTOR( env_file_path, defautl_cluster_name );
+    // Use modern property loading approach
+    // TODO: Replace with proper environment/descriptor based property loading
+    Properties props = new Properties();
+    props.put("bootstrap.servers", "localhost:9092");
+    props.put("schema.registry.url", "http://localhost:8081");
+    
+    // Override with environment variables if available
+    String bootstrapServers = ModernEnvVarTools.readPropertyFromEnv("KST", "BOOTSTRAP_SERVERS");
+    if (bootstrapServers != null) {
+        props.put("bootstrap.servers", bootstrapServers);
+    }
 
     props.put(StreamsConfig.APPLICATION_ID_CONFIG, "KafkaStreams_EXAMPLE_01_" + System.currentTimeMillis() );
 

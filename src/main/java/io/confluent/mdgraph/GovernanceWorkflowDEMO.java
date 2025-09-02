@@ -5,7 +5,7 @@ import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientExcept
 import io.confluent.mdgraph.model.IKnowledgeGraph;
 import io.confluent.mdgraph.model.KnowledgeGraphFactory;
 import io.confluent.mdgraph.model.KnowledgeGraphNeo4J;
-import net.christophschubert.kafka.clusterstate.cli.CLITools;
+import io.confluent.ks.modern.kafka.ModernKafkaClient;
 import org.apache.log4j.LogManager;
 
 import java.io.File;
@@ -20,7 +20,7 @@ public class GovernanceWorkflowDEMO {
 
         System.out.println( "Start Knowledge Graph DEMO: => AppID : DataGovernanceDemo001_ ... ");
 
-        final Properties properties = CLITools.loadProperties(new File("src/main/cluster-state-tools-data/example2/kst.properties"), null, "KST");
+        final Properties properties = ModernKafkaClient.loadProperties(new File("src/main/cluster-state-tools-data/example2/kst.properties"), null, "KST");
 
         /**
          * Command: inspect
