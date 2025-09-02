@@ -1,11 +1,9 @@
-#
-# Example : How to provide Cluster Credentials via ENV-Variables to the KST tool?
-#
-source setenv.sh
+#!/bin/bash
 
-cd ..
+# Source the version configuration
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "${SCRIPT_DIR}/version.conf" 2>/dev/null || export KSI_VERSION="2.6.1"
 
-export KST_TARGET_CLUSTER_NAME=cluster_0
-#export KST_TARGET_CLUSTER_NAME=PROD-cluster-101
+echo ">>> Run the Kafka Streams App example ..."
 
-java -cp target/ks-inspector-1.0-SNAPSHOT.jar io.confluent.cp.apps.KafkaStreamsExample01
+java -cp target/ks-inspector-${KSI_VERSION}.jar io.confluent.cp.apps.KafkaStreamsExample01

@@ -1,9 +1,13 @@
 #!/bin/bash
 
+# Source the version configuration
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "${SCRIPT_DIR}/version.conf" 2>/dev/null || export KSI_VERSION="2.6.1"
+
 # Quick Start Script for ks-inspector
 # This script helps you get started quickly with the ks-inspector tool
 
-echo "🚀 ks-inspector Quick Start"
+echo "🚀 ks-inspector Quick Start (Version: ${KSI_VERSION})"
 echo "=========================="
 echo
 
@@ -33,7 +37,7 @@ fi
 echo
 
 # Build the project
-echo "🔨 Building the project..."
+echo "🔨 Building the project (Version: ${KSI_VERSION})..."
 mvn clean package
 
 if [ $? -ne 0 ]; then
@@ -72,4 +76,4 @@ echo "   3. Create your own Maven profile in pom.xml for custom analysis"
 echo "   4. Refer to QUICKSTART.md for detailed instructions"
 echo
 
-echo "🎉 You're ready to use ks-inspector!"
+echo "🎉 You're ready to use ks-inspector version ${KSI_VERSION}!"

@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 
-@Command(name= "ksi", subcommands = { CommandLine.HelpCommand.class }, version = "ksi 0.1.0",
+@Command(name= "ksi", subcommands = { CommandLine.HelpCommand.class }, version = "ksi 2.6.1",
         description = "Inspect kafka based streaming processes via flow- and knowledge-graphs.")
 class CLI {
 

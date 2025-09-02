@@ -1,5 +1,17 @@
 #!/bin/bash
 
+# Source the version configuration
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "${SCRIPT_DIR}/version.conf" 2>/dev/null || export KSI_VERSION="2.6.1"
+
+echo ">>> Run the query example ..."
+
+java -jar target/ks-inspector-${KSI_VERSION}.jar queryGraph  \
+        -wp ./src/main/cypher/cmd/ \
+        -e KST \
+        -qfp q1.cypher \
+        ./src/main/cypher/cmd/q1.cypher
+
 cd ..
 
 export KST_BOOTSTRAP_SERVER=pkc-4yyd6.us-east1.gcp.confluent.cloud:9092

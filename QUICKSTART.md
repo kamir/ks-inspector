@@ -1,6 +1,6 @@
 # Quick Start Guide
 
-Get up and running with ks-inspector in just a few steps.
+Get up and running with ks-inspector version 2.6.1 in just a few steps.
 
 ## Prerequisites
 
@@ -66,6 +66,31 @@ Run directly with arguments:
 ```bash
 mvn exec:java -Dexec.mainClass="io.confluent.mdgraph.cli.CLI" -Dexec.args="inspectDomain -wp /path/to/your/data -bss localhost:9092 -e KST ./src/main/cluster-state-tools-data/example10"
 ```
+
+## Running with Confluent Cloud
+
+To run with Confluent Cloud instead of a local cluster:
+
+1. **Configure your Confluent Cloud credentials:**
+   ```bash
+   cd bin
+   cp setenv.sh.template setenv.sh
+   ```
+   Edit [setenv.sh](file:///Users/kamir/GITHUB.cflt/ks-inspector/bin/setenv.sh) with your actual Confluent Cloud API keys and cluster details.
+
+2. **Update the kst.properties file** in your data directory:
+   ```bash
+   cd src/main/cluster-state-tools-data/example1
+   ```
+   Edit [kst.properties](file:///Users/kamir/GITHUB.cflt/ks-inspector/src/main/cluster-state-tools-data/example1/kst.properties) with your Confluent Cloud cluster endpoint and credentials.
+
+3. **Run the inspection with Confluent Cloud:**
+   ```bash
+   cd ../../../../
+   ./bin/run-03-inspect-domains.sh
+   ```
+
+For detailed Confluent Cloud setup instructions, see [CONFLUENT_CLOUD_SETUP.md](CONFLUENT_CLOUD_SETUP.md).
 
 ## Key Commands
 
@@ -142,6 +167,14 @@ curl -X "POST" "http://localhost:8088/ksql" \
      -H "Content-Type: application/vnd.ksql.v1+json; charset=utf-8" \
      -d '{"ksql": "SHOW STREAMS;", "streamsProperties": {}}'
 ```
+
+### Confluent Cloud Connection Issues
+If you're having trouble connecting to Confluent Cloud:
+
+1. Verify your cluster endpoint is correct
+2. Check that your API keys have the necessary permissions
+3. Ensure your network allows outbound connections to Confluent Cloud
+4. Confirm your [kst.properties](file:///Users/kamir/GITHUB.cflt/ks-inspector/src/main/cluster-state-tools-data/example1/kst.properties) file has the correct credentials
 
 ## Next Steps
 

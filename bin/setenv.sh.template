@@ -2,6 +2,9 @@
 # Example : How to provide Cluster Credentials via ENV-Variables to the KST tool?
 #=======================================================================================================================
 
+# Version configuration
+export KSI_VERSION="2.6.1"
+
 ########################################################################################################################
 # Please fill in the API-KEYs and API-SECRETS for all environments and keep this data in a save place.
 #-----------------------------------------------------------------------------------------------------------------------

@@ -3,7 +3,7 @@
 
 _Scalytics-Connect: KS-Inspector_ is a tool to understand Kafka based streams applications better. Proactive maintenance and application modernization are the key contributions of this system.
 
-> **🚀 Modernized Version (v2.0)**: This project has been significantly updated to Java 21 and modernized dependencies while maintaining backward compatibility. The external `kafka-clusterstate-tools` dependency has been eliminated and replaced with self-contained modern implementations in the `io.confluent.ks.modern.*` package structure.
+> **🚀 Modernized Version (v2.6.1)**: This project has been significantly updated to Java 21 and modernized dependencies while maintaining backward compatibility. The external `kafka-clusterstate-tools` dependency has been eliminated and replaced with self-contained modern implementations in the `io.confluent.ks.modern.*` package structure.
 
 The tool helps application developers and operators of Kafka Streaming applications to understand dependencies between KSQL queries and KStreams applications.
 Using the metadata graph we are able to identify components which process sensitive information.
