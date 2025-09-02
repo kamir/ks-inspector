@@ -1,4 +1,4 @@
-# ks-inspector
+# Scalytics-Connect: KSQLDB-Inspector
 ![KS-Inspector Overview](docs/overview-2025-09-v3.jpeg)
 
 KS-Inspector is a tool to understand Kafka based streams applications better.
