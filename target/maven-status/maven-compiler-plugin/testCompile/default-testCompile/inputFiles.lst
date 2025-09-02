@@ -1,1 +1,6 @@
 /Users/kamir/GITHUB.cflt/ks-inspector/src/test/java/CLIStructureTest.java
+/Users/kamir/GITHUB.cflt/ks-inspector/src/test/java/io/confluent/ksql/client/KSQLDBClientIntegrationTest.java
+/Users/kamir/GITHUB.cflt/ks-inspector/src/test/java/io/confluent/ksql/client/KSQLDBClientLiveTest.java
+/Users/kamir/GITHUB.cflt/ks-inspector/src/test/java/io/confluent/ksql/client/KSQLDBClientTest.java
+/Users/kamir/GITHUB.cflt/ks-inspector/src/test/java/io/confluent/ksql/client/KSQLDBClientUnitTest.java
+/Users/kamir/GITHUB.cflt/ks-inspector/src/test/java/io/confluent/ksql/client/KSQLDBConfigTest.java

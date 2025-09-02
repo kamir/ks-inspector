@@ -4,3 +4,6 @@
 [submodule "kafka-clusterstate-tools"]
 	path = kafka-clusterstate-tools
 	url = https://github.com/kamir/kafka-clusterstate-tools
+[submodule "ksql"]
+	path = ksql
+	url = https://github.com/confluentinc/ksql

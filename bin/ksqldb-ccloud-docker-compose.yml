@@ -1,0 +1,53 @@
+version: '2'
+services:
+  ksqldb-server:
+    image: confluentinc/ksqldb-server:latest
+    hostname: ksqldb-server
+    container_name: ksqldb-server
+    ports:
+      - "8088:8088"
+    environment:
+      KSQL_CONFIG_DIR: "/etc/ksql"
+      KSQL_BOOTSTRAP_SERVERS: "${KST_BOOTSTRAP_SERVER}"
+      KSQL_LISTENERS: "http://0.0.0.0:8088"
+      KSQL_KSQL_LOGGING_PROCESSING_STREAM_AUTO_CREATE: "true"
+      KSQL_KSQL_LOGGING_PROCESSING_TOPIC_AUTO_CREATE: "true"
+      
+      # Confluent Cloud Security Configuration
+      KSQL_SECURITY_PROTOCOL: "${KST_SECURITY_PROTOCOL}"
+      KSQL_SASL_JAAS_CONFIG: "${KST_SASL_JAAS_CONFIG}"
+      KSQL_SASL_MECHANISM: "${KST_SASL_MECHANISM}"
+      
+      # Schema Registry Configuration (if applicable)
+      KSQL_KSQL_SCHEMA_REGISTRY_URL: "${KST_SCHEMA_REGISTRY_URL}"
+      KSQL_SCHEMA_REGISTRY_BASIC_AUTH_CREDENTIALS_SOURCE: "${KST_SCHEMA_REGISTRY_BASIC_AUTH_CREDENTIALS_SOURCE}"
+      KSQL_SCHEMA_REGISTRY_BASIC_AUTH_USER_INFO: "${KST_SCHEMA_REGISTRY_BASIC_AUTH_USER_INFO}"
+      
+      KSQL_KSQL_SERVICE_ID: "ksql-ccloud-service"
+
+      # Internal topics (command topic, state stores, etc.)
+      KSQL_KSQL_INTERNAL_TOPIC_REPLICAS: "3"
+      KSQL_KSQL_INTERNAL_TOPIC_MIN_INSYNC_REPLICAS: "2"
+
+      # Streams defaults that ksqlDB uses for changelog/repartition topics
+      KSQL_KSQL_STREAMS_REPLICATION_FACTOR: "3"
+      KSQL_KSQL_STREAMS_MIN_INSYNC_REPLICAS: "2"
+
+      # Sink topics created by ksqlDB (CREATE STREAM/TABLE AS SELECT)
+      KSQL_KSQL_SINK_REPLICAS: "3"
+      KSQL_KSQL_SINK_MIN_INSYNC_REPLICAS: "2"
+
+      # Processing log topic (ksql_processing_log)
+      KSQL_KSQL_LOGGING_PROCESSING_TOPIC_REPLICATION_FACTOR: "3"
+      KSQL_KSQL_LOGGING_PROCESSING_TOPIC_MIN_INSYNC_REPLICAS: "2"
+      
+    volumes:
+      - ./ksqldb-scripts:/opt/app/scripts
+
+  ksqldb-cli:
+    image: confluentinc/ksqldb-cli:latest
+    container_name: ksqldb-cli
+    depends_on:
+      - ksqldb-server
+    entrypoint: /bin/sh
+    tty: true

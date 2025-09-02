@@ -11,6 +11,7 @@
       { "name" : "inspect", "parameterTypes" : ["java.lang.String", "java.lang.String", "java.io.File", "java.lang.String", "java.io.File"] },
       { "name" : "inspect", "parameterTypes" : ["java.lang.String", "java.lang.String", "java.lang.String", "java.io.File", "java.lang.String", "java.io.File"] },
       { "name" : "inspectExt", "parameterTypes" : ["java.lang.String", "java.lang.String", "java.lang.String", "java.io.File", "java.lang.String", "java.io.File"] },
+      { "name" : "inspectKSQLDB", "parameterTypes" : ["java.lang.String", "int", "java.lang.String", "java.lang.String", "boolean", "java.lang.String", "java.lang.String", "java.lang.String", "java.lang.String"] },
       { "name" : "inspectSchemaRegistry", "parameterTypes" : ["java.lang.String", "java.lang.String", "java.io.File", "java.lang.String", "java.io.File"] },
       { "name" : "queryGraph", "parameterTypes" : ["java.lang.String", "java.lang.String", "java.lang.String", "java.lang.String", "java.lang.String", "java.io.File"] },
       { "name" : "readEvents", "parameterTypes" : ["java.lang.String", "java.lang.String", "java.lang.String", "java.lang.String", "java.lang.String", "java.io.File"] }

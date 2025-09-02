@@ -28,6 +28,64 @@ The project has been modernized with the following key improvements:
 - **Kafka Integration** (`io.confluent.ks.modern.kafka.*`): Modern Kafka Admin Client wrapper
 - **Utilities** (`io.confluent.ks.modern.utils.*`): Environment variable processing and CLI tools
 
+## 📊 KSQLDB Cluster Inspection (New in v2.6.1)
+
+The latest version introduces comprehensive KSQLDB cluster inspection capabilities:
+
+- **Complete Metadata Collection**: Gather information about streams, tables, topics, and queries
+- **Structured Inventory Storage**: Store metadata in human-readable YAML format
+- **Neo4j Integration**: Export inventory data to Neo4j for advanced analysis and visualization
+- **CLI Integration**: Easy-to-use command-line interface
+
+### Usage
+
+To inspect a KSQLDB cluster and save the results to a YAML file:
+
+```bash
+java -cp target/ks-inspector-2.6.1.jar \
+    io.confluent.mdgraph.cli.CLI inspectKSQLDB \
+    --host localhost \
+    --port 8088 \
+    --output ksqldb-inventory.yaml
+```
+
+To export directly to Neo4j:
+
+```bash
+java -cp target/ks-inspector-2.6.1.jar \
+    io.confluent.mdgraph.cli.CLI inspectKSQLDB \
+    --host localhost \
+    --port 8088 \
+    --output ksqldb-inventory.yaml \
+    --neo4j-uri bolt://localhost:7687 \
+    --neo4j-user neo4j \
+    --neo4j-password admin
+```
+
+### KSQLDB Client API
+
+The project also includes a standalone KSQLDB client API that can be used programmatically:
+
+```java
+KSQLDBConfig config = new KSQLDBConfig()
+    .setHost("localhost")
+    .setPort(8088);
+
+try (KSQLDBClient client = new KSQLDBClient(config)) {
+    ServerInfo serverInfo = client.getServerInfo();
+    List<StreamInfo> streams = client.listStreams();
+    List<TableInfo> tables = client.listTables();
+    List<TopicInfo> topics = client.listTopics();
+    List<QueryInfo> queries = client.listQueries();
+    
+    // Process the collected metadata
+}
+```
+
+For detailed documentation on the KSQLDB client API, see [KSQLDB Client Usage Guide](docs/KSQLDB_CLIENT_USAGE.md).
+
+For detailed documentation on the KSQLDB inspection functionality, see [KSQLDB Inspection Documentation](docs/KSQLDB_INSPECTION.md).
+
 ## Motivation and Concept
 
 Think about a set of KSQL queries you want to deploy on a KSQL cluster. This is a very easy task. 
@@ -170,6 +228,23 @@ curl -X "POST" "http://localhost:8088/ksql" \
   "streamsProperties": {}
 }' > queries.data
 ```
+
+### Running KSQLDB with Confluent Cloud
+
+You can run KSQLDB locally using Docker with Confluent Cloud as the backend:
+
+```bash
+# Configure your Confluent Cloud credentials
+bin/run-ksqldb-ccloud.sh
+
+# Access the KSQLDB CLI
+docker exec -it ksqldb-cli ksql http://ksqldb-server:8088
+
+# Stop the services
+bin/stop-ksqldb-ccloud.sh
+```
+
+For detailed instructions, see [KSQLDB Cloud Setup Guide](docs/KSQLDB_CLOUD_SETUP.md).
 
 > **⚠️ Java 21 Required**: This modernized version requires Java 21. Please ensure your environment is configured accordingly.
 

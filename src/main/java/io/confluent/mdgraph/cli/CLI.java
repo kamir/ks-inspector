@@ -22,6 +22,10 @@ import java.io.IOException;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 
+import io.confluent.ksql.client.KSQLDBConfig;
+import io.confluent.ksql.inspector.KSQLDBClusterInspector;
+import io.confluent.ksql.inventory.KSQLDBInventory;
+
 @Command(name= "ksi", subcommands = { CommandLine.HelpCommand.class }, version = "ksi 2.6.1",
         description = "Inspect kafka based streaming processes via flow- and knowledge-graphs.")
 class CLI {
@@ -407,6 +411,78 @@ class CLI {
 
     }
 
+    // New command for KSQLDB cluster inspection
+    @Command(name = "inspectKSQLDB", description = "Inspect a KSQLDB cluster and create an inventory.")
+    int inspectKSQLDB(
+            @Option(names = { "-h", "--host" }, paramLabel = "<host>",
+                    description = "KSQLDB server host", defaultValue = "localhost") String host,
+            @Option(names = { "-p", "--port" }, paramLabel = "<port>",
+                    description = "KSQLDB server port", defaultValue = "8088") int port,
+            @Option(names = { "-u", "--username" }, paramLabel = "<username>",
+                    description = "KSQLDB username") String username,
+            @Option(names = { "-pw", "--password" }, paramLabel = "<password>",
+                    description = "KSQLDB password") String password,
+            @Option(names = { "--tls" }, description = "Use TLS for connection") boolean useTls,
+            @Option(names = { "-o", "--output" }, paramLabel = "<output>",
+                    description = "Output file path for YAML inventory") String outputPath,
+            @Option(names = { "--neo4j-uri" }, paramLabel = "<neo4j-uri>",
+                    description = "Neo4j URI for export") String neo4jUri,
+            @Option(names = { "--neo4j-user" }, paramLabel = "<neo4j-user>",
+                    description = "Neo4j username") String neo4jUser,
+            @Option(names = { "--neo4j-password" }, paramLabel = "<neo4j-password>",
+                    description = "Neo4j password") String neo4jPassword
+    ) {
+        try {
+            System.out.println("> Starting KSQLDB cluster inspection...");
+            
+            // Create KSQLDB configuration
+            KSQLDBConfig config = new KSQLDBConfig()
+                    .setHost(host)
+                    .setPort(port)
+                    .setUseTls(useTls);
+                    
+            if (username != null && !username.isEmpty()) {
+                config.setUsername(username);
+            }
+            
+            if (password != null && !password.isEmpty()) {
+                config.setPassword(password);
+            }
+            
+            // Create inspector and inspect cluster
+            KSQLDBClusterInspector inspector = new KSQLDBClusterInspector();
+            KSQLDBInventory inventory = inspector.inspectCluster(config);
+            
+            System.out.println("> Cluster inspection completed successfully");
+            System.out.println("> Found " + inventory.getStreams().size() + " streams");
+            System.out.println("> Found " + inventory.getTables().size() + " tables");
+            System.out.println("> Found " + inventory.getTopics().size() + " topics");
+            System.out.println("> Found " + inventory.getQueries().size() + " queries");
+            
+            // Save inventory to file if output path is specified
+            if (outputPath != null && !outputPath.isEmpty()) {
+                System.out.println("> Saving inventory to " + outputPath);
+                inspector.saveInventory(inventory, outputPath);
+                System.out.println("> Inventory saved successfully");
+            }
+            
+            // Export to Neo4j if Neo4j parameters are provided
+            if (neo4jUri != null && !neo4jUri.isEmpty() && 
+                neo4jUser != null && !neo4jUser.isEmpty() && 
+                neo4jPassword != null && !neo4jPassword.isEmpty()) {
+                
+                System.out.println("> Exporting inventory to Neo4j at " + neo4jUri);
+                inspector.exportToNeo4j(inventory, neo4jUri, neo4jUser, neo4jPassword);
+                System.out.println("> Inventory exported to Neo4j successfully");
+            }
+            
+            return 0;
+        } catch (Exception e) {
+            System.err.println("Error during KSQLDB cluster inspection: " + e.getMessage());
+            e.printStackTrace();
+            return 1;
+        }
+    }
 
     public static void main(String[] args) {
         final int status = new CommandLine(new CLI()).execute(args);
