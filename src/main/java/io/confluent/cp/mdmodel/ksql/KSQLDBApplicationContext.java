@@ -33,18 +33,23 @@ public class KSQLDBApplicationContext {
     String domain = null;
     String project = null;
 
+    // Private constructor to enforce Factory Method pattern
     private KSQLDBApplicationContext() {
-        // Private constructor to prevent direct instantiation
+        // Initialize with default values
+        this.ksqlServer = new KSQLServerInstance();
+        this.appPath = new KSQLDBApplicationPath();
     }
 
-    public static KSQLDBApplicationContext create(String a1, String a2, String a3, String host, String port, String domain, String project) {
+    // Factory method to create and initialize KSQLDBApplicationContext
+    public static KSQLDBApplicationContext createInstance(String a1, String a2, String a3, String host, String port, String domain, String project) {
         KSQLDBApplicationContext context = new KSQLDBApplicationContext();
         
         context.setQueryFolder(a1);
         context.setKSQLFilename(a2);
         context.setKSQLBufferFolder(a3);
         
-        context.setKSQLServerHost(host, port);
+        // Directly set host and port to avoid "this" escape
+        context.ksqlServer.setHostAndPort(host, port);
         
         context.domain = domain;
         context.project = project;
@@ -202,5 +207,3 @@ public class KSQLDBApplicationContext {
         }
     }
 }
-
-

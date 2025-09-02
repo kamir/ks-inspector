@@ -150,7 +150,7 @@ public class KSQLServerInstanceInspector {
 
         KSQLServerInstanceInspector inspector = new KSQLServerInstanceInspector( p, qf );
 
-        inspector.appContext = KSQLDBApplicationContext.create( inspector.getQueryFolder(), inspector.default_queryFileName, inspector.getQueryBufferFolder(), ks, port, domain, project );
+        inspector.appContext = KSQLDBApplicationContext.createInstance( inspector.getQueryFolder(), inspector.default_queryFileName, inspector.getQueryBufferFolder(), ks, port, domain, project );
 
         inspector.getQueriesFromKSQLServer(inspector.appContext);
 
@@ -367,8 +367,6 @@ public class KSQLServerInstanceInspector {
         System.out.println(stats);
 
     }
-
-
 
 
 

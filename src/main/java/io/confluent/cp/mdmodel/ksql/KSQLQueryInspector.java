@@ -73,7 +73,7 @@ public class KSQLQueryInspector {
 
         KSQLQueryInspector inspector = new KSQLQueryInspector( p, qf );
 
-        inspector.appContext = KSQLDBApplicationContext.create( inspector.getQueryStageFolder(), inspector.default_queryFileName, inspector.getQueryStageFolder(), ks, port, domain, project );
+        inspector.appContext = KSQLDBApplicationContext.createInstance( inspector.getQueryStageFolder(), inspector.default_queryFileName, inspector.getQueryStageFolder(), ks, port, domain, project );
 
 ///        graph.registerKSQL
 
@@ -93,7 +93,7 @@ public class KSQLQueryInspector {
 
         KSQLQueryInspector inspector = new KSQLQueryInspector( p, qf );
 
-        inspector.setAppContext( KSQLDBApplicationContext.create( inspector.getQueryStageFolder(), inspector.default_queryFileName, inspector.getQueryStageFolder(), ks, port, domain, project ));
+        inspector.setAppContext( KSQLDBApplicationContext.createInstance( inspector.getQueryStageFolder(), inspector.default_queryFileName, inspector.getQueryStageFolder(), ks, port, domain, project ));
 
 
         //inspector.getQueriesFromKSQLServer(inspector.appContext);
@@ -340,8 +340,6 @@ public class KSQLQueryInspector {
         System.out.println(stats);
 
     }
-
-
 
 
 

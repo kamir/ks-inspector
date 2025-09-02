@@ -70,14 +70,22 @@
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.8.1</version>
+        <version>3.12.1</version>
         <configuration>
           <fork>false</fork>
           <encoding>UTF-8</encoding>
-          <source>${java.version}</source>
-          <target>${java.version}</target>
+          <source>21</source>
+          <target>21</target>
+          <annotationProcessorPaths>
+            <path>
+              <groupId>info.picocli</groupId>
+              <artifactId>picocli-codegen</artifactId>
+              <version>4.7.5</version>
+            </path>
+          </annotationProcessorPaths>
           <compilerArgs>
-            <arg>-Xlint:all</arg>
+            <arg>-Xlint:all,-processing</arg>
+            <arg>--enable-preview</arg>
           </compilerArgs>
         </configuration>
       </plugin>
@@ -120,10 +128,10 @@
         <argument3v>192.168.3.172:9092</argument3v>
         <argument2v>KST</argument2v>
         <maven.test.skip>true</maven.test.skip>
-        <java.version>8</java.version>
-        <maven.compiler.source>1.8</maven.compiler.source>
+        <java.version>21</java.version>
+        <maven.compiler.source>21</maven.compiler.source>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.target>21</maven.compiler.target>
         <argument2k>-e</argument2k>
         <argument1k>-wp</argument1k>
         <argument3k>-bss</argument3k>
@@ -139,10 +147,10 @@
         <argument3v>192.168.3.172:9092</argument3v>
         <argument2v>KST</argument2v>
         <maven.test.skip>true</maven.test.skip>
-        <java.version>8</java.version>
-        <maven.compiler.source>1.8</maven.compiler.source>
+        <java.version>21</java.version>
+        <maven.compiler.source>21</maven.compiler.source>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.target>21</maven.compiler.target>
         <argument2k>-e</argument2k>
         <argument1k>-wp</argument1k>
         <argument3k>-bss</argument3k>
@@ -158,10 +166,10 @@
         <argument3v>192.168.3.172:9092</argument3v>
         <argument2v>KST</argument2v>
         <maven.test.skip>true</maven.test.skip>
-        <java.version>8</java.version>
-        <maven.compiler.source>1.8</maven.compiler.source>
+        <java.version>21</java.version>
+        <maven.compiler.source>21</maven.compiler.source>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.target>21</maven.compiler.target>
         <argument2k>-e</argument2k>
         <argument1k>-wp</argument1k>
         <argument3k>-bss</argument3k>
@@ -177,10 +185,10 @@
         <argument3v>q1.cypher</argument3v>
         <argument2v>KST</argument2v>
         <maven.test.skip>true</maven.test.skip>
-        <java.version>8</java.version>
-        <maven.compiler.source>1.8</maven.compiler.source>
+        <java.version>21</java.version>
+        <maven.compiler.source>21</maven.compiler.source>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.target>21</maven.compiler.target>
         <argument2k>-e</argument2k>
         <argument1k>-wp</argument1k>
         <argument3k>-qfp</argument3k>
@@ -196,10 +204,10 @@
         <argument3v>servicesWeek2.txt</argument3v>
         <argument2v>192.168.3.172:9092</argument2v>
         <maven.test.skip>true</maven.test.skip>
-        <java.version>8</java.version>
-        <maven.compiler.source>1.8</maven.compiler.source>
+        <java.version>21</java.version>
+        <maven.compiler.source>21</maven.compiler.source>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.target>21</maven.compiler.target>
         <argument2k>-bss</argument2k>
         <argument1k>-wp</argument1k>
         <argument3k>-fn</argument3k>
@@ -215,10 +223,10 @@
         <argument3v>servicesWeek2.txt</argument3v>
         <argument2v>192.168.3.172:9092</argument2v>
         <maven.test.skip>true</maven.test.skip>
-        <java.version>8</java.version>
-        <maven.compiler.source>1.8</maven.compiler.source>
+        <java.version>21</java.version>
+        <maven.compiler.source>21</maven.compiler.source>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.target>21</maven.compiler.target>
         <argument2k>-bss</argument2k>
         <argument1k>-wp</argument1k>
         <argument3k>-fn</argument3k>
@@ -234,10 +242,10 @@
         <argument3v>KST</argument3v>
         <argument2v>192.168.3.172:9092</argument2v>
         <maven.test.skip>true</maven.test.skip>
-        <java.version>8</java.version>
-        <maven.compiler.source>1.8</maven.compiler.source>
+        <java.version>21</java.version>
+        <maven.compiler.source>21</maven.compiler.source>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.target>21</maven.compiler.target>
         <argument2k>-bss</argument2k>
         <argument1k>-wp</argument1k>
         <argument3k>-e</argument3k>
@@ -253,10 +261,10 @@
         <argument3v>KST</argument3v>
         <argument2v>192.168.3.172:9092</argument2v>
         <maven.test.skip>true</maven.test.skip>
-        <java.version>8</java.version>
-        <maven.compiler.source>1.8</maven.compiler.source>
+        <java.version>21</java.version>
+        <maven.compiler.source>21</maven.compiler.source>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.target>21</maven.compiler.target>
         <argument2k>-bss</argument2k>
         <argument1k>-wp</argument1k>
         <argument3k>-e</argument3k>
@@ -272,10 +280,10 @@
         <argument3v>q1.cypher</argument3v>
         <argument2v>KST</argument2v>
         <maven.test.skip>true</maven.test.skip>
-        <java.version>8</java.version>
-        <maven.compiler.source>1.8</maven.compiler.source>
+        <java.version>21</java.version>
+        <maven.compiler.source>21</maven.compiler.source>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.target>21</maven.compiler.target>
         <argument2k>-e</argument2k>
         <argument1k>-wp</argument1k>
         <argument3k>-qfp</argument3k>
@@ -299,17 +307,25 @@
     <repository>
       <id>confluent</id>
       <name>Confluent</name>
-      <url>https://jenkins-confluent-packages-beta-maven.s3.amazonaws.com/6.1.0-beta200825192044/1/maven/</url>
+      <url>https://packages.confluent.io/maven/</url>
     </repository>
   </repositories>
+  <dependencies>
+    <dependency>
+      <groupId>info.picocli</groupId>
+      <artifactId>picocli-codegen</artifactId>
+      <version>4.7.5</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
   <properties>
     <argument1v>.</argument1v>
     <argument3v>127.0.0.1:9092</argument3v>
     <argument2v>127.0.0.1</argument2v>
-    <java.version>8</java.version>
-    <maven.compiler.source>1.8</maven.compiler.source>
+    <java.version>21</java.version>
+    <maven.compiler.source>21</maven.compiler.source>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.compiler.target>21</maven.compiler.target>
     <argument2k>-ksql-server</argument2k>
     <argument1k>-p</argument1k>
     <argument4k>-qf</argument4k>
