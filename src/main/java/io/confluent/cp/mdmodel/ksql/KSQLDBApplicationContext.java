@@ -33,17 +33,23 @@ public class KSQLDBApplicationContext {
     String domain = null;
     String project = null;
 
-    public KSQLDBApplicationContext(String a1, String a2, String a3, String host, String port, String domain, String project) {
+    private KSQLDBApplicationContext() {
+        // Private constructor to prevent direct instantiation
+    }
 
-        setQueryFolder( a1 );
-        setKSQLFilename( a2 );
-        setKSQLBufferFolder( a3 );
-
-        setKSQLServerHost( host, port );
-
-        this.domain = domain;
-        this.project = project;
-
+    public static KSQLDBApplicationContext create(String a1, String a2, String a3, String host, String port, String domain, String project) {
+        KSQLDBApplicationContext context = new KSQLDBApplicationContext();
+        
+        context.setQueryFolder(a1);
+        context.setKSQLFilename(a2);
+        context.setKSQLBufferFolder(a3);
+        
+        context.setKSQLServerHost(host, port);
+        
+        context.domain = domain;
+        context.project = project;
+        
+        return context;
     }
 
     public void setKSQLServerHost( String host ) {

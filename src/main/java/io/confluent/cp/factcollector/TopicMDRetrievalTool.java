@@ -30,7 +30,7 @@ public class TopicMDRetrievalTool {
 
             DescribeTopicsResult a = kac.describeTopics(tn);
 
-            Map<String, TopicDescription> b = a.all().get();
+            Map<String, TopicDescription> b = a.allTopicNames().get();
             for( String key : b.keySet() ) {
                 TopicDescription td = b.get( key );
 

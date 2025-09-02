@@ -18,7 +18,7 @@ public class Classifications {
     /**
      * THIS MAPPING WILL BE LOADED FROM A DATA-CATALOG DEFINITION FILE.
      */
-    static Hashtable<String, String[]> tags = new Hashtable();
+    static Hashtable<String, String[]> tags = new Hashtable<String, String[]>();
 
     public static void initTags() {
 

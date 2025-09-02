@@ -59,7 +59,7 @@ public class KSQLQueryInspector {
 
         this();
 
-        this.workdir = path;
+        workdir = path;
 
         this.default_queryFileName = qfn;
 
@@ -73,7 +73,7 @@ public class KSQLQueryInspector {
 
         KSQLQueryInspector inspector = new KSQLQueryInspector( p, qf );
 
-        inspector.appContext = new KSQLDBApplicationContext( inspector.getQueryStageFolder(), inspector.default_queryFileName, inspector.getQueryStageFolder(), ks, port, domain, project );
+        inspector.appContext = KSQLDBApplicationContext.create( inspector.getQueryStageFolder(), inspector.default_queryFileName, inspector.getQueryStageFolder(), ks, port, domain, project );
 
 ///        graph.registerKSQL
 
@@ -84,7 +84,7 @@ public class KSQLQueryInspector {
 
     public static void main( String[] args ) throws Exception {
 
-        String p = workdir;
+        String p = KSQLQueryInspector.workdir;
         String qf = args[0]; // "200_PoC-queries-solution.sql"; // ""opentsx.ksql";
         String ks = "127.0.0.1";
         String port = "8088";
@@ -93,7 +93,7 @@ public class KSQLQueryInspector {
 
         KSQLQueryInspector inspector = new KSQLQueryInspector( p, qf );
 
-        inspector.setAppContext( new KSQLDBApplicationContext( inspector.getQueryStageFolder(), inspector.default_queryFileName, inspector.getQueryStageFolder(), ks, port, domain, project ));
+        inspector.setAppContext( KSQLDBApplicationContext.create( inspector.getQueryStageFolder(), inspector.default_queryFileName, inspector.getQueryStageFolder(), ks, port, domain, project ));
 
 
         //inspector.getQueriesFromKSQLServer(inspector.appContext);

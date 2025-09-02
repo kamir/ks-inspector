@@ -24,10 +24,11 @@ public class SimpleKafkaLoggerApp {
 
         System.out.println("> Started SimpleKafkaLoggerApp.");
 
-        Enumeration appenders = logger.getAllAppenders();
+        @SuppressWarnings("unchecked")
+        Enumeration<Appender> appenders = logger.getAllAppenders();
 
         while( appenders.hasMoreElements() ) {
-            Appender a = (Appender)appenders.nextElement();
+            Appender a = appenders.nextElement();
             System.out.println( "[ ]-> " + a.getName() );
         }
 

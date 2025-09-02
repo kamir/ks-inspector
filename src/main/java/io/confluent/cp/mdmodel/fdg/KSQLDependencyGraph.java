@@ -37,13 +37,13 @@ public class KSQLDependencyGraph {
         return theGraph;
     }
 
-    Vector<Set> largeClusters = null;
+    Vector<Set<String>> largeClusters = null;
 
     Graph<String, DataFlowEdge> flowDependencyGraph = new SimpleDirectedWeightedGraph<>( DataFlowEdge.class );
     Graph<String, DefaultEdge> flowDependencyGraph_undirected = new SimpleWeightedGraph<>( DefaultEdge.class );
 
     boolean hasCycles = false;
-    ClusteringAlgorithm.Clustering clustering = null;
+    ClusteringAlgorithm.Clustering<String> clustering = null;
 
     /**
      * Persist the flowDependencyGraph (SimpleDirectedWeightedGraph).
@@ -130,7 +130,7 @@ public class KSQLDependencyGraph {
 
     }
 
-    Hashtable<Integer, Set<String>> numberedClusters = new Hashtable<>();
+    Hashtable<Integer, Set<String>> numberedClusters = new Hashtable<Integer, Set<String>>();
 
     private void numberLargeClusters( boolean useOnlyLargeSubgraphs ) {
         int nr = 0;
@@ -239,25 +239,25 @@ public class KSQLDependencyGraph {
 
     private void inspectClusters(Graph<String, DefaultEdge> flowDependencyGraph) {
 
-        LabelPropagationClustering alg1 = new LabelPropagationClustering(flowDependencyGraph);
+        LabelPropagationClustering<String, DefaultEdge> alg1 = new LabelPropagationClustering<String, DefaultEdge>(flowDependencyGraph);
 
         clustering = alg1.getClustering();
 
         System.out.println( "# number of clusters: " + clustering.getNumberClusters() );
 
         // HISTORGRAM OF CLUSTERS ...
-        for(  Set s : (List<Set>)alg1.getClustering().getClusters() )
+        for(  Set<String> s : alg1.getClustering().getClusters() )
             System.out.println( ">   # s: " + s.size() );
 
         largeClusters = getClustersLargerThan( 0 );
 
     }
 
-    public Vector<Set> getClustersLargerThan( int z_min ) {
+    public Vector<Set<String>> getClustersLargerThan( int z_min ) {
 
-        Vector<Set> clusters = new Vector<Set>();
+        Vector<Set<String>> clusters = new Vector<Set<String>>();
 
-        for(  Set s : (List<Set>) clustering.getClusters() ) {
+        for(  Set<String> s : clustering.getClusters() ) {
 //             System.out.println("   # s: " + s.size());
             if ( s.size() > z_min ) {
                 clusters.add(s);
@@ -266,7 +266,7 @@ public class KSQLDependencyGraph {
 
         int z = 0;
 
-        for(  Set s : (List<Set>)clusters ) {
+        for(  Set<String> s : clusters ) {
             System.out.println("#### s: " + s.size() + " => " + s );
             z = z + 1;
         }

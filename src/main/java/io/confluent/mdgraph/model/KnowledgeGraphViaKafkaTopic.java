@@ -227,7 +227,7 @@ public class KnowledgeGraphViaKafkaTopic implements IKnowledgeGraph {
 
     @Override
     public boolean isReadyForDataProcessing() {
-        if ( this.graph != null && FactQueryProducer.isReady() ) return true;
+        if ( KnowledgeGraphViaKafkaTopic.graph != null && FactQueryProducer.isReady() ) return true;
         else
             return false;
     }
@@ -303,9 +303,9 @@ public class KnowledgeGraphViaKafkaTopic implements IKnowledgeGraph {
         exequteCypherQuery( q );
 
         if ( props != null ) {
-            Enumeration<String> en = (Enumeration<String>)props.propertyNames();
-            while( en.hasMoreElements() ) {
-                String k = en.nextElement();
+            Enumeration<?> enumeration = props.propertyNames();
+            while( enumeration.hasMoreElements() ) {
+                String k = (String) enumeration.nextElement();
                 String v = props.getProperty( k );
                 addPropertiesToNode("type", "name", name, k, v);
             }
@@ -320,9 +320,9 @@ public class KnowledgeGraphViaKafkaTopic implements IKnowledgeGraph {
         exequteCypherQuery( q );
 
         if ( props != null ) {
-            Enumeration<String> en = (Enumeration<String>)props.propertyNames();
-            while( en.hasMoreElements() ) {
-                String k = en.nextElement();
+            Enumeration<?> enumeration = props.propertyNames();
+            while( enumeration.hasMoreElements() ) {
+                String k = (String) enumeration.nextElement();
                 String v = props.getProperty( k );
                 addPropertiesToNode("Topic", "name", topic, k, v);
             }
@@ -337,9 +337,9 @@ public class KnowledgeGraphViaKafkaTopic implements IKnowledgeGraph {
         exequteCypherQuery( q );
 
         if ( props != null ) {
-            Enumeration<String> en = (Enumeration<String>)props.propertyNames();
-            while( en.hasMoreElements() ) {
-                String k = en.nextElement();
+            Enumeration<?> enumeration = props.propertyNames();
+            while( enumeration.hasMoreElements() ) {
+                String k = (String) enumeration.nextElement();
                 String v = props.getProperty( k );
                 addPropertiesToNode("CloudCluster", "name", env, k, v);
             }
@@ -355,9 +355,9 @@ public class KnowledgeGraphViaKafkaTopic implements IKnowledgeGraph {
         exequteCypherQuery( q );
 
         if ( props != null ) {
-            Enumeration<String> en = (Enumeration<String>)props.propertyNames();
-            while( en.hasMoreElements() ) {
-                String k = en.nextElement();
+            Enumeration<?> enumeration = props.propertyNames();
+            while( enumeration.hasMoreElements() ) {
+                String k = (String) enumeration.nextElement();
                 String v = props.getProperty( k );
                 addPropertiesToNode("Domain", "name", domain, k, v);
             }

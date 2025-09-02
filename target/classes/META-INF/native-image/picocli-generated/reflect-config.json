@@ -1,0 +1,30 @@
+[
+  {
+    "name" : "io.confluent.mdgraph.cli.CLI",
+    "allDeclaredConstructors" : true,
+    "allPublicConstructors" : true,
+    "allDeclaredMethods" : true,
+    "allPublicMethods" : true,
+    "methods" : [
+      { "name" : "clearGraph", "parameterTypes" : ["java.lang.String", "java.io.File", "java.lang.String", "java.lang.String", "java.io.File"] },
+      { "name" : "exportGraphToNeo4JService", "parameterTypes" : ["java.lang.String", "java.io.File", "java.lang.String", "java.lang.String", "java.io.File"] },
+      { "name" : "inspect", "parameterTypes" : ["java.lang.String", "java.lang.String", "java.io.File", "java.lang.String", "java.io.File"] },
+      { "name" : "inspect", "parameterTypes" : ["java.lang.String", "java.lang.String", "java.lang.String", "java.io.File", "java.lang.String", "java.io.File"] },
+      { "name" : "inspectExt", "parameterTypes" : ["java.lang.String", "java.lang.String", "java.lang.String", "java.io.File", "java.lang.String", "java.io.File"] },
+      { "name" : "inspectSchemaRegistry", "parameterTypes" : ["java.lang.String", "java.lang.String", "java.io.File", "java.lang.String", "java.io.File"] },
+      { "name" : "queryGraph", "parameterTypes" : ["java.lang.String", "java.lang.String", "java.lang.String", "java.lang.String", "java.lang.String", "java.io.File"] },
+      { "name" : "readEvents", "parameterTypes" : ["java.lang.String", "java.lang.String", "java.lang.String", "java.lang.String", "java.lang.String", "java.io.File"] }
+    ]
+  },
+  {
+    "name" : "picocli.CommandLine$HelpCommand",
+    "allDeclaredConstructors" : true,
+    "allPublicConstructors" : true,
+    "allDeclaredMethods" : true,
+    "allPublicMethods" : true,
+    "fields" : [
+      { "name" : "commands" },
+      { "name" : "helpRequested" }
+    ]
+  }
+]

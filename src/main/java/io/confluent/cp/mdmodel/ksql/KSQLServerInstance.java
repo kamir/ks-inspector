@@ -2,8 +2,10 @@ package io.confluent.cp.mdmodel.ksql;
 
 import com.google.gson.Gson;
 import com.google.gson.internal.LinkedTreeMap;
+import com.google.gson.reflect.TypeToken;
 import io.confluent.cp.factcollector.ksql.KSQLRestClient;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Properties;
@@ -46,27 +48,33 @@ public class KSQLServerInstance {
 
             data = data.substring(1, data.length()-1);
 
-            Map jsonJavaRootObject = new Gson().fromJson( data , Map.class);
+            Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
+            Map<String, Object> jsonJavaRootObject = new Gson().fromJson( data , mapType);
 
             //System.out.println( jsonJavaRootObject );
 
-            ArrayList<LinkedTreeMap> things = (ArrayList) jsonJavaRootObject.get( field );
+            Type listType = new TypeToken<ArrayList<LinkedTreeMap<String, Object>>>(){}.getType();
+            ArrayList<LinkedTreeMap<String, Object>> things = new Gson().fromJson(new Gson().toJson(jsonJavaRootObject.get(field)), listType);
 
             //System.out.println( things );
 
             for(Object o : things) {
+                if (o instanceof LinkedTreeMap) {
+                    @SuppressWarnings("unchecked")
+                    LinkedTreeMap<String, Object> ltm = (LinkedTreeMap<String, Object>)o;
+                    //System.out.println( ltm );
 
-                LinkedTreeMap ltm = (LinkedTreeMap)o;
-                //System.out.println( ltm );
+                    Object attrValue = ltm.get(attribute);
+                    if (attrValue instanceof String) {
+                        String value = (String)attrValue;
 
-                String value = (String)ltm.get( attribute );
+                        // System.out.println( "> " + value );
 
-                // System.out.println( "> " + value );
-
-                if ( field.equals("topics") && HIDE_INTERNAL_TOPICS && !value.startsWith("_") ) {
-                    tempT.add(value);
+                        if (field.equals("topics") && HIDE_INTERNAL_TOPICS && !value.startsWith("_")) {
+                            tempT.add(value);
+                        }
+                    }
                 }
-
             }
 
         }
@@ -93,21 +101,27 @@ public class KSQLServerInstance {
 
             data = data.substring(1, data.length()-1);
 
-            Map jsonJavaRootObject = new Gson().fromJson( data , Map.class);
+            Type mapType = new TypeToken<Map<String, Object>>(){}.getType();
+            Map<String, Object> jsonJavaRootObject = new Gson().fromJson( data , mapType);
 
             // System.out.println( jsonJavaRootObject );
 
-            ArrayList<LinkedTreeMap> things = (ArrayList) jsonJavaRootObject.get( "queries" );
+            Type listType = new TypeToken<ArrayList<LinkedTreeMap<String, Object>>>(){}.getType();
+            ArrayList<LinkedTreeMap<String, Object>> things = new Gson().fromJson(new Gson().toJson(jsonJavaRootObject.get("queries")), listType);
 
             //System.out.println( things );
 
             for(Object o : things) {
+                if (o instanceof LinkedTreeMap) {
+                    @SuppressWarnings("unchecked")
+                    LinkedTreeMap<String, Object> ltm = (LinkedTreeMap<String, Object>)o;
+                    // System.out.println( ltm );
 
-                LinkedTreeMap ltm = (LinkedTreeMap)o;
-                // System.out.println( ltm );
-
-                tempT.add( (String)ltm.get( "queryString" ) );
-
+                    Object queryValue = ltm.get("queryString");
+                    if (queryValue instanceof String) {
+                        tempT.add((String)queryValue);
+                    }
+                }
             }
 
         }

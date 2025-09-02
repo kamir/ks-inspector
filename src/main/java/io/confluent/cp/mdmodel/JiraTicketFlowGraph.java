@@ -14,7 +14,6 @@ import java.util.Properties;
 public class JiraTicketFlowGraph {
 
     Gson gson = new Gson();
-    JsonParser jsonParser = new JsonParser();
 
     static JiraTicketFlowGraph g = null;
 
@@ -60,7 +59,7 @@ public class JiraTicketFlowGraph {
         JsonElement jsonTree = null;
 
         try {
-            jsonTree = jsonParser.parse( value );
+            jsonTree = JsonParser.parseString( value );
         }
         catch(Exception ex){
             System.err.println( ex.getMessage() );

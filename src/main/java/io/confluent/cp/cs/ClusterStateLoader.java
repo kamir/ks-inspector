@@ -150,8 +150,8 @@ public class ClusterStateLoader {
         // This is now your custom GraphMapper
         try {
             System.out.println( "> load GraphMapper class: {" + graphMapperClassName + "}" );
-            GraphMapper gmi = (GraphMapper) Class.forName(graphMapperClassName).newInstance();
-            populateKnowledgeGraphFromCSVFlows(kg, csvPath, (GraphMapper)gmi, true);
+            GraphMapper gmi = (GraphMapper) Class.forName(graphMapperClassName).getDeclaredConstructor().newInstance();
+            populateKnowledgeGraphFromCSVFlows(kg, csvPath, gmi, true);
         }
         catch(Exception e) {
             e.printStackTrace();
@@ -235,7 +235,7 @@ public class ClusterStateLoader {
 
         File f = new File(environmentPath);
 
-        Environment env = (Environment)yamlMapper.readValue( f, Environment.class);
+        Environment env = yamlMapper.readValue( f, Environment.class);
         logger.info("Environments: " + env);
 
         for ( CloudCluster c : env.clusters ) {

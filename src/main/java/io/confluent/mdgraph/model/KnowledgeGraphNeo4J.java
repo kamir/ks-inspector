@@ -70,7 +70,7 @@ public class KnowledgeGraphNeo4J extends KnowledgeGraphViaKafkaTopic {
 
         try ( Session session = driver.session() )
         {
-            return session.readTransaction( tx -> {
+            return session.executeRead( tx -> {
                 List<String> names = new ArrayList<>();
                 Result result = tx.run( "MATCH (n) RETURN n.name ORDER BY n.name" );
                 while ( result.hasNext() )
@@ -123,23 +123,14 @@ public class KnowledgeGraphNeo4J extends KnowledgeGraphViaKafkaTopic {
 
         System.out.println( ">>> Deletion of graph starts ... " );
 
-        Session s = driver.session();
-
-        String st = s.writeTransaction( new TransactionWork<String>()
-        {
-            @Override
-            public String execute(org.neo4j.driver.Transaction tx) {
-
-                Result result = tx.run( "MATCH (n)\n" +
-                                "DETACH DELETE n" );
-
+        try (Session s = driver.session()) {
+            String st = s.executeWrite(tx -> {
+                Result result = tx.run("MATCH (n)\n" + "DETACH DELETE n");
                 return result.toString();
+            });
 
-            }
-
-        } );
-
-        System.out.println( st );
+            System.out.println(st);
+        }
 
         System.out.println( ">>> Deletion of graph DONE." );
 
@@ -154,71 +145,52 @@ public class KnowledgeGraphNeo4J extends KnowledgeGraphViaKafkaTopic {
 
     public void exequteCypherQuery(String q, boolean verbose, StringBuffer logger, String qid) {
 
-        Session s = driver.session();
-
-        String st = s.writeTransaction( new TransactionWork<String>()
-        {
-            @Override
-            public String execute(org.neo4j.driver.Transaction tx) {
-
+        try (Session s = driver.session()) {
+            String st = s.executeWrite(tx -> {
                 try {
-
                     Result result = tx.run(q);
 
                     int i = 0;
                     while (result.hasNext()) {
-
                         i++;
 
                         org.neo4j.driver.Record row = result.next();
 
                         String content = row.asMap().toString();
 
-                        if ( verbose ) {
+                        if (verbose) {
                             System.out.println(content);
                         }
                         logger.append(content + "\n");
-
                     }
 
                     // System.out.println( "> Result (" + qid + ") : " + i + " rows." );
 
-                    logger.append( "> Result (" + qid + ") : " + i + " rows.\n" );
+                    logger.append("> Result (" + qid + ") : " + i + " rows.\n");
 
                     return result.toString();
 
-                }
-                catch(Exception ex) {
-
-                    tx.close();
-                    System.err.println( "*****************" );
-                    System.err.println( "*** EXCEPTION ***" );
-                    System.err.println( "*****************" );
-                    System.err.println( " " + ex.getMessage() + "\n\n");
+                } catch (Exception ex) {
+                    System.err.println("*****************");
+                    System.err.println("*** EXCEPTION ***");
+                    System.err.println("*****************");
+                    System.err.println(" " + ex.getMessage() + "\n\n");
                     ex.printStackTrace();
 
-                    if ( ex.getMessage().startsWith("Expected exactly one statement per query but got:") ) {
+                    if (ex.getMessage().startsWith("Expected exactly one statement per query but got:")) {
+                        System.out.println("*** TRY MULTI-QUERY PROCESSING MODE ***");
 
-                        System.out.println( "*** TRY MULTI-QUERY PROCESSING MODE ***");
+                        String logs = processMultiLineQuery(q, true, logger);
 
-                        String logs = processMultiLineQuery( q, true, logger );
-
-                        if ( verbose )
-                            System.out.println( logs );
+                        if (verbose)
+                            System.out.println(logs);
 
                         return logs;
-
-                    }
-                    else
+                    } else
                         return ex.getMessage();
-
                 }
-
-            }
-
-        } );
-
-
+            });
+        }
     }
 
     private String processMultiLineQuery(String q, boolean verbose, StringBuffer logger) {

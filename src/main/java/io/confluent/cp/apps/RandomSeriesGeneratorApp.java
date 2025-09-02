@@ -2,7 +2,6 @@ package io.confluent.cp.apps;
 
 import io.confluent.cp.cs.AppDescriptorLoader;
 import io.confluent.cp.mdmodel.kafka.KafkaApplicationContextHandler;
-import io.confluent.ks.modern.utils.ModernEnvVarTools;
 import io.confluent.ks.modern.model.Domain;
 import org.apache.log4j.Appender;
 import org.apache.log4j.LogManager;
@@ -11,29 +10,24 @@ import org.apache.log4j.Logger;
 import java.io.File;
 import java.util.Enumeration;
 
-/**
- * This application generates some random numbers into a Kafka topic.
- *
- * Logger properties are configured in the log4j.properties file,
- * in the resources folder.
- */
-
 public class RandomSeriesGeneratorApp {
 
     private static final Logger logger = Logger.getRootLogger();
 
     public static void main(String[] argv) throws Exception {
 
-        String targetDomainName = ModernEnvVarTools.readPropertyFromEnv("KST", "TARGET_DOMAIN_NAME");
-        String targetClusterName = ModernEnvVarTools.readPropertyFromEnv("KST", "TARGET_CLUSTER_NAME");
+        System.out.println("> Started RandomSeriesGeneratorApp.");
 
-        System.out.println("> Started RandomSeriesGeneratorApp in Domain ["+targetDomainName+"].");
+        String targetDomainName = "order-processing";
+        String targetClusterName = "cp-cluster-1";
+
         System.out.println("> I will work with cluster: [" + targetClusterName + "].");
 
-        Enumeration appenders = logger.getAllAppenders();
+        @SuppressWarnings("unchecked")
+        Enumeration<Appender> appenders = logger.getAllAppenders();
 
         while( appenders.hasMoreElements() ) {
-            Appender a = (Appender)appenders.nextElement();
+            Appender a = appenders.nextElement();
             System.out.println( "[ ]-> " + a.getName() );
         }
 

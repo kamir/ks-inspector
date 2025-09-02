@@ -4,7 +4,7 @@ import org.apache.kafka.clients.producer.Producer;
 
 public class GenericProducerWrapper {
 
-    public static Producer producer = null;
+    public static Producer<String, String> producer = null;
 
     public static void flush() {
 
@@ -22,4 +22,3 @@ public class GenericProducerWrapper {
     }
 
 }
-

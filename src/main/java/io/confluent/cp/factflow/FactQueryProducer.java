@@ -78,5 +78,3 @@ public class FactQueryProducer extends GenericProducerWrapper {
         return producer != null;
     }
 }
-
-

@@ -6,6 +6,7 @@ import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 
+import java.time.Duration;
 import java.util.Collections;
 import java.util.Properties;
 
@@ -51,7 +52,7 @@ public class FactQueryConsumer extends GenericProducerWrapper {
         while (true) {
 
             final ConsumerRecords<String, String> consumerRecords =
-                    consumer.poll(1000);
+                    consumer.poll(Duration.ofMillis(1000));
 
             if (consumerRecords.count()==0) {
                 noRecordsCount++;
@@ -95,7 +96,7 @@ public class FactQueryConsumer extends GenericProducerWrapper {
         while (true) {
 
             final ConsumerRecords<String, String> consumerRecords =
-                    consumer.poll(1000);
+                    consumer.poll(Duration.ofMillis(1000));
 
             if (consumerRecords.count()==0) {
                 noRecordsCount++;
