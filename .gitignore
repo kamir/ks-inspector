@@ -49,6 +49,11 @@ src/main/resources/ccloud.props
 # this file contains API-Keys and API-Secrets for all environments
 bin/setenv.sh
 bin/.env
+setenv.sh
+.env
+
+# Neo4j database files
+bin/graphdb/
 
 /insights/worldremit-v1.graphml
 /last-export.graphml
