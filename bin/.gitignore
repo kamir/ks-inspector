@@ -1,0 +1,5 @@
+# Neo4j runtime state – never commit
+bin/graphdb/neo4j/data/
+bin/graphdb/neo4j/logs/
+bin/graphdb/neo4j/import/
+bin/graphdb/neo4j/plugins/
