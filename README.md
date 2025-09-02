@@ -1,10 +1,30 @@
 # ks-inspector
 KS-Inspector is a tool to understand Kafka based streams applications better.
 
+> **🚀 Modernized Version (v2.0)**: This project has been significantly updated to Java 21 and modernized dependencies while maintaining backward compatibility. The external `kafka-clusterstate-tools` dependency has been eliminated and replaced with self-contained modern implementations in the `io.confluent.ks.modern.*` package structure.
+
 The tool helps application developers and operators of Kafka Streaming applications to understand dependencies between KSQL queries and KStreams applications.
 Using the metadata graph we are able to identify components which process sensitive information.
 
 <a href="https://codeclimate.com/github/kamir/ks-inspector"><img src="https://api.codeclimate.com/v1/badges/ef4bcda7d1b5fd0a4f1e/maintainability" /></a>  [![Build Status](https://travis-ci.com/kamir/ks-inspector.svg?branch=master)](https://travis-ci.com/kamir/ks-inspector)
+
+## 🚀 Modern Architecture (v2.0)
+
+The project has been modernized with the following key improvements:
+
+- **Java 21**: Upgraded from Java 8 to modern Java 21
+- **Self-contained**: Eliminated external `kafka-clusterstate-tools` dependency
+- **Modern Dependencies**: Updated to Confluent Platform 7.6.0 and Kafka 3.7.0
+- **Clean Architecture**: Introduced `io.confluent.ks.modern.*` package structure
+- **Jackson Integration**: Modern YAML/JSON processing with Jackson
+- **Enhanced Domain Model**: Improved domain classes with better Neo4j integration
+
+### Modern Components
+
+- **Domain Model** (`io.confluent.ks.modern.model.*`): Modern Jackson-annotated domain classes
+- **Parser Layer** (`io.confluent.ks.modern.parser.*`): YAML/JSON domain file parsing
+- **Kafka Integration** (`io.confluent.ks.modern.kafka.*`): Modern Kafka Admin Client wrapper
+- **Utilities** (`io.confluent.ks.modern.utils.*`): Environment variable processing and CLI tools
 
 ## Motivation and Concept
 
@@ -54,6 +74,8 @@ provide a comprehensive view of interdependent flows on a Kafka cluster or on Co
 ![The KStreams application context](docs/intro.png)
 
 ### How to use the tool?
+
+> **⚠️ Java 21 Required**: This modernized version requires Java 21. Please ensure your environment is configured accordingly.
 
 You can run the tool via Maven with the `mvn exec:java` command using custom profiles.
 This makes it easy to use it with automation tools in an CI/CD context.
@@ -146,5 +168,7 @@ curl -X "POST" "http://localhost:8088/ksql" \
   "streamsProperties": {}
 }' > queries.data
 ```
+
+> **⚠️ Java 21 Required**: This modernized version requires Java 21. Please ensure your environment is configured accordingly.
 
 Source: https://rmoff.net/2019/01/17/ksql-rest-api-cheatsheet/
