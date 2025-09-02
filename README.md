@@ -1,4 +1,6 @@
 # ks-inspector
+![KS-Inspector Overview](docs/overview-2025-09-v3.jpeg)
+
 KS-Inspector is a tool to understand Kafka based streams applications better.
 
 > **🚀 Modernized Version (v2.0)**: This project has been significantly updated to Java 21 and modernized dependencies while maintaining backward compatibility. The external `kafka-clusterstate-tools` dependency has been eliminated and replaced with self-contained modern implementations in the `io.confluent.ks.modern.*` package structure.
