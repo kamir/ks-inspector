@@ -1,0 +1,1603 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "contact": {
+      "name": "Confluent",
+      "url": "https://confluent.io",
+      "email": "support@confluent.io"
+    },
+    "description": "# Introduction\n\nThe Confluent Cloud Metrics API provides actionable operational metrics about your Confluent\nCloud deployment. This is a queryable HTTP API in which the user will `POST` a query written in\nJSON and get back a time series of metrics specified by the query.\n\nComprehensive documentation is available on\n[docs.confluent.io](https://docs.confluent.io/current/cloud/metrics-api.html).\n\n# Available Metrics Reference\n\n<h3 style=\"margin-top: 0;\">Please see the <a href=\"/docs/descriptors\">Metrics Reference</a> for\na list of available metrics.</h3>\n\nThis information is also available programmatically via the\n[descriptors endpoint](#tag/Version-2/paths/~1v2~1metrics~1{dataset}~1descriptors~1metrics/get).\n\n# Authentication\nConfluent uses API keys for integrating with Confluent Cloud. Applications must be\nauthorized and authenticated before they can access or manage resources in Confluent Cloud.\nYou can manage your API keys in the Confluent Cloud Dashboard or Confluent Cloud CLI.\n\nAn API key is owned by a User or Service Account and inherits the permissions granted\nto the owner.\n\nToday, you can divide API keys into two classes:\n\n* **Cloud API Keys** - These grant access to the Confluent Cloud Control Plane APIs,\n  such as for Provisioning and Metrics integrations.\n* **Cluster API Keys** - These grant access to a single Confluent cluster, such as a specific\n  Kafka or Schema Registry cluster.\n\n**If you are going to use an API Key, you must use a Cloud API Key**. Cluster API Keys won't\nwork. Cloud API Keys can be created using the [Confluent Cloud CLI](https://docs.confluent.io/current/cloud/cli/).\n\n```\nccloud api-key create --resource cloud\n```\n\nAll API requests must be made over HTTPS. Calls made over plain HTTP will fail. API requests\nwithout authentication will also fail.\n\nThe Confluent Cloud Metrics API also supports OAuth 2.0 by allowing Confluent Security Token Service (STS) tokens as\ncredentials to authenticate to metrics API. See steps to\n[Authenticate access to Confluent Cloud APIs using Confluent STS tokens](https://docs.confluent.io/cloud/current/access-management/authenticate/oauth/access-rest-apis-sts.html#authenticate-access-to-ccloud-apis-using-confluent-security-token-service-sts-tokens)\n\n# Versioning\n\nConfluent APIs ensure stability for your integrations by avoiding the introduction\nof breaking changes to customers unexpectedly. Confluent will make non-breaking\nAPI changes without advance notice. Thus, API clients **must** follow the\n[Compatibility Policy](#section/Versioning/Compatibility-Policy) below to ensure your\ningtegration remains stable. All APIs follow the API Lifecycle Policy described below,\nwhich describes the guarantees API clients can rely on.\n\nBreaking changes will be [widely communicated](#communication) in advance in accordance\nwith our [Deprecation Policy](#section/Versioning/Deprecation-Policy). Confluent will provide\ntimelines and a migration path for all API changes, where available. Be sure to subscribe\nto one or more [communication channels](#communication) so you don't miss any updates!\n\nOne exception to these guidelines is for critical security issues. We will take any necessary\nactions to mitigate any critical security issue as soon as possible, which may include disabling\nthe vulnerable functionality until a proper solution is available.\n\nDo not consume any Confluent API unless it is documented in the API Reference. All undocumented\nendpoints should be considered private, subject to change without notice, and not covered by any\nagreements.\n\n> Note: The \"v1\" in the URL is not a \"major version\" in the\n[Semantic Versioning](https://semver.org/) sense. It is a \"generational version\" or\n\"meta version\", as seen in other APIs like\n<a href=\"https://developer.github.com/v3/versions/\" target=\"_blank\">Github API</a> or the\n<a href=\"https://stripe.com/docs/api/versioning\" target=\"_blank\">Stripe API</a>.\n\n## Changelog\n\n### 2022-12-01\n\n#### The dataset `health-plus` is now available in preview.\nSee the [Datasets](#section/Object-Model/Datasets) section for more details.\n\n### 2022-10-18\n\n#### `cluster_active_link_count` metric is deprecated\nThe `io.confluent.kafka.server/cluster_active_link_count` is now deprecated. Please use the\n`io.confluent.kafka.server/cluster_link_count` metric instead.\n\n#### New metrics available in `/export`\nThe following metrics are now available in the `/export` endpoint:\n* `io.confluent.kafka.server/request_bytes`\n* `io.confluent.kafka.server/response_bytes`\n* `io.confluent.kafka.server/cluster_link_destination_response_bytes`\n* `io.confluent.kafka.server/cluster_link_source_response_bytes`\n* `io.confluent.kafka.server/cluster_link_count`\n* `io.confluent.kafka.server/cluster_link_mirror_topic_count`\n* `io.confluent.kafka.server/cluster_link_mirror_topic_offset_lag`\n* `io.confluent.kafka.server/cluster_link_mirror_topic_bytes`\n\n### 2022-10-17\n\n#### API Version 1 is marked sunset\nAll API Version 1 endpoints are no longer supported from 2022-10-17. API users\nshould migrate to API [Version 2](#tag/Version-2).\n\n### 2021-09-23\n\n#### API Version 1 is now deprecated\nAll API Version 1 endpoints are now deprecated and will be removed on 2022-04-04. API users\nshould migrate to API [Version 2](#tag/Version-2).\n\n### 2021-08-24\n\n#### Metric-specific aggregation functions\nNew metrics are being introduced that require alternative aggregation functions (e.g. `MAX`).\nWhen querying those metrics, using `agg: \"SUM\"` will return an error.\nIt is recommended that clients **omit the `agg` field in the request** such that the required\naggregation function for the specific metric is automatically applied on the backend.\n\n> Note: The initial version of Metrics API required clients to effectively hardcode `agg: \"SUM\"`\n> in all queries.  In early 2021, the `agg` field was made optional, but many clients have not\n> been updated to omit the `agg` field.\n\n#### Cursor-based pagination for `/query` endpoint\nThe `/query` endpoint now supports cursor-based pagination similar to the `/descriptors` and\n`/attributes` endpoints.\n\n### 2021-02-10\n\n#### API Version 2 is now Generally Available (GA)\nSee the [Version 2](#tag/Version-2) section below for a detailed description of changes and\nmigration guide.\n\n### 2020-12-04\n\n#### API Version 2 *(Preview)*\nVersion 2 of the Metrics API is now available in Preview. See the [Version 2](#tag/Version-2)\nsection below for a detailed description of changes.\n\n### 2020-07-08\n\n#### Correction for `active_connection_count` metric\nA bug in the `active_connection_count` metric that affected a subset of customers was fixed.\nCustomers exporting the metric to an external monitoring system may observe a discontinuity\nbetween historical results and current results due to this one-time correction.\n\n### 2020-04-01\nThis release includes the following changes from the preview release:\n\n#### New `format` request attribute\nThe `/query` request now includes a `format` attribute which controls the result structuring in\nthe response body.  See the `/query` endpoint definition for more details.\n\n#### New `/available` endpoint\nThe new `/available` endpoint allows determining which metrics are available for a set of\nresources (defined by labels). This endpoint can be used to determine which subset of metrics\nare currently available for a specific resource (e.g. a Confluent Cloud Kafka cluster).\n\n#### Metric type changes\nThe `CUMULATIVE_(INT|DOUBLE)` metric type enumeration was changed to `COUNTER_(INT|DOUBLE)`.\nThis was done to better align with OpenTelemetry conventions. In tandem with this change,\nseveral metrics that were improperly classified as `GAUGE`s were re-classified as `COUNTER`s.\n\n### Metric name changes\nThe `/delta` suffix has been removed from the following metrics:\n* `io.confluent.kafka.server/received_bytes/delta`\n* `io.confluent.kafka.server/sent_bytes/delta`\n* `io.confluent.kafka.server/request_count/delta`\n\n### 2020-09-15\n\n#### Retire `/available` endpoint\nThe `/available` endpoint (which was in _Preview_ status) has been removed from the API.\nThe `/descriptors` endpoint can still be used to determine the universe of available\nmetrics for Metrics API.\n\n**The legacy metric names are deprecated and will stop functioning on 2020-07-01.**\n\n## API Lifecycle Policy\n\nThe following status labels are applicable to APIs, features, and SDK versions, based on\nthe current support status of each:\n\n* **Early Access** – May change at any time. Not recommended for production usage. Not\n  officially supported by Confluent. Intended for user feedback only. Users must be granted\n  explicit access to the API by Confluent.\n* **Preview** – Unlikely to change between Preview and General Availability. Not recommended\n  for production usage. Officially supported by Confluent for non-production usage.\n  For Closed Previews, users must be granted explicit access to the API by Confluent.\n* **Generally Available (GA)** – Will not change at short notice. Recommended for production\n  usage. Officially supported by Confluent for non-production and production usage.\n* **Deprecated** – No longer supported. Will be removed in the future at the announced date.\n  Use is discouraged and migration following the upgrade guide is recommended.\n* **Sunset** – Removed, and no longer supported or available.\n\nResources, operations, and individual fields in the\n<a href=\"./api.yaml\" target=\"_blank\">OpenAPI spec</a> will be annotated with\n`x-lifecycle-stage`, `x-deprecated-at`, and `x-sunset-at`. These annotations will appear in the\ncorresponding API Reference Documentation. An API is \"Generally Available\" unless explicitly\nmarked otherwise.\n\n## Compatibility Policy\n\nConfluent APIs are governed by\n<a href=\"https://docs.confluent.io/current/cloud/limits.html#upgrade-policy\" target=\"_blank\">\nConfluent Cloud Upgrade Policy</a> in which we will make backward incompatible changes and\ndeprecations approximately once per year, and will provide 180 days notice via email to all\nregistered Confluent Cloud users.\n\n### Backward Compatibility\n\n> *An API version is backwards-compatible if a program written against the previous version of\n> the API will continue to work the same way, without modification, against this version of the\n> API.*\n\nConfluent considers the following changes to be backwards-compatible:\n\n* Adding new API resources.\n* Adding new optional parameters to existing API requests (e.g., query string or body).\n* Adding new properties to existing API responses.\n* Changing the order of properties in existing API responses.\n* Changing the length or format of object IDs or other opaque strings.\n  * Unless otherwise documented, you can safely assume object IDs we generate will never exceed\n    255 characters, but you should be able to handle IDs of up to that length.\n    If you're using MySQL, for example, you should store IDs in a\n    `VARCHAR(255) COLLATE utf8_bin` column.\n  * This includes adding or removing fixed prefixes (such as `lkc-` on kafka cluster IDs).\n  * This includes API keys, API tokens, and similar authentication mechanisms.\n  * This includes all strings described as \"opaque\" in the docs, such as pagination cursors.\n* Omitting properties with null values from existing API responses.\n\n### Client Responsibilities\n\n* Resource and rate limits, and the default and maximum sizes of paginated data **are not**\n  considered part of the API contract and may change (possibly dynamically). It is the client's\n  responsibility to read the road signs and obey the speed limit.\n* If a property has a primitive type and the API documentation does not explicitly limit its\n  possible values, clients **must not** assume the values are constrained to a particular set\n  of possible responses.\n* If a property of an object is not explicitly declared as mandatory in the API, clients\n  **must not** assume it will be present.\n* A resource **may** be modified to return a \"redirection\" response (e.g. `301`, `307`) instead\n  of directly returning the resource. Clients **must** handle HTTP-level redirects, and respect\n  HTTP headers (e.g. `Location`).\n\n## Deprecation Policy\n\nConfluent will announce deprecations at least 180 days in advance of a breaking change\nand we will continue to maintain the deprecated APIs in their original form during this time.\n\nExceptions to this policy apply in case of critical security vulnerabilities or functional\ndefects.\n\n### Communication\n\nWhen a deprecation is announced, the details and any relevant migration\ninformation will be available on the following channels:\n\n* Publication in the [API Changelog](#section/Versioning/Changelog)\n* Lifecycle, deprecation and \"x-deprecated-at\" annotations in the\n  <a href=\"/docs/api.yaml\" target=\"_blank\">OpenAPI spec</a>\n* Announcements on the\n  <a href=\"https://www.confluent.io/blog/\" target=\"_blank\">Developer Blog</a>,\n  <a href=\"https://confluentcommunity.slack.com\" target=\"_blank\">Community Slack</a>\n  (<a href=\"https://slackpass.io/confluentcommunity\" target=\"_blank\">join!</a>),\n  <a href=\"https://groups.google.com/forum/#!forum/confluent-platform\" target=\"_blank\">\n  Google Group</a>,\n  the <a href=\"https://twitter.com/ConfluentInc\" target=\"_blank\">@ConfluentInc twitter</a>\n  account, and similar channels\n* Enterprise customers may receive information by email to their specified Confluent contact,\n  if applicable.\n\n# Object Model\nThe object model for the Metrics API is designed similarly to the\n[OpenTelemetry](https://opentelemetry.io/) standard.\n\n## Metrics\nA _metric_ is a numeric attribute of a resource, measured at a specific point in time, labeled\nwith contextual metadata gathered at the point of instrumentation.\n\nThere are two types of metrics:\n* `GAUGE`: An instantaneous measurement of a value.\n  Gauge metrics are implicitly averaged when aggregating over time.\n  > Example: `io.confluent.kafka.server/retained_bytes`\n* `COUNTER`: The count of occurrences in a _single (one minute) sampling\n  interval_ (unless otherwise stated in the metric description).\n  Counter metrics are implicitly summed when aggregating over time.\n  > Example: `io.confluent.kafka.server/received_bytes`\n\nThe list of metrics and their labels is available at [/docs/descriptors](/docs/descriptors).\n\n## Resources\nA _resource_ represents an entity against which metrics are collected.  For example, a Kafka\ncluster, a Kafka Connector, a ksqlDB application, etc.\n\nEach metric _descriptor_ is associated with one or more resource _descriptors_, representing\nthe resource types to which that metric can apply.  A metric _data point_ is associated with a\nsingle resource _instance_, identified by the resource labels on that metric data point.\n\nFor example, metrics emitted by Kafka Connect are associated to the `connector` resource type.\nData points for those metrics include resource labels identifying the specific `connector`\ninstance that emitted the metric.\n\nThe list of resource types and labels are discoverable via the `/descriptors/resources`\nendpoint.\n\n## Labels\nA _label_ is a key-value attribute associated with a metric data point.\n\nLabels can be used in queries to filter or group the results.  Labels must be prefixed when\nused in queries:\n* `metric.<label>` (for metric labels), for example `metric.topic`\n* `resource.<resource-type>.<label>` (for resource labels), for example `resource.kafka.id`.\n\nThe set of valid label keys for a metric include:\n* The label keys defined on that metric's descriptor itself\n* The label keys defined on the resource descriptor for the metric's associated resource type\n\nFor example, the `io.confluent.kafka.server/received_bytes` metric has the following labels:\n* `resource.kafka.id` - The Kafka cluster to which the metric pertains\n* `metric.topic` - The Kafka topic to which the bytes were produced\n* `metric.partition` - The partition to which the bytes were produced\n\n## Datasets\nA _dataset_ is a logical collection of metrics that can be queried together.  The `dataset` is\na required URL template parameter for every endpoint in this API.  The following datasets are\ncurrently available:\n\n<table>\n<thead>\n  <tr>\n    <th style=\"width: 250px;\">Dataset</th>\n    <th>Description</th>\n  </tr>\n</thead>\n<tbody>\n  <tr>\n    <td>\n      <code>cloud</code>\n      <p><img\n          src=\"https://img.shields.io/badge/Lifecycle%20Stage-Generally%20Available-%230074A2\"\n          alt=\"generally-available\">\n    </td>\n    <td>\n      Metrics originating from Confluent Cloud resources.\n      <p>Requests to this dataset require a resource <code>filter</code>\n         (e.g. Kafka cluster ID, Connector ID, etc.) in the query for authorization purposes.\n         The client's API key must be authorized for the resource referenced in the filter.\n    </td>\n  </tr>\n  <tr>\n    <td>\n      <code>cloud-custom</code>\n      <p><img\n          src=\"https://img.shields.io/badge/Lifecycle%20Stage-Generally%20Available-%230074A2\"\n          alt=\"generally-available\">\n    </td>\n    <td>\n      Metrics originating from custom Confluent Cloud resources (e.g. a Custom Connector).\n      <p>Requests to this dataset require a resource <code>filter</code>\n         (e.g. Custom Connector ID, etc.) in the query for authorization purposes.\n         The client's API key must be authorized for the resource referenced in the filter.\n    </td>\n  </tr>\n  <tr>\n    <td>\n      <code>health-plus</code>\n      <p><img\n          src=\"https://img.shields.io/badge/Lifecycle%20Stage-Preview-%2300AFBA\"\n          alt=\"preview\">\n    </td>\n    <td>\n      Metrics originating from Confluent Platform resources.\n    </td>\n  </tr>\n</tbody>\n</table>\n\n# Client Considerations and Best Practices\n\n## Rate Limiting\nTo protect the stability of the API and keep it available to all users, Confluent employs\nmultiple safeguards. Users who send many requests in quick succession or perform too many\nconcurrent operations may be throttled or have their requested rejected with an error.\nWhen a rate limit is breached, an HTTP `429 Too Many Requests` error is returned. The\nfollowing headers are sent back to provide assistance in dealing with rate limits.\n\n| Header                  | Description                            |\n| ----------------------- | -------------------------------------- |\n| `rateLimit-limit`     | The maximum number of requests you're permitted to make per time period. |\n| `rateLimit-reset`     | The relative time in seconds until the current rate limit window resets. **Important:** This differs from Github and Twitter\\'s same-named header which uses UTC epoch seconds. We use relative time to avoid client/server time synchronization issues. |\n| `rateLimit-remaining` | The number of requests remaining in the current rate-limit window. |\n\nRate limits are enforced at multiple scopes. You get two sets of the headers above, each\nspecifying the limit of one scope.\n\n### Global Rate Limits\nA global rate limit of **60 requests per IP address, per minute** is enforced.\n\n### Per-endpoint Rate Limits\nAdditionally, some endpoint-specific rate limits are enforced.\n\n| Endpoint  | Rate limit |\n| --------- | ---------- |\n| `/v2/metrics/{dataset}/export` | 160 requests per resource, per hour, per principal.<br/>See the [export endpoint documentation](#tag/Version-2/paths/~1v2~1metrics~1{dataset}~1export/get) for details. |\n\n## Retries\nImplement retry logic in your client to gracefully handle transient API failures.\nThis should be done by watching for error responses and building in a retry mechanism.\nThis mechanism should follow a capped exponential backoff policy to prevent retry\namplification (\"retry storms\") and also introduce some randomness (\"jitter\") to avoid the\n[thundering herd effect](https://en.wikipedia.org/wiki/Thundering_herd_problem).\n\n## Metric Data Latency\nMetric data points are typically available for query in the API within **5 minutes** of their\norigination at the source.  This latency can vary based on network conditions and processing\noverhead.  Clients that are polling (or \"scraping\") metrics into an external monitoring system\nshould account for this latency in their polling requests.  API requests that fail to\nincorporate the latency into the query `interval` may have incomplete data in the response.\n\n## Pagination\nCursors, tokens, and corresponding pagination links may expire after a short amount of time.\nIn this case, the API will return a `400 Bad Request` error and the client will need to restart\nfrom the beginning.\n\nThe client should have no trouble pausing between rate limiting windows, but persisting cursors\nfor hours or days is not recommended.\n",
+    "version": "",
+    "title": "Confluent Cloud Metrics API",
+    "x-api-id": "4be9bd3c-ea9b-4efe-89aa-946c36b50161",
+    "x-audience": "external-public",
+    "x-logo": {
+      "url": "https://assets.confluent.io/m/1661ef5e4ff82d3d/"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://api.telemetry.confluent.cloud"
+    }
+  ],
+  "x-tagGroups": [
+    {
+      "name": "API Endpoints",
+      "tags": [
+        "Version 2"
+      ]
+    }
+  ],
+  "tags": [
+    {
+      "name": "Version 2",
+      "description": "![generally-available](https://img.shields.io/badge/Lifecycle%20Stage-Generally%20Available-%230074A2)\n\nVersion 2 of the Metrics API adds the ability to query metrics for Kafka Connect, ksqlDB,\nand Schema Registry.\n\nThis capability is enabled by the introduction of a [Resource](#section/Object-Model/Resources)\nabstraction into the API object model. Resources represent the entity against which metrics\nare collected.\n\n### Migration Guide\nThe following endpoint URLs have changed in version 2:\n\n| Endpoint                | Version 1 (Sunset)           | Version 2                                |\n| ----------------------- | -------------------------------- | ---------------------------------------- |\n| Metrics discovery       | `/metrics/{dataset}/descriptors` | `/metrics/{dataset}/descriptors/metrics` |\n\nThe label prefix syntax has changed in version 2:\n\n| Label                   | Version 1 (Sunset)       | Version 2               |\n| ----------------------- | ---------------------------- | ----------------------- |\n| Resource labels *(new)* | *N/A*                        | `resource.<label>`      |\n| Kafka cluster ID        | `metric.label.cluster_id`    | `resource.kafka.id`     |\n| All other metric labels | `metric.label.<label>`       | `metric.<label>`        |\n\nThis example shows a request to `/v1/metrics/cloud/query` migrated into the new `v2` syntax\n\n#### Version 1 Request\n```json\n{\n  \"group_by\": [\n    \"metric.label.topic\"\n  ],\n  \"aggregations\": [{\n    \"metric\": \"io.confluent.kafka.server/received_bytes\",\n    \"agg\": \"SUM\"\n  }],\n  \"filter\": {\n    \"field\": \"metric.label.cluster_id\",\n    \"op\": \"EQ\",\n    \"value\": \"lkc-00000\"\n  },\n  \"granularity\": \"ALL\",\n  \"intervals\" : [\n    \"2020-01-01T00:00:00Z/PT1H\"\n  ]\n}\n```\n\n#### Version 2 Request\n```json\n{\n  \"group_by\": [\n    \"metric.topic\"\n  ],\n  \"aggregations\": [{\n    \"metric\": \"io.confluent.kafka.server/received_bytes\",\n    \"agg\": \"SUM\"\n  }],\n  \"filter\": {\n    \"field\": \"resource.kafka.id\",\n    \"op\": \"EQ\",\n    \"value\": \"lkc-00000\"\n  },\n  \"granularity\": \"ALL\",\n  \"intervals\" : [\n    \"2020-01-01T00:00:00Z/PT1H\"\n  ]\n}\n```\n"
+    }
+  ],
+  "paths": {
+    "/v2/metrics/{dataset}/descriptors/metrics": {
+      "get": {
+        "summary": "List metric descriptors",
+        "tags": [
+          "Version 2"
+        ],
+        "description": "Lists all the metric descriptors for a dataset.\n\nA metric descriptor represents metadata for a metric, including its data type and labels.\nThis metadata is provided programmatically to enable clients to dynamically adjust as new\nmetrics are added to the dataset, rather than hardcoding metric names in client code.\n",
+        "parameters": [
+          {
+            "name": "dataset",
+            "in": "path",
+            "required": true,
+            "description": "The [dataset](#section/Object-Model/Datasets) to list metric descriptors for.",
+            "schema": {
+              "$ref": "#/components/schemas/Dataset"
+            }
+          },
+          {
+            "name": "page_size",
+            "description": "The maximum number of results to return. The page size is an integer in the range from 1 through 1000.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000,
+              "default": 100
+            }
+          },
+          {
+            "name": "page_token",
+            "description": "The next page token. The token is returned by the previous request as part of `meta.pagination`.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/PageToken"
+            }
+          },
+          {
+            "name": "resource_type",
+            "description": "The type of the resource to list metric descriptors for.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/ResourceType"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListMetricDescriptorsResponse"
+                },
+                "examples": {
+                  "listResponse": {
+                    "value": {
+                      "data": [
+                        {
+                          "description": "The delta count of bytes received from the network. Each sample is the number of bytes received since the previous data sample. The count is sampled every 60 seconds.",
+                          "labels": [
+                            {
+                              "description": "The name of the Kafka topic.",
+                              "key": "topic",
+                              "exportable": true
+                            }
+                          ],
+                          "name": "io.confluent.kafka.server/received_bytes",
+                          "type": "COUNTER_INT64",
+                          "exportable": true,
+                          "unit": "By",
+                          "lifecycle_stage": "GENERAL_AVAILABILITY",
+                          "resources": [
+                            "kafka"
+                          ]
+                        },
+                        {
+                          "description": "The delta count of bytes sent over the network. Each sample is the number of bytes sent since the previous data point. The count is sampled every 60 seconds.",
+                          "labels": [
+                            {
+                              "description": "The name of the Kafka topic.",
+                              "key": "topic",
+                              "exportable": true
+                            }
+                          ],
+                          "name": "io.confluent.kafka.server/sent_bytes",
+                          "type": "COUNTER_INT64",
+                          "exportable": true,
+                          "unit": "By",
+                          "lifecycle_stage": "GENERAL_AVAILABILITY",
+                          "resources": [
+                            "kafka"
+                          ]
+                        }
+                      ],
+                      "links": null,
+                      "meta": {
+                        "pagination": {
+                          "page_size": 3,
+                          "total_size": 3
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimitError"
+          },
+          "default": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v2/metrics/{dataset}/descriptors/resources": {
+      "get": {
+        "tags": [
+          "Version 2"
+        ],
+        "summary": "List resource descriptors",
+        "description": "Lists all the resource descriptors for a dataset.\n",
+        "parameters": [
+          {
+            "name": "dataset",
+            "in": "path",
+            "required": true,
+            "description": "The [dataset](#section/Object-Model/Datasets) to list resource descriptors for.",
+            "schema": {
+              "$ref": "#/components/schemas/Dataset"
+            }
+          },
+          {
+            "name": "page_size",
+            "description": "The maximum number of results to return. The page size is an integer in the range from 1 through 1000.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000,
+              "default": 100
+            }
+          },
+          {
+            "name": "page_token",
+            "description": "The next page token. The token is returned by the previous request as part of `meta.pagination`.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/PageToken"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListResourceDescriptorsResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimitError"
+          },
+          "default": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v2/metrics/{dataset}/query": {
+      "post": {
+        "summary": "Query metric values",
+        "tags": [
+          "Version 2"
+        ],
+        "description": "Query for metric values in a dataset.\n",
+        "parameters": [
+          {
+            "name": "dataset",
+            "in": "path",
+            "required": true,
+            "description": "The [dataset](#section/Object-Model/Datasets) to query.",
+            "schema": {
+              "$ref": "#/components/schemas/Dataset"
+            }
+          },
+          {
+            "name": "page_token",
+            "description": "The next page token. The token is returned by the previous request as part of `meta.pagination`. Pagination is only supported for requests containing a `group_by` element.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/PageToken"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QueryRequest"
+              },
+              "examples": {
+                "query": {
+                  "value": {
+                    "group_by": [
+                      "metric.topic"
+                    ],
+                    "aggregations": [
+                      {
+                        "metric": "io.confluent.kafka.server/sent_bytes",
+                        "agg": "SUM"
+                      }
+                    ],
+                    "filter": {
+                      "op": "AND",
+                      "filters": [
+                        {
+                          "field": "resource.kafka.id",
+                          "op": "EQ",
+                          "value": "lkc-1234"
+                        },
+                        {
+                          "op": "NOT",
+                          "filter": {
+                            "field": "metric.topic",
+                            "op": "EQ",
+                            "value": "topicA"
+                          }
+                        }
+                      ]
+                    },
+                    "order_by": [
+                      {
+                        "metric": "io.confluent.kafka.server/sent_bytes",
+                        "agg": "SUM",
+                        "order": "DESCENDING"
+                      }
+                    ],
+                    "granularity": "PT1H",
+                    "intervals": [
+                      "2019-10-17T20:17:00.000Z/PT2H"
+                    ],
+                    "limit": 5
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QueryResponse"
+                },
+                "examples": {
+                  "flatResponse": {
+                    "value": {
+                      "data": [
+                        {
+                          "timestamp": "2019-10-17T20:17:00.000Z",
+                          "metric.topic": "foo",
+                          "value": 9741
+                        },
+                        {
+                          "timestamp": "2019-10-17T20:18:00.000Z",
+                          "metric.topic": "foo",
+                          "value": 9246
+                        },
+                        {
+                          "timestamp": "2019-10-17T20:17:00.000Z",
+                          "metric.topic": "bar",
+                          "value": 844.1
+                        },
+                        {
+                          "timestamp": "2019-10-17T20:18:00.000Z",
+                          "metric.topic": "bar",
+                          "value": 821.1
+                        }
+                      ]
+                    }
+                  },
+                  "groupedResponse": {
+                    "value": {
+                      "data": [
+                        {
+                          "metric.topic": "foo",
+                          "points": [
+                            {
+                              "timestamp": "2019-10-17T20:17:00.000Z",
+                              "value": 9741
+                            },
+                            {
+                              "timestamp": "2019-10-17T20:18:00.000Z",
+                              "value": 9246
+                            }
+                          ]
+                        },
+                        {
+                          "metric.topic": "bar",
+                          "points": [
+                            {
+                              "timestamp": "2019-10-17T20:17:00.000Z",
+                              "value": 844.1
+                            },
+                            {
+                              "timestamp": "2019-10-17T20:18:00.000Z",
+                              "value": 821.1
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimitError"
+          },
+          "default": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v2/metrics/{dataset}/export": {
+      "get": {
+        "tags": [
+          "Version 2"
+        ],
+        "summary": "Export metric values",
+        "description": "Export current metric values in [OpenMetrics format](https://github.com/OpenObservability/OpenMetrics/blob/main/specification/OpenMetrics.md)\nor [Prometheus format](https://prometheus.io/docs/instrumenting/exposition_formats/#text-based-format),\nsuitable for import into an external monitoring system. Returns the single most recent\ndata point for each metric, for each distinct combination of labels.\n\n#### Supported datasets and metrics\nBy default only the `cloud` and `cloud-custom` datasets are supported for this endpoint.\n\nSome metrics and labels within the datasets may not be exportable. To request\na particular metric or label be added, please contact [Confluent Support](https://support.confluent.io).\n\n#### Metric translation\nMetric and label names are translated to adhere to [Prometheus restrictions](https://prometheus.io/docs/concepts/data_model/#metric-names-and-labels).\nThe `resource.` and `metric.` prefixes from label names are also dropped to simplify consumption in downstream systems.\n\nCounter metrics are classified as the Prometheus `gauge` type to conform to required semantics.\n> The `counter` type in Prometheus must be monotonically increasing, whereas Confluent\nMetrics API counters are represented as deltas.\n\n#### Timestamp offset\nTo account for [metric data latency](#section/Client-Considerations-and-Best-Practices/Metric-Data-Latency),\nthis endpoint returns metrics from the current timestamp minus a fixed offset. The current\noffset is 5 minutes rounded down to the start of the minute. For example, if a request is\nreceived at `12:06:41`, the returned metrics will have the timestamp `12:01:00` and represent the\ndata for the interval `12:01:00` through `12:02:00` (exclusive).\n\n> **NOTE:** Confluent may choose to lengthen or shorten this offset based on operational\nconsiderations. _Doing so is considered a backwards-compatible change_.\n\nTo accommodate this offset, the timestamps in the response should be honored when importing\nthe metrics. For example, in prometheus this can be controlled using the `honor_timestamps`\nflag.\n\n#### Rate limits\nSince metrics are available at minute granularity, it is expected that clients scrape this\nendpoint at most once per minute. To allow for ad-hoc testing, the rate limit is enforced\nat hourly granularity. To accommodate retries, the rate limit is 160 requests per hour\nrather than 60 per hour.\n\nThe rate limit is evaluated on a per-resource basis. For example, the following requests would\neach be allowed a 160-requests-per-hour rate:\n* `GET /v2/metrics/cloud/export?resource.kafka.id=lkc-1&resource.kafka.id=lkc-2`\n* `GET /v2/metrics/cloud/export?resource.kafka.id=lkc-3`\n\nRate limits for this endpoint are also scoped to the authentication principal. This allows multiple systems\nto export metrics for the same resources by configuring each with a separate service account.\n\nIf the rate limit is exceeded, the response body will include a message indicating which\nresource exceeded the limit.\n```json\n{\n  \"errors\": [\n    {\n      \"status\": \"429\",\n      \"detail\": \"Too many requests have been made for the following resources: kafka.id:lkc-12345. Please see the documentation for current rate limits.\"\n    }\n  ]\n}\n```\n\n#### Resource parameter formats\nResource parameters support two formats for maximum compatibility:\n\n**Dot format (traditional):** `resource.kafka.id`, `resource.connector.id`, etc.\n**Underscore format (Prometheus):** `resource_kafka_id`, `resource_connector_id`, etc.\n\nBoth formats support two ways to specify multiple resources:\n1. **Multiple parameters:** `?resource.kafka.id=lkc-1&resource.kafka.id=lkc-2`\n2. **Comma-separated values:** `?resource.kafka.id=lkc-1,lkc-2,lkc-3`\n\nYou can also mix both formats in the same request:\n* `?resource.kafka.id=lkc-1,lkc-2&resource_kafka_id=lkc-3`\n\nExamples:\n* `GET /v2/metrics/cloud/export?resource.kafka.id=lkc-1,lkc-2,lkc-3`\n* `GET /v2/metrics/cloud/export?resource_kafka_id=lkc-1,lkc-2&resource.connector.id=lcc-1`\n* `GET /v2/metrics/cloud/export?resource.kafka.id=lkc-1&resource_kafka_id=lkc-2&resource_connector_id=lcc-1,lcc-2`\n\n#### Return limits\nTo ensure values are returned in a timely fashion, data points returned per `resource type` per `metric` is limited to `30000`.\nIf you have more than `30000` unique combinations of labels then the response will be truncated to return\nthe first `30000` data points.\n\nFor example, if a request is made for 4 Kafka clusters(resource type 1) and 3 Kafka connectors(resource type 2)\n* Assuming each Kafka cluster has `8000` topics and there are `5` metrics with only topic label\n      It translates to `32000` unique label combinations per metric(capped to 30000) which in turn\n      translates to `150,000` data points for 5 metrics.\n* Assuming each Kafka connector has `3` metrics\n       It translates to 9 data points for 3 Kafka connectors.\n\nThe data points returned for this request totals to 150,009.\n\nIn this case, we would recommend making separate scrape jobs up to 3 kafka clusters in order to stay within the return limits for a resource type.\n\n#### Example Prometheus scrape configuration\nHere is an example [prometheus configuration](https://prometheus.io/docs/prometheus/latest/configuration/configuration/)\nfor scraping this endpoint:\n\n```yaml\nscrape_configs:\n  - job_name: Confluent Cloud\n    scrape_interval: 1m\n    scrape_timeout: 1m\n    honor_timestamps: true\n    static_configs:\n      - targets:\n        - api.telemetry.confluent.cloud\n    scheme: https\n    basic_auth:\n      username: <Cloud API Key>\n      password: <Cloud API Secret>\n    metrics_path: /v2/metrics/cloud/export\n    params:\n      \"resource.kafka.id\":\n        - lkc-1\n        - lkc-2\n```\n\n#### Ignoring failed metrics\nUsing `ignore_failed_metrics` param, you can get a partial response consisting of successful metrics. Unsuccessful metrics would be ignored\nif the failure count was below the configured failure threshold percentage, otherwise an error would be returned.\n\nIn case a partial response is returned, it would contain an additional StateSet metric `export_status` with one sample for each metric.\nIf the associated metric fetch was unsuccessful, the value of the sample for that metric will be 1, otherwise it will be 0.\nEach sample will have a metric and a resource label which denotes the name of the metric for which the status is shown and name of the resource to which the metric belongs respectively.\n\nA sample partial response is shown in the Responses section wherein two metrics were requested and one of them was unsuccessful.\n",
+        "parameters": [
+          {
+            "name": "dataset",
+            "in": "path",
+            "required": true,
+            "description": "The [dataset](#section/Object-Model/Datasets) to export metrics for.",
+            "schema": {
+              "$ref": "#/components/schemas/Dataset"
+            }
+          },
+          {
+            "name": "resource.kafka.id",
+            "description": "The ID of the Kafka cluster to export metrics for. This parameter can be specified multiple times (e.g. `?resource.kafka.id=lkc-1&resource.kafka.id=lkc-2`). You can also use comma-separated values in a single parameter (e.g. `?resource.kafka.id=lkc-1,lkc-2,lkc-3`).",
+            "in": "query",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "resource_kafka_id",
+            "description": "The ID of the Kafka cluster to export metrics for (Prometheus format). This parameter can be specified multiple times (e.g. `?resource_kafka_id=lkc-1&resource_kafka_id=lkc-2`). You can also use comma-separated values in a single parameter (e.g. `?resource_kafka_id=lkc-1,lkc-2,lkc-3`). This is an alternative to `resource.kafka.id` for compatibility with Prometheus scraping.",
+            "in": "query",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "resource.connector.id",
+            "description": "The ID of the Connector to export metrics for. This parameter can be specified multiple times (e.g. `?resource.connector.id=lcc-1&resource.connector.id=lcc-2`). You can also use comma-separated values in a single parameter (e.g. `?resource.connector.id=lcc-1,lcc-2,lcc-3`).",
+            "in": "query",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "resource_connector_id",
+            "description": "The ID of the Connector to export metrics for (Prometheus format). This parameter can be specified multiple times (e.g. `?resource_connector_id=lcc-1&resource_connector_id=lcc-2`). You can also use comma-separated values in a single parameter (e.g. `?resource_connector_id=lcc-1,lcc-2,lcc-3`). This is an alternative to `resource.connector.id` for compatibility with Prometheus scraping.",
+            "in": "query",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "resource.custom_connector.id",
+            "description": "The ID of the custom Connector to export metrics for. This parameter can be specified multiple times (e.g. `?resource.custom_connector.id=lcc-1&resource.custom_connector.id=lcc-2`). You can also use comma-separated values in a single parameter (e.g. `?resource.custom_connector.id=lcc-1,lcc-2,lcc-3`).",
+            "in": "query",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "resource_custom_connector_id",
+            "description": "The ID of the custom Connector to export metrics for (Prometheus format). This parameter can be specified multiple times (e.g. `?resource_custom_connector_id=lcc-1&resource_custom_connector_id=lcc-2`). You can also use comma-separated values in a single parameter (e.g. `?resource_custom_connector_id=lcc-1,lcc-2,lcc-3`). This is an alternative to `resource.custom_connector.id` for compatibility with Prometheus scraping.",
+            "in": "query",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "resource.ksql.id",
+            "description": "The ID of the ksqlDB application to export metrics for. This parameter can be specified multiple times (e.g. `?resource.ksql.id=lksql-1&resource.ksql.id=lksql-2`). You can also use comma-separated values in a single parameter (e.g. `?resource.ksql.id=lksql-1,lksql-2,lksql-3`).",
+            "in": "query",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "resource_ksql_id",
+            "description": "The ID of the ksqlDB application to export metrics for (Prometheus format). This parameter can be specified multiple times (e.g. `?resource_ksql_id=lksql-1&resource_ksql_id=lksql-2`). You can also use comma-separated values in a single parameter (e.g. `?resource_ksql_id=lksql-1,lksql-2,lksql-3`). This is an alternative to `resource.ksql.id` for compatibility with Prometheus scraping.",
+            "in": "query",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "resource.schema_registry.id",
+            "description": "The ID of the Schema Registry to export metrics for. This parameter can be specified multiple times (e.g. `?resource.schema_registry.id=lsr-1&resource.schema_registry.id=lsr-2`). You can also use comma-separated values in a single parameter (e.g. `?resource.schema_registry.id=lsr-1,lsr-2,lsr-3`).",
+            "in": "query",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "resource_schema_registry_id",
+            "description": "The ID of the Schema Registry to export metrics for (Prometheus format). This parameter can be specified multiple times (e.g. `?resource_schema_registry_id=lsr-1&resource_schema_registry_id=lsr-2`). You can also use comma-separated values in a single parameter (e.g. `?resource_schema_registry_id=lsr-1,lsr-2,lsr-3`). This is an alternative to `resource.schema_registry.id` for compatibility with Prometheus scraping.",
+            "in": "query",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "resource.compute_pool.id",
+            "description": "The ID of the Flink Compute Pool to export metrics for. This parameter can be specified multiple times (e.g. `?resource.compute_pool.id=lcp-1&resource.compute_pool.id=lcp-2`). You can also use comma-separated values in a single parameter (e.g. `?resource.compute_pool.id=lcp-1,lcp-2,lcp-3`).",
+            "in": "query",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "resource_compute_pool_id",
+            "description": "The ID of the Flink Compute Pool to export metrics for (Prometheus format). This parameter can be specified multiple times (e.g. `?resource_compute_pool_id=lcp-1&resource_compute_pool_id=lcp-2`). You can also use comma-separated values in a single parameter (e.g. `?resource_compute_pool_id=lcp-1,lcp-2,lcp-3`). This is an alternative to `resource.compute_pool.id` for compatibility with Prometheus scraping.",
+            "in": "query",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "interval",
+            "x-hidden": true,
+            "description": "The interval to export metrics for.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "metric",
+            "description": "The metric to export. If this parameter is not specified, all metrics for the resource will be exported. This parameter can be specified multiple times.",
+            "in": "query",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "ignore_failed_metrics",
+            "description": "Ignore failed metrics and export only successful metrics if allowed failure threshold is not breached. If this parameter is set to true, a StateSet metric (export_status) will be included in the response to report which metrics were successful and which failed.",
+            "in": "query",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "text/plain;version=0.0.4": {
+                "schema": {
+                  "description": "Metric values formatted in [Prometheus text-based format](https://prometheus.io/docs/instrumenting/exposition_formats/#text-based-format).",
+                  "type": "string"
+                },
+                "examples": {
+                  "ignore_failed_metrics_FALSE": {
+                    "value": "# HELP confluent_kafka_server_received_bytes The delta count of bytes of the customer's data received from the network. Each sample is the number of bytes received since the previous data sample. The count is sampled every 60 seconds.\n# TYPE confluent_kafka_server_received_bytes gauge\nconfluent_kafka_server_received_bytes{kafka_id=\"lkc-1\",topic=\"topicA\"} 10.0 1609459200\nconfluent_kafka_server_received_bytes{kafka_id=\"lkc-1\",topic=\"topicB\"} 20.0 1609459200\nconfluent_kafka_server_received_bytes{kafka_id=\"lkc-2\",topic=\"topicA\"} 30.0 1609459200\n# HELP confluent_kafka_server_sent_bytes The delta count of bytes of the customer's data sent to the network. Each sample is the number of bytes sent since the previous data sample. The count is sampled every 60 seconds.\n# TYPE confluent_kafka_server_sent_bytes gauge\nconfluent_kafka_server_sent_bytes{kafka_id=\"lkc-1\",topic=\"topicA\"} 90.0 1609459200\nconfluent_kafka_server_sent_bytes{kafka_id=\"lkc-1\",topic=\"topicB\"} 80.0 1609459200\nconfluent_kafka_server_sent_bytes{kafka_id=\"lkc-2\",topic=\"topicA\"} 70.0 1609459200\n"
+                  },
+                  "ignore_failed_metrics_TRUE": {
+                    "value": "# HELP export_status Status of exported metrics. Value 1 denotes status was error. Value 0 denotes status was not error.\n# TYPE export_status gauge\nexport_status{export_status=\"error\",metric=\"io.confluent.kafka.server/received_bytes\",resource=\"kafka\",} 0.0\nexport_status{export_status=\"error\",metric=\"io.confluent.kafka.server/sent_bytes\",resource=\"kafka\",} 1.0\n# HELP confluent_kafka_server_received_bytes The delta count of bytes of the customer's data received from the network. Each sample is the number of bytes received since the previous data sample. The count is sampled every 60 seconds.\n# TYPE confluent_kafka_server_received_bytes gauge\nconfluent_kafka_server_received_bytes{kafka_id=\"lkc-1\",topic=\"topicA\",} 30.0 1609459200000\nconfluent_kafka_server_received_bytes{kafka_id=\"lkc-2\",topic=\"topicA\",} 70.0 1609459200000\n"
+                  }
+                }
+              },
+              "application/openmetrics-text;version=1.0.0;charset=utf-8": {
+                "schema": {
+                  "description": "Metric values formatted in [OpenMetrics text format](https://github.com/OpenObservability/OpenMetrics/blob/main/specification/OpenMetrics.md).",
+                  "type": "string"
+                },
+                "examples": {
+                  "ignore_failed_metrics_FALSE": {
+                    "value": "# TYPE confluent_kafka_server_received_bytes gauge\n# UNIT confluent_kafka_server_received_bytes bytes\n# HELP confluent_kafka_server_received_bytes The delta count of bytes of the customer's data received from the network. Each sample is the number of bytes received since the previous data sample. The count is sampled every 60 seconds.\nconfluent_kafka_server_received_bytes{kafka_id=\"lkc-1\",topic=\"topicA\"} 30.0 1609459200.000\nconfluent_kafka_server_received_bytes{kafka_id=\"lkc-1\",topic=\"topicB\"} 70.0 1609459200.000\nconfluent_kafka_server_received_bytes{kafka_id=\"lkc-2\",topic=\"topicA\"} 230.0 1609459200.000\nconfluent_kafka_server_received_bytes{kafka_id=\"lkc-2\",topic=\"topicB\"} 270.0 1609459200.000\n# TYPE confluent_kafka_server_sent_bytes gauge\n# UNIT confluent_kafka_server_received_bytes bytes\n# HELP confluent_kafka_server_sent_bytes The delta count of bytes of the customer's data sent over the network. Each sample is the number of bytes sent since the previous data point. The count is sampled every 60 seconds.\nconfluent_kafka_server_sent_bytes{kafka_id=\"lkc-1\",topic=\"topicA\"} 34.0 1609459200.000\nconfluent_kafka_server_sent_bytes{kafka_id=\"lkc-1\",topic=\"topicB\"} 74.0 1609459200.000\n#EOF\n"
+                  },
+                  "ignore_failed_metrics_TRUE": {
+                    "value": "# TYPE export_status stateset\n# HELP export_status Status of exported metrics. Value 1 denotes status was error. Value 0 denotes status was not error.\nexport_status{export_status=\"error\",metric=\"io.confluent.kafka.server/received_bytes\",resource=\"kafka\"} 0.0\nexport_status{export_status=\"error\",metric=\"io.confluent.kafka.server/sent_bytes\",resource=\"kafka\"} 1.0\n# TYPE confluent_kafka_server_received_bytes gauge\n# UNIT confluent_kafka_server_received_bytes bytes\n# HELP confluent_kafka_server_received_bytes The delta count of bytes of the customer's data received from the network. Each sample is the number of bytes received since the previous data sample. The count is sampled every 60 seconds.\nconfluent_kafka_server_received_bytes{kafka_id=\"lkc-1\",topic=\"topicA\"} 30.0 1609459200000\nconfluent_kafka_server_received_bytes{kafka_id=\"lkc-2\",topic=\"topicA\"} 70.0 1609459200000\n# EOF\n"
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate Limit Exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v2/metrics/{dataset}/attributes": {
+      "post": {
+        "summary": "Query label values",
+        "tags": [
+          "Version 2"
+        ],
+        "description": "Enumerates label values for a single metric.\n",
+        "parameters": [
+          {
+            "name": "dataset",
+            "in": "path",
+            "required": true,
+            "description": "The dataset to query.",
+            "schema": {
+              "$ref": "#/components/schemas/Dataset"
+            }
+          },
+          {
+            "name": "page_token",
+            "description": "The next page token. The token is returned by the previous request as part of `meta.pagination`.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AttributesRequest"
+              },
+              "examples": {
+                "request": {
+                  "value": {
+                    "metric": "io.confluent.kafka.server/sent_bytes",
+                    "group_by": [
+                      "metric.topic"
+                    ],
+                    "filter": {
+                      "field": "resource.kafka.id",
+                      "op": "EQ",
+                      "value": "lkc-09d19"
+                    },
+                    "limit": 3,
+                    "intervals": [
+                      "2019-10-16T16:30:20Z/2019-10-24T18:57:00Z"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AttributesResponse"
+                },
+                "examples": {
+                  "response": {
+                    "value": {
+                      "data": [
+                        {
+                          "metric.topic": "bar"
+                        },
+                        {
+                          "metric.topic": "baz"
+                        },
+                        {
+                          "metric.topic": "foo"
+                        }
+                      ],
+                      "meta": {
+                        "pagination": {
+                          "page_size": 3,
+                          "next_page_token": "dG9waWNC"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimitError"
+          },
+          "default": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "security": [
+    {
+      "api-key": []
+    },
+    {
+      "confluent-sts-access-token": []
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "api-key": {
+        "type": "http",
+        "scheme": "basic",
+        "description": "API keys must be sent as an `Authorization: Basic {key}` header with the Key ID as the\nusername and the Key Secret as the password. Remember that HTTP Basic authorization\nrequires you to colon-separate and base64 encode your key. For example, if your API Key ID\nis `ABCDEFGH123456789` and the corresponding API Key Secret is\n`XNCIW93I2L1SQPJSJ823K1LS902KLDFMCZPWEO`, then the authorization header will be\n\n    Authorization: Basic QUJDREVGR0gxMjM0NTY3ODk6WE5DSVc5M0kyTDFTUVBKU0o4MjNLMUxTOTAyS0xERk1DWlBXRU8=\n\nThis example header can be generated (using Mac OS X syntax) from the API key with\n\n    $ echo -n \"ABCDEFGH123456789:XNCIW93I2L1SQPJSJ823K1LS902KLDFMCZPWEO\" | base64\n"
+      },
+      "confluent-sts-access-token": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "Confluent Security Token Service (STS) issues access tokens (`confluent-sts-access-token`) by exchanging an\nexternal token (`external-access-token`) for a confluent-sts-access-token. It can be generated using the steps\nmentioned [here](https://docs.confluent.io/cloud/current/access-management/authenticate/oauth/access-rest-apis-sts.html#)\nconfluent-sts-access-token must be sent as an `Authorization: Bearer {confluent-sts-access-token}` header.\n"
+      }
+    },
+    "schemas": {
+      "Dataset": {
+        "type": "string",
+        "description": "A logical collection of metrics that can be described and queried. Valid values are `cloud` and `health-plus`."
+      },
+      "PageToken": {
+        "description": "An opaque token that you use to get the next page of results.",
+        "type": "string"
+      },
+      "ResourceType": {
+        "description": "A named type for a resource (e.g. `kafka`, `connector`).",
+        "type": "string"
+      },
+      "Pagination": {
+        "description": "The pagination information.",
+        "properties": {
+          "page_size": {
+            "description": "The page size requested by the user.",
+            "format": "int32",
+            "type": "integer"
+          },
+          "total_size": {
+            "description": "The total number of items, if the total size can be determined in advance; otherwise, `total_size` is not included.",
+            "format": "int32",
+            "type": "integer"
+          },
+          "next_page_token": {
+            "$ref": "#/components/schemas/PageToken"
+          }
+        },
+        "required": [
+          "page_size"
+        ],
+        "example": {
+          "page_size": 10,
+          "total_size": 25
+        }
+      },
+      "Meta": {
+        "type": "object",
+        "description": "Meta object",
+        "properties": {
+          "pagination": {
+            "$ref": "#/components/schemas/Pagination"
+          }
+        },
+        "required": [
+          "pagination"
+        ]
+      },
+      "Links": {
+        "description": "link information",
+        "properties": {
+          "next": {
+            "description": "The next page of resources in a collection. The link is present only if the current document is part of a collection.",
+            "type": "string"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "description": "A unique identifier for this particular occurrence of the problem.",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "The HTTP status code applicable to this problem, expressed as a string value.",
+                  "type": "string"
+                },
+                "code": {
+                  "description": "An application-specific error code, expressed as a string value.",
+                  "type": "string"
+                },
+                "detail": {
+                  "description": "A human-readable explanation specific to this occurrence of the problem.",
+                  "type": "string"
+                },
+                "meta": {
+                  "$ref": "#/components/schemas/Meta"
+                },
+                "links": {
+                  "$ref": "#/components/schemas/Links"
+                }
+              }
+            }
+          }
+        },
+        "required": [
+          "errors"
+        ],
+        "example": {
+          "errors": [
+            {
+              "detail": "fieldA must not be null"
+            },
+            {
+              "detail": "fieldB must not be null"
+            }
+          ]
+        }
+      },
+      "LabelDescriptor": {
+        "description": "The description of a label.",
+        "type": "object",
+        "properties": {
+          "description": {
+            "description": "The description of the metric.",
+            "type": "string"
+          },
+          "key": {
+            "description": "The key of the label.",
+            "type": "string"
+          },
+          "exportable": {
+            "description": "Is this label included in the `/export` endpoint response?",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "description",
+          "key"
+        ],
+        "example": {
+          "key": "topic",
+          "description": "The name of the Kafka topic.",
+          "exportable": true
+        }
+      },
+      "MetricDescriptor": {
+        "description": "Defines a metric type and its schema.",
+        "type": "object",
+        "properties": {
+          "description": {
+            "description": "The description of the metric.",
+            "type": "string"
+          },
+          "labels": {
+            "description": "Labels for filtering and aggregating this metric. For example, you can\nfilter the `io.confluent.kafka.server/received_bytes` metric by the\n`topic` label.\n",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LabelDescriptor"
+            }
+          },
+          "name": {
+            "description": "The unique name of the metric, for example,\n`io.confluent.kafka.server/received_bytes`.\n",
+            "type": "string"
+          },
+          "unit": {
+            "description": "The unit that the metric value is reported in. Units follow the format described in\n[the Unified Code for Units of Measure](http://unitsofmeasure.org/ucum.html).\nFor example, `By` for bytes and `By/s` for bytes per second.\n",
+            "type": "string"
+          },
+          "type": {
+            "description": "The type of the measurement. The metric type follows the\n[OpenTelemetry](https://opentelemetry.io/) exposition format.\n* `GAUGE_(INT64|DOUBLE)`: An instantaneous measurement of a value.\n  Gauge metrics are implicitly averaged when aggregating over time.\n* `COUNTER_(INT64|DOUBLE)`: The count of occurrences in a _single (one minute) sampling\n  interval_ (unless otherwise stated in the metric description).\n  Counter metrics are implicitly summed when aggregating over time.\n",
+            "type": "string",
+            "x-extensible-enum": [
+              "GAUGE_INT64",
+              "GAUGE_DOUBLE",
+              "COUNTER_INT64",
+              "COUNTER_DOUBLE"
+            ]
+          },
+          "lifecycle_stage": {
+            "description": "The support lifecycle stage for this metric:\n* `PREVIEW`: May change at any time\n* `GENERAL_AVAILABILITY`: Fully released and stable. Will not change without notice.\n* `DEPRECATED`: No longer supported. Will be removed in the future at the annouced date.\n",
+            "type": "string",
+            "x-extensible-enum": [
+              "PREVIEW",
+              "GENERAL_AVAILABILITY",
+              "DEPRECATED"
+            ]
+          },
+          "exportable": {
+            "description": "Is this metric included in the `/export` endpoint response?",
+            "type": "boolean"
+          },
+          "resources": {
+            "description": "The resource types to which this metric pertains.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "description",
+          "labels",
+          "name",
+          "unit",
+          "type",
+          "lifecycle_stage",
+          "exportable",
+          "resources"
+        ],
+        "example": {
+          "description": "The delta count of bytes received from the network. The count is sampled every 60 seconds.",
+          "name": "io.confluent.kafka.server/received_bytes",
+          "unit": "By",
+          "type": "GAUGE_INT64",
+          "exportable": true,
+          "lifecycle_stage": "GENERAL_AVAILABILITY",
+          "resources": [
+            "kafka"
+          ],
+          "labels": [
+            {
+              "key": "topic",
+              "description": "The name of the Kafka topic.",
+              "exportable": true
+            }
+          ]
+        }
+      },
+      "ListMetricDescriptorsResponse": {
+        "description": "The ListMetricDescriptors response.",
+        "type": "object",
+        "properties": {
+          "data": {
+            "description": "The metric descriptors for the specified dataset.",
+            "items": {
+              "$ref": "#/components/schemas/MetricDescriptor"
+            },
+            "type": "array"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          },
+          "links": {
+            "$ref": "#/components/schemas/Links"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ]
+      },
+      "ResourceDescriptor": {
+        "description": "A Resource represents the entity producing metrics.\nFor example: a Kafka cluster a Kafka Connector, etc.\n",
+        "type": "object",
+        "properties": {
+          "type": {
+            "$ref": "#/components/schemas/ResourceType"
+          },
+          "description": {
+            "description": "The description of the resource.",
+            "type": "string"
+          },
+          "labels": {
+            "description": "Labels for the resource.\nResource labels can be used for filtering and aggregating metrics\nassociated with a resource.\n",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LabelDescriptor"
+            }
+          }
+        },
+        "required": [
+          "type",
+          "description",
+          "labels"
+        ],
+        "example": {
+          "type": "kafka",
+          "description": "A Kafka cluster.",
+          "labels": [
+            {
+              "key": "kafka.id",
+              "description": "ID of the kafka cluster",
+              "exportable": true
+            }
+          ]
+        }
+      },
+      "ListResourceDescriptorsResponse": {
+        "description": "The list of resource descriptors for a dataset",
+        "type": "object",
+        "properties": {
+          "data": {
+            "description": "The resource descriptors for the specified dataset.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ResourceDescriptor"
+            }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          },
+          "links": {
+            "$ref": "#/components/schemas/Links"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ]
+      },
+      "AggregationFunction": {
+        "type": "string",
+        "enum": [
+          "SUM",
+          "MIN",
+          "MAX"
+        ]
+      },
+      "Aggregation": {
+        "type": "object",
+        "x-java-class": "io.confluent.observability.metricsquery.api.Aggregation",
+        "properties": {
+          "metric": {
+            "description": "The metric to aggregate.",
+            "type": "string"
+          },
+          "agg": {
+            "description": "The aggregation function for the label buckets defined in `group_by`.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AggregationFunction"
+              }
+            ]
+          }
+        },
+        "required": [
+          "metric"
+        ],
+        "example": {
+          "metric": "io.confluent.kafka.server/bytes_in",
+          "agg": "SUM"
+        }
+      },
+      "Granularity": {
+        "description": "Defines the time buckets that the aggregation is performed for.\nBuckets are specified in\n[ISO-8601 duration syntax](https://en.wikipedia.org/wiki/ISO_8601#Durations), but\nonly the enumerated values are supported. Buckets are aligned to UTC boundaries.\nThe special `ALL` value defines a single bucket for all intervals.\n\nThe allowed granularity for a query is restricted by the length of that query's `interval`.\n\nDo not confuse intervals with retention time. Confluent uses granularity and intervals to\nvalidate requests. Retention time is the length of time Confluent stores data. For example,\nrequests with a granularity of `PT1M` can have a maximum interval of six hours. A  request\nwith a granularity of `PT1M` and an interval of 12 hours would fail validation. For more\ninformation about retention time, see the\n[FAQ](https://docs.confluent.io/cloud/current/monitoring/metrics-api.html#what-is-the-retention-time-of-metrics-in-the-metrics-api).\n\nGranularity equal to or greater than `PT1H` can use any interval.\n\n\n| Granularity          | Maximum Interval Length  |\n|----------------------|--------------------------|\n| `PT1M` (1 minute)    | 6 hours                  |\n| `PT5M` (5 minutes)   | 1 day                    |\n| `PT15M` (15 minutes) | 4 days                   |\n| `PT30M` (30 minutes) | 7 days                   |\n| `PT1H` (1 hour)      | Any                      |\n| `PT4H` (4 hours)     | Any                      |\n| `PT6H` (6 hours)     | Any                      |\n| `PT12H` (12 hours)   | Any                      |\n| `P1D` (1 day)        | Any                      |\n| `ALL`                | Any                      |\n",
+        "type": "string",
+        "format": "ISO-8601 duration (PnDTnHnMn.nS) or ALL",
+        "enum": [
+          "PT1M",
+          "PT5M",
+          "PT15M",
+          "PT30M",
+          "PT1H",
+          "PT4H",
+          "PT6H",
+          "PT12H",
+          "P1D",
+          "ALL"
+        ],
+        "example": "PT1H"
+      },
+      "FieldFilter": {
+        "title": "Field Filter",
+        "type": "object",
+        "x-java-class": "io.confluent.observability.metricsquery.api.Filter",
+        "properties": {
+          "op": {
+            "type": "string",
+            "description": "The comparison operator for the filter.\nNote that labels are compared _lexicographically_.\n\nThe `GT` or `GTE` operators can be used to page through grouped result sets that exceed\nthe query limit.\n",
+            "enum": [
+              "EQ",
+              "GT",
+              "GTE"
+            ]
+          },
+          "field": {
+            "description": "The field to filter on; see [here](#section/Object-Model/Labels) on using labels as\nfilter fields.\n",
+            "type": "string",
+            "example": "metric.topic"
+          },
+          "value": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ]
+          }
+        },
+        "required": [
+          "op",
+          "value"
+        ],
+        "example": {
+          "op": "EQ",
+          "field": "resource.kafka.id",
+          "value": "lkc-1234"
+        }
+      },
+      "Filter": {
+        "description": "Metric filter.",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/FieldFilter"
+          },
+          {
+            "$ref": "#/components/schemas/CompoundFilter"
+          },
+          {
+            "$ref": "#/components/schemas/UnaryFilter"
+          }
+        ]
+      },
+      "CompoundFilter": {
+        "title": "Compound Filter",
+        "type": "object",
+        "x-java-class": "io.confluent.observability.metricsquery.api.Filter",
+        "properties": {
+          "op": {
+            "type": "string",
+            "enum": [
+              "AND",
+              "OR"
+            ]
+          },
+          "filters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Filter"
+            }
+          }
+        },
+        "required": [
+          "op",
+          "filters"
+        ],
+        "example": {
+          "op": "OR",
+          "filters": [
+            {
+              "field": "resource.kafka.id",
+              "op": "EQ",
+              "value": "lkc-1234"
+            },
+            {
+              "field": "resource.kafka.id",
+              "op": "EQ",
+              "value": "lkc-5678"
+            }
+          ]
+        }
+      },
+      "UnaryFilter": {
+        "title": "Unary Filter",
+        "type": "object",
+        "x-java-class": "io.confluent.observability.metricsquery.api.Filter",
+        "properties": {
+          "op": {
+            "type": "string",
+            "enum": [
+              "NOT"
+            ]
+          },
+          "filter": {
+            "$ref": "#/components/schemas/Filter"
+          }
+        },
+        "required": [
+          "op",
+          "filter"
+        ],
+        "example": {
+          "op": "NOT",
+          "filter": {
+            "field": "metric.topic",
+            "op": "EQ",
+            "value": "topicA"
+          }
+        }
+      },
+      "OrderBy": {
+        "type": "object",
+        "properties": {
+          "metric": {
+            "type": "string"
+          },
+          "agg": {
+            "$ref": "#/components/schemas/AggregationFunction"
+          },
+          "order": {
+            "type": "string",
+            "enum": [
+              "ASCENDING",
+              "DESCENDING"
+            ],
+            "default": "DESCENDING"
+          }
+        },
+        "required": [
+          "metric"
+        ],
+        "example": {
+          "metric": "io.confluent.kafka.server/bytes_in",
+          "agg": "SUM",
+          "order": "DESCENDING"
+        }
+      },
+      "Interval": {
+        "type": "string",
+        "format": "ISO-8601 interval (<start>/<end> | <start>/<duration> | <duration>/<end>)"
+      },
+      "ResponseFormat": {
+        "description": "Desired response format for query results.\n* `FLAT` (default): Each item in the response `data` array represents a data point in the\n  timeseries. Each data point contains the `timestamp`, metric aggregation `value` and\n  attributes for the `group_by` labels.\n* `GROUPED`: Each item in the response `data` array represents a group. Each group contains\n  attributes for the `group_by` labels and an array of `points` for the metric aggregation\n  timeseries. **Only allowed when `group_by` is non-empty.**\n\nPlease see the response schema and accompanying examples for more details.\n",
+        "type": "string",
+        "enum": [
+          "FLAT",
+          "GROUPED"
+        ],
+        "default": "FLAT"
+      },
+      "QueryRequest": {
+        "type": "object",
+        "x-java-class": "io.confluent.observability.metricsquery.api.MetricsQueryRequest",
+        "properties": {
+          "aggregations": {
+            "description": "Specifies which metrics to query and the aggregation operator to apply across the `group_by` labels. **Currently, only one aggregation per request is supported.**",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Aggregation"
+            },
+            "minItems": 1,
+            "maxItems": 1
+          },
+          "group_by": {
+            "description": "Specifies how data gets bucketed by label(s); see [here](#section/Object-Model/Labels)\non using labels for grouping query results.\n",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "granularity": {
+            "$ref": "#/components/schemas/Granularity"
+          },
+          "filter": {
+            "$ref": "#/components/schemas/Filter"
+          },
+          "order_by": {
+            "description": "Sort ordering for result groups. **Only valid for `granularity: \"ALL\"`.**\nIf not specified, defaults to the first `aggregation` in descending order.\n\nNote that this ordering applies to the groups.\nWithin a group (or for ungrouped results), data points are always ordered by `timestamp`\nin descending order.\n",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderBy"
+            },
+            "maxItems": 1
+          },
+          "intervals": {
+            "description": "Defines the time range(s) that the query runs over.\nA time range is an ISO-8601 interval.\n\nThe keyword `now` can be used in place of a timestamp to refer to the current time.\nOffset and truncation modifiers can be also be applied to the `now` expression:\n\n| Modifier | Syntax | Examples |\n| --- | --- | --- |\n| Offset | `(+\\|-)<amount>(m\\|h\\|d)` | `-2m` (minus 2 minutes)<br/>`-1h` (minus 1 hour) |\n| Truncation | `\\|(m\\|h\\|d)` | `\\|m` (round down to start of minute)<br/>`\\|h` (round down to start of hour) |\n\nAll hour/day truncation is performed against the UTC timezone.\n\nIf `now` is `2020-01-01T02:13:27Z`, some examples are:\n* `now-2m|m`: `now` minus 2 minutes, truncated to start of minute.\n<br/>Resolves to `2020-01-01T02:11:00Z`\n* `now|h`: `now` truncated to start of hour.\n<br/>Resolves to `2020-01-01T02:00:00Z`\n* `now-1d|d`: `now` minus 1 day, truncated to start of day.\n<br/>Resolves to `2019-12-31T00:00:00Z`\n\nWhen using `now`, it is recommended to apply a negative offset to avoid incomplete data\n(see [metric availability delays](#section/Client-Considerations-and-Best-Practices/Metric-Data-Latency))\nand align to minute boundaries (e.g. `now-2m|m`).\n",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Interval"
+            },
+            "minItems": 1
+          },
+          "limit": {
+            "description": "The maximum number of _groups_ to return. Only supported with a non-empty `group_by` field. The maximum number of data points in the response is equal to `limit * (interval / granularity)`. For example, with an interval of 1 day, granularity of `PT1H`, and limit of `2` there will be a maximum of 48 data points in the response (24 for each group). For granularity of `ALL`, the limit defaults to 1000.",
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000,
+            "default": 100
+          },
+          "format": {
+            "$ref": "#/components/schemas/ResponseFormat"
+          }
+        },
+        "required": [
+          "intervals",
+          "aggregations",
+          "granularity"
+        ]
+      },
+      "Point": {
+        "type": "object",
+        "properties": {
+          "timestamp": {
+            "description": "The timestamp for this time bucket, aligned to UTC boundaries.",
+            "type": "string",
+            "format": "date-time"
+          },
+          "value": {
+            "description": "The value for the requested aggregation for this time bucket.",
+            "type": "number"
+          }
+        },
+        "additionalProperties": true,
+        "required": [
+          "timestamp",
+          "value"
+        ],
+        "example": {
+          "timestamp": "2019-10-17T20:17:00.000Z",
+          "resource.kafka.id": "lkc-12345entry",
+          "metric.topic": "foo",
+          "value": 9741
+        }
+      },
+      "FlatQueryResponse": {
+        "title": "Flat Response",
+        "type": "object",
+        "properties": {
+          "data": {
+            "description": "An array of results for this query. Each item includes `timestamp`, `value`, and an attribute for each label specified in the request's `group_by`.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Point"
+            }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        },
+        "required": [
+          "data"
+        ],
+        "example": {
+          "data": [
+            {
+              "timestamp": "2019-10-17T20:17:00.000Z",
+              "metric.topic": "foo",
+              "value": 9741
+            },
+            {
+              "timestamp": "2019-10-17T20:18:00.000Z",
+              "metric.topic": "foo",
+              "value": 9246
+            },
+            {
+              "timestamp": "2019-10-17T20:17:00.000Z",
+              "metric.topic": "bar",
+              "value": 844.1
+            },
+            {
+              "timestamp": "2019-10-17T20:18:00.000Z",
+              "metric.topic": "bar",
+              "value": 821.1
+            }
+          ],
+          "meta": {
+            "pagination": {
+              "page_size": 3,
+              "total_size": 3
+            }
+          }
+        }
+      },
+      "GroupedQueryResponse": {
+        "title": "Grouped Response",
+        "type": "object",
+        "properties": {
+          "data": {
+            "description": "An array of results for this query. Each item represents a group bucket having a distinct set of label values for the request's `group_by`.  The groups are ordered lexicographically by the label values for that group.",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "points": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Point"
+                  }
+                }
+              },
+              "additionalProperties": true,
+              "required": [
+                "points"
+              ]
+            }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        },
+        "required": [
+          "data"
+        ],
+        "example": {
+          "data": [
+            {
+              "metric.topic": "foo",
+              "points": [
+                {
+                  "timestamp": "2019-10-17T20:17:00.000Z",
+                  "value": 9741
+                },
+                {
+                  "timestamp": "2019-10-17T20:18:00.000Z",
+                  "value": 9246
+                }
+              ]
+            },
+            {
+              "metric.topic": "bar",
+              "points": [
+                {
+                  "timestamp": "2019-10-17T20:17:00.000Z",
+                  "value": 844.1
+                },
+                {
+                  "timestamp": "2019-10-17T20:18:00.000Z",
+                  "value": 821.1
+                }
+              ]
+            }
+          ],
+          "meta": {
+            "pagination": {
+              "page_size": 3,
+              "total_size": 3
+            }
+          }
+        }
+      },
+      "QueryResponse": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/FlatQueryResponse"
+          },
+          {
+            "$ref": "#/components/schemas/GroupedQueryResponse"
+          }
+        ]
+      },
+      "AttributesRequest": {
+        "type": "object",
+        "x-java-class": "io.confluent.observability.metricsquery.attributes.AttributesRequest",
+        "properties": {
+          "metric": {
+            "type": "string",
+            "description": "The metric that the label values are enumerated for."
+          },
+          "group_by": {
+            "description": "The label(s) that the values are enumerated for.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1
+          },
+          "filter": {
+            "$ref": "#/components/schemas/Filter"
+          },
+          "intervals": {
+            "description": "Defines the time range(s) for which available metrics will be listed. A time range is an ISO-8601 interval. When unspecified, the value defaults to the last hour before the request was made",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Interval"
+            },
+            "minItems": 1
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000,
+            "default": 100
+          }
+        },
+        "required": [
+          "group_by"
+        ]
+      },
+      "AttributesResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "description": "The enumerated labels, as an array of key/value pairs.",
+            "type": "array",
+            "items": {
+              "description": "A key/value pair for the label.",
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "example": {
+                "topic": "foo"
+              }
+            }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          },
+          "links": {
+            "$ref": "#/components/schemas/Links"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "example": {
+          "data": [
+            {
+              "metric.label.topic": "foo"
+            },
+            {
+              "metric.label.topic": "bar"
+            },
+            {
+              "metric.label.topic": "baz"
+            }
+          ],
+          "meta": {
+            "pagination": {
+              "page_size": 3,
+              "total_size": 3
+            }
+          }
+        }
+      }
+    },
+    "responses": {
+      "RateLimitError": {
+        "description": "Rate Limit Exceeded"
+      }
+    }
+  }
+}

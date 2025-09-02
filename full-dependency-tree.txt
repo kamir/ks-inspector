@@ -1,0 +1,30 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ---------------------< io.confluent:ks-inspector >----------------------
+[INFO] Building ks-inspector 1.0-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[WARNING] The POM for io.confluent.observability:telemetry-client:jar:3.948.0 is missing, no dependency information available
+[INFO] 
+[INFO] --- dependency:3.1.1:tree (default-cli) @ ks-inspector ---
+[INFO] Verbose not supported since maven-dependency-plugin 3.0
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  1.090 s
+[INFO] Finished at: 2025-09-02T11:47:05+02:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-dependency-plugin:3.1.1:tree (default-cli) on project ks-inspector: Cannot build project dependency graph: Could not resolve nor collect following dependencies: [io.confluent.observability:telemetry-client:jar:3.948.0 (runtime)]: Could not resolve dependencies for project io.confluent:ks-inspector:jar:1.0-SNAPSHOT
+[ERROR] dependency: io.confluent.observability:telemetry-client:jar:3.948.0 (runtime)
+[ERROR] 	io.confluent.observability:telemetry-client:jar:3.948.0 was not found in https://ksqldb-maven.s3.amazonaws.com/maven/ during a previous attempt. This failure was cached in the local repository and resolution is not reattempted until the update interval of ksqlDB has elapsed or updates are forced
+[ERROR] 	io.confluent.observability:telemetry-client:jar:3.948.0 was not found in https://packages.confluent.io/maven/ during a previous attempt. This failure was cached in the local repository and resolution is not reattempted until the update interval of confluent_repo has elapsed or updates are forced
+[ERROR] 	io.confluent.observability:telemetry-client:jar:3.948.0 was not found in https://packages.confluent.io/maven/ during a previous attempt. This failure was cached in the local repository and resolution is not reattempted until the update interval of confluent has elapsed or updates are forced
+[ERROR] 	io.confluent.observability:telemetry-client:jar:3.948.0 was not found in https://repo.maven.apache.org/maven2 during a previous attempt. This failure was cached in the local repository and resolution is not reattempted until the update interval of central has elapsed or updates are forced
+[ERROR] 	io.confluent.observability:telemetry-client:jar:3.948.0 was not found in https://s3-us-west-2.amazonaws.com/confluent-snapshots/ during a previous attempt. This failure was cached in the local repository and resolution is not reattempted until the update interval of confluent-snapshots has elapsed or updates are forced
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoExecutionException

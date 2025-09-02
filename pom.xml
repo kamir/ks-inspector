@@ -365,6 +365,20 @@
             <groupId>io.confluent.ksql</groupId>
             <artifactId>ksqldb-api-client</artifactId>
             <version>7.6.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.confluent.observability</groupId>
+                    <artifactId>telemetry-client</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.confluent.observability</groupId>
+                    <artifactId>telemetry-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.confluent</groupId>
+                    <artifactId>telemetry-events</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- Removed kafka-clusterstate-tools dependency - replaced with modern implementations -->
@@ -425,12 +439,6 @@
             <groupId>org.neo4j.driver</groupId>
             <artifactId>neo4j-java-driver</artifactId>
             <version>5.18.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>io.confluent.ksql</groupId>
-            <artifactId>ksqldb-api-client</artifactId>
-            <version>7.6.0</version>
         </dependency>
 
     </dependencies>
